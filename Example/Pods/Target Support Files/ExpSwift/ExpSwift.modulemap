@@ -1,0 +1,6 @@
+framework module ExpSwift {
+  umbrella header "ExpSwift-umbrella.h"
+
+  export *
+  module * { export * }
+}
