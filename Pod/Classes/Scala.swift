@@ -79,7 +79,7 @@ public func getDevices(limit:String, skip:String, sort:String) -> Promise<Array<
 */
 public func getDevice(uuid:String) -> Promise<Device>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/devicess/" + uuid )
+        let request = Alamofire.request(.GET, hostUrl + "/api/devices/" + uuid )
         request.responseObject { (request, response, device: Device?, error) in
             var statusCode = response?.statusCode
             if(error != nil) {
@@ -219,6 +219,36 @@ public func getZone(uuid:String) -> Promise<Zone>{
         }
     }
 }
+
+/**
+Get Current Device
+@return Promise<Any>
+*/
+
+public func getCurrentDevice() ->Promise<Any>{
+    return scalaSocketManager.getCurrentDevice()
+}
+
+/**
+Get Current Experience
+@return Promise<Any>
+*/
+
+public func getCurrentExperience() ->Promise<Any>{
+    return scalaSocketManager.getCurrentExperience()
+}
+
+/**
+Connection Socket
+@param name for connection(offline,line),callback
+@return void
+*/
+public func connection(name:String,callback:String->Void){
+    scalaSocketManager.connection(name,  callback: { (resultListen) -> Void in
+        callback(resultListen)
+    })
+}
+
 
 /**
     Get Channel By Enum

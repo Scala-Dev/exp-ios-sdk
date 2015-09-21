@@ -106,6 +106,17 @@ class ViewController: UIViewController {
             }.catch { error in
                 println(error)
         }
+        
+        //CALLBACK CONNECTION ONLINE
+        ExpSwift.connection("online", { obj -> Void in
+            println(obj)
+        })
+        
+        //CALLBACK CONNECTION OFFLINE
+        ExpSwift.connection("offline", { obj -> Void in
+            println(obj)
+        })
+
      }
 
     override func didReceiveMemoryWarning() {

@@ -24,9 +24,11 @@ public  class ScalaSocketManager {
     var scalaSystemChannel:ScalaSystemCh?
     var scalaExperienceChannel:ScalaExperienceCh?
     var request = [String: Any]()
+    public typealias CallBackTypeConnection = String -> Void
     public typealias CallBackType = [String: AnyObject] -> Void
     var listeners = [String: CallBackType]()
     var responders = [String: CallBackType]()
+    var connection = [String: CallBackTypeConnection]()
    
     
     /**
@@ -43,8 +45,19 @@ public  class ScalaSocketManager {
         
         return Promise { fulfill, reject in
             self.socket.on("connect") {data, ack in
-                println("socket connected")
                 fulfill(true)
+                if((self.connection.indexForKey(ScalaConfig.ONLINE)) != nil){
+                    let callBack = self.connection[ScalaConfig.ONLINE]!
+                    callBack(ScalaConfig.ONLINE)
+                }
+                
+            }
+            self.socket.on("disconnect") {data, ack in
+                if((self.connection.indexForKey(ScalaConfig.OFFLINE)) != nil){
+                    let callBack = self.connection[ScalaConfig.OFFLINE]!
+                    callBack(ScalaConfig.OFFLINE)
+                }
+
             }
             self.socket.on(ScalaConfig.SOCKET_MESSAGE) {data, ack in
                 var response = data?.firstObject as! NSDictionary
@@ -145,6 +158,17 @@ public  class ScalaSocketManager {
         return sysCh.request(msg)
     }
 
+    /**
+    Listen for particular socket name on type response broadcast
+    @param  Dictionarty.
+    @return Promise<Any>
+    */
+    public func connection(name:String, callback:CallBackTypeConnection){
+        connection.updateValue(callback, forKey: name)
+    }
+    
+
+    
     /**
         Get Socket Channel By Enum
         @param enum SCALA_SOCKET_CHANNELS. default is SYSTEM CHANNEL

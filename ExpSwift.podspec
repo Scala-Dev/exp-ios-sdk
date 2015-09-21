@@ -38,5 +38,5 @@ Pod::Spec.new do |s|
    s.dependency 'PromiseKit'
    s.dependency 'Alamofire','<= 1.3.1'
    s.dependency 'Socket.IO-Client-Swift', '<= 2.4.5'
-   s.dependency 'JSONWebToken'
+   s.dependency 'JSONWebToken', '<= 1.3.0'
 end
