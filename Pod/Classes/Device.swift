@@ -30,10 +30,6 @@ public final class Device: ResponseObject,ResponseCollection {
         self.status = representation.valueForKeyPath("status") as! Bool
     }
     
-    
-    
-    
-    
     @objc public static func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [Device] {
         var devices: [Device] = []
         

@@ -9,7 +9,7 @@
 import Foundation
 
 
-struct ScalaConfig{
+public struct Config{
     static let EXP_REST_API_ERROR = 1
     static let EXP_ERROR_SOCKET = 2
     static let RESPONSE = "response"
@@ -20,4 +20,7 @@ struct ScalaConfig{
     static let ORGANIZATION = "organization"
     static let EXPERIENCE = "experience"
     static let LOCATION = "location"
+    static let ONLINE = "online"
+    static let OFFLINE = "offline"
 }
+

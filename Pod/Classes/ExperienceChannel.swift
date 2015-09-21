@@ -1,5 +1,5 @@
 //
-//  ExpLocationCh.swift
+//  ScalaExperienceCh.swift
 //  Pods
 //
 //  Created by Cesar on 9/15/15.
@@ -11,18 +11,17 @@ import Socket_IO_Client_Swift
 import PromiseKit
 
 
-public final class ScalaLocationCh {
+public class ExperienceChannel: Channel {
     
     var request = [String: Any]()
     public typealias CallBackType = [String: AnyObject] -> Void
     var listeners = [String: CallBackType]()
     var responders = [String: CallBackType]()
-    let channel = "location"
+    let channel = "experience"
     
-    var socketLocation:SocketIOClient
-    
-    init(socket socketC:SocketIOClient) {
-        self.socketLocation=socketC
+    var socketExperience:SocketIOClient
+    public required init(socket socketC:SocketIOClient) {
+        self.socketExperience=socketC
     }
     
     /**
@@ -40,7 +39,7 @@ public final class ScalaLocationCh {
             }else{
                 let errorLog:String = error!
                 let rej = dictionary["reject"] as! NSError -> Void
-                rej(NSError(domain: hostUrl, code: ScalaConfig.EXP_ERROR_SOCKET, userInfo: ["error":errorLog]))
+                rej(NSError(domain: hostUrl, code: Config.EXP_ERROR_SOCKET, userInfo: ["error":errorLog]))
             }
             self.request.removeValueForKey(id)
         }
@@ -56,19 +55,18 @@ public final class ScalaLocationCh {
         let payload:Dictionary<String,AnyObject> = responseDic["payload"] as! Dictionary
         callBack(payload)
         self.responders.removeValueForKey(name!)
+        
     }
-    
     
     /**
         Handle the Socket Type BroadCast
         @param  Dictionarty.
     */
-    public func onBroadCast(responseDic: NSDictionary){
+    public func onBroadcast(responseDic: NSDictionary){
         let name:String? = responseDic["name"] as? String
         let callBack = self.listeners[name!]!
-        let payload:Dictionary<String,AnyObject> = responseDic.valueForKey("payload") as! Dictionary
+        let payload:Dictionary<String,AnyObject> = responseDic["payload"] as! Dictionary
         callBack(payload)
-        
     }
     
     /**
@@ -81,7 +79,7 @@ public final class ScalaLocationCh {
         messageDic["id"] = uuid
         messageDic["channel"] = channel
         let requestPromise = Promise<Any> { fulfill, reject in
-            self.socketLocation.emit(ScalaConfig.SOCKET_MESSAGE,messageDic)
+            self.socketExperience.emit(Config.SOCKET_MESSAGE,messageDic)
             var promiseDic = Dictionary<String,Any>()
             promiseDic  = [ "fulfill": fulfill,"reject":reject]
             request.updateValue(promiseDic, forKey: uuid)
@@ -94,10 +92,10 @@ public final class ScalaLocationCh {
         @param  Dictionarty.
         @return Promise<Any>
     */
-    public func broadcast(var messageDic:[String:AnyObject]) -> Void{
+    public func broadcast(var messageDic:[String: AnyObject]) -> Void{
         messageDic["type"] = "broadcast"
-        messageDic["channel"] = self.channel
-        self.socketLocation.emit(ScalaConfig.SOCKET_MESSAGE,messageDic)
+        messageDic["channel"] = channel
+        self.socketExperience.emit(Config.SOCKET_MESSAGE,messageDic)
     }
     
     /**
@@ -115,7 +113,7 @@ public final class ScalaLocationCh {
         @param  Dictionarty.
         @return Promise<Any>
     */
-    public func respon(messageDic:[String: AnyObject], callback:CallBackType){
+    public func respond(messageDic:[String: AnyObject], callback:CallBackType){
         var name:String = messageDic["name"] as! String
         responders.updateValue(callback, forKey: name)
     }
