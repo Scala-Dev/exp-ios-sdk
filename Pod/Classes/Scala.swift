@@ -16,10 +16,10 @@ import JWT
 
 var hostUrl: String = ""
 var tokenSDK: String = ""
-var scalaSocketManager = ScalaSocketManager()
+var scalaSocketManager = SocketManager()
 
 
-public enum SCALA_SOCKET_CHANNELS: String {
+public enum SOCKET_CHANNELS: String {
     case SYSTEM = "system"
     case ORGANIZATION = "organization"
     case LOCATION = "location"
@@ -54,9 +54,9 @@ public func scala_init(host: String, uuid: String, secret: String)  -> Promise<B
     @param limit,skip,sort.
     @return Promise<Array<Device>>.
 */
-public func getDevices(limit:String, skip:String, sort:String) -> Promise<Array<Device>>{
+public func getDevices(limit:Int, skip:Int, sort:String) -> Promise<Array<Device>>{
         return Promise { fulfill, reject in
-                let request = Alamofire.request(.GET, hostUrl + "/api/devices?" + "limit=" + limit + "&skip=" + skip + "&sort=" + sort )
+                let request = Alamofire.request(.GET, hostUrl + "/api/devices?" + "limit=" + String(limit) + "&skip=" + String(skip) + "&sort=" + sort )
                    request.responseCollection { (request, response, devices: [Device]?, error) in
                     
                     var statusCode = response?.statusCode
@@ -79,7 +79,7 @@ public func getDevices(limit:String, skip:String, sort:String) -> Promise<Array<
 */
 public func getDevice(uuid:String) -> Promise<Device>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/devicess/" + uuid )
+        let request = Alamofire.request(.GET, hostUrl + "/api/devices/" + uuid )
         request.responseObject { (request, response, device: Device?, error) in
             var statusCode = response?.statusCode
             if(error != nil) {
@@ -119,9 +119,9 @@ public func getExperience(uuid:String) -> Promise<Experience>{
     @param limit,skip,sort.
     @return Promise<Array<Experience>>.
 */
-public func getExperiences(limit:String, skip:String, sort:String) -> Promise<Array<Experience>>{
+public func getExperiences(limit:Int, skip:Int, sort:String) -> Promise<Array<Experience>>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/experiences?" + "limit=" + limit + "&skip=" + skip + "&sort=" + sort )
+        let request = Alamofire.request(.GET, hostUrl + "/api/experiences?" + "limit=" + String(limit) + "&skip=" + String(skip) + "&sort=" + sort )
         request.responseCollection { (request, response, experiences: [Experience]?, error) in
             var statusCode = response?.statusCode
             if(error != nil) {
@@ -162,9 +162,9 @@ public func getLocation(uuid:String) -> Promise<Location>{
     @param limit,skip,sort.
     @return Promise<Array<Experience>>.
 */
-public func getLocations(limit:String, skip:String, sort:String) -> Promise<Array<Location>>{
+public func getLocations(limit:Int, skip:Int, sort:String) -> Promise<Array<Location>>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/locations?" + "limit=" + limit + "&skip=" + skip + "&sort=" + sort )
+        let request = Alamofire.request(.GET, hostUrl + "/api/locations?" + "limit=" + String(limit) + "&skip=" + String(skip) + "&sort=" + sort )
         request.responseCollection { (request, response, locations: [Location]?, error) in
             var statusCode = response?.statusCode
             if(error != nil) {
@@ -183,9 +183,9 @@ public func getLocations(limit:String, skip:String, sort:String) -> Promise<Arra
     @param limit,skip,sort.
     @return Promise<Array<Zone>>.
 */
-public func getZones(limit:String, skip:String, sort:String) -> Promise<Array<Zone>>{
+public func getZones(limit:Int, skip:Int, sort:String) -> Promise<Array<Zone>>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/zones?" + "limit=" + limit + "&skip=" + skip + "&sort=" + sort )
+        let request = Alamofire.request(.GET, hostUrl + "/api/zones?" + "limit=" + String(limit) + "&skip=" + String(skip) + "&sort=" + sort )
         request.responseCollection { (request, response, zones: [Zone]?, error) in
             var statusCode = response?.statusCode
             if(error != nil) {
@@ -221,11 +221,41 @@ public func getZone(uuid:String) -> Promise<Zone>{
 }
 
 /**
+Get Current Device
+@return Promise<Any>
+*/
+
+public func getCurrentDevice() ->Promise<Any>{
+    return scalaSocketManager.getCurrentDevice()
+}
+
+/**
+Get Current Experience
+@return Promise<Any>
+*/
+
+public func getCurrentExperience() ->Promise<Any>{
+    return scalaSocketManager.getCurrentExperience()
+}
+
+/**
+Connection Socket
+@param name for connection(offline,line),callback
+@return void
+*/
+public func connection(name:String,callback:String->Void){
+    scalaSocketManager.connection(name,  callback: { (resultListen) -> Void in
+        callback(resultListen)
+    })
+}
+
+
+/**
     Get Channel By Enum
     @param enum SCALA_SOCKET_CHANNELS.
     @return AnyObject (ScalaOrgCh,ScalaLocationCh,ScalaSystemCh,ScalaExperienceCh).
 */
-public func getChannel(typeChannel:SCALA_SOCKET_CHANNELS) -> AnyObject{
+public func getChannel(typeChannel:SOCKET_CHANNELS) -> Any{
     return scalaSocketManager.getChannel(typeChannel)
 }
 

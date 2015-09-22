@@ -33,7 +33,7 @@ extension Alamofire.Request {
                 // if there is ERROR return the message and code error
                 let code:String = codeKey as! String
                 let message:String = result?["message"] as! String
-                return (nil, NSError(domain: hostUrl, code: ScalaConfig.EXP_REST_API_ERROR, userInfo: ["code":code,"message":message]))
+                return (nil, NSError(domain: hostUrl, code: Config.EXP_REST_API_ERROR, userInfo: ["code":code,"message":message]))
             }
         }
         

@@ -11,7 +11,7 @@ import Socket_IO_Client_Swift
 import PromiseKit
 
 
-public  class ScalaOrgCh {
+public  class OrganizationChannel: Channel {
     var request = [String: Any]()
     public typealias CallBackType = [String: AnyObject] -> Void
     var listeners = [String: CallBackType]()
@@ -20,7 +20,7 @@ public  class ScalaOrgCh {
 
     
     var socketOrg:SocketIOClient
-    init(socket socketC:SocketIOClient) {
+    public required init(socket socketC:SocketIOClient) {
         self.socketOrg=socketC
     }
     
@@ -40,7 +40,7 @@ public  class ScalaOrgCh {
             }else{
                 let errorLog:String = error!
                 let rej = dictionary["reject"] as! NSError -> Void
-                rej(NSError(domain: hostUrl, code: ScalaConfig.EXP_ERROR_SOCKET, userInfo: ["error":errorLog]))
+                rej(NSError(domain: hostUrl, code: Config.EXP_ERROR_SOCKET, userInfo: ["error":errorLog]))
             }
             self.request.removeValueForKey(id)
         }
@@ -64,7 +64,7 @@ public  class ScalaOrgCh {
         Handle the Socket Type BroadCast
         @param  Dictionarty.
     */
-    public func onBroadCast(responseDic: NSDictionary){
+    public func onBroadcast(responseDic: NSDictionary){
         let name:String? = responseDic["name"] as? String
        if(( self.listeners.indexForKey(name!)) != nil){
             let callBack = self.listeners[name!]!
@@ -85,7 +85,7 @@ public  class ScalaOrgCh {
         messageDic["id"] = uuid
         messageDic["channel"] = channel
         let requestPromise = Promise<Any> { fulfill, reject in
-            self.socketOrg.emit(ScalaConfig.SOCKET_MESSAGE,messageDic)
+            self.socketOrg.emit(Config.SOCKET_MESSAGE,messageDic)
             var promiseDic = Dictionary<String,Any>()
             promiseDic  = [ "fulfill": fulfill,"reject":reject]
             request.updateValue(promiseDic, forKey: uuid)
@@ -101,7 +101,7 @@ public  class ScalaOrgCh {
     public func broadcast(var messageDic:[String:AnyObject]) -> Void{
         messageDic["type"] = "broadcast"
         messageDic["channel"] = self.channel
-        self.socketOrg.emit(ScalaConfig.SOCKET_MESSAGE,messageDic)
+        self.socketOrg.emit(Config.SOCKET_MESSAGE,messageDic)
     }
     
     /**
@@ -119,7 +119,7 @@ public  class ScalaOrgCh {
         @param  Dictionarty.
         @return Promise<Any>
     */
-    public func respon(messageDic:[String: AnyObject], callback:CallBackType){
+    public func respond(messageDic:[String: AnyObject], callback:CallBackType){
         var name:String = messageDic["name"] as! String
         responders.updateValue(callback, forKey: name)
     }

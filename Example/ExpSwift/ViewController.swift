@@ -19,7 +19,7 @@ class ViewController: UIViewController {
             println(result)
             
             //SENT REQUEST
-            var systemChannel = ExpSwift.getChannel(SCALA_SOCKET_CHANNELS.SYSTEM) as! ScalaSystemCh
+            var systemChannel = ExpSwift.getChannel(SOCKET_CHANNELS.SYSTEM) as! SystemChannel
             var msg:Dictionary<String,String> = ["type": "request", "name": "getCurrentExperience"]
             systemChannel.request(msg).then { obj -> Void in
                             println("request response")
@@ -28,7 +28,7 @@ class ViewController: UIViewController {
                 println(error)
             }
             
-            var orgchannel = ExpSwift.getChannel(SCALA_SOCKET_CHANNELS.ORGANIZATION) as! ScalaOrgCh
+            var orgchannel = ExpSwift.getChannel(SOCKET_CHANNELS.ORGANIZATION) as! OrganizationChannel
             //SEND BROADCAS MESSAGE
             var payload:Dictionary<String,String> = ["opening":"knock knock?"]
             var msg2:Dictionary<String,AnyObject> = ["name": "testing","payload":payload]
@@ -43,7 +43,7 @@ class ViewController: UIViewController {
 
 
         //GET DEVICES
-        ExpSwift.getDevices("10","0","name").then { (devices: Array<Device>) -> Void  in
+        ExpSwift.getDevices(10,0,"name").then { (devices: Array<Device>) -> Void  in
             for device in devices{
                 println(device.name)
             }
@@ -67,7 +67,7 @@ class ViewController: UIViewController {
         }
         
         //GET EXPERIENCES
-        ExpSwift.getExperiences("10","0","name").then { (experiences: Array<Experience>) -> Void  in
+        ExpSwift.getExperiences(10,0,"name").then { (experiences: Array<Experience>) -> Void  in
             for experience in experiences{
                 println(experience.name)
             }
@@ -83,7 +83,7 @@ class ViewController: UIViewController {
         }
         
         //GET LOCATIONS
-        ExpSwift.getLocations("10","0","name").then { (locations: Array<Location>) -> Void  in
+        ExpSwift.getLocations(10,0,"name").then { (locations: Array<Location>) -> Void  in
             for location in locations{
                 println(location.name)
             }
@@ -92,7 +92,7 @@ class ViewController: UIViewController {
         }
         
         //GET ZONES
-        ExpSwift.getZones("10","0","name").then { (zones: Array<Zone>) -> Void  in
+        ExpSwift.getZones(10,0,"name").then { (zones: Array<Zone>) -> Void  in
             for zone in zones{
                 println(zone.name)
             }
@@ -106,6 +106,17 @@ class ViewController: UIViewController {
             }.catch { error in
                 println(error)
         }
+        
+        //CALLBACK CONNECTION ONLINE
+        ExpSwift.connection("online", { obj -> Void in
+            println(obj)
+        })
+        
+        //CALLBACK CONNECTION OFFLINE
+        ExpSwift.connection("offline", { obj -> Void in
+            println(obj)
+        })
+
      }
 
     override func didReceiveMemoryWarning() {
