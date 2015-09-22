@@ -58,15 +58,15 @@ There are four channels available:
 
 ### How to get channels
 ```swift
-var orgchannel = ExpSwift.getChannel(SCALA_SOCKET_CHANNELS.ORGANIZATION) as! ScalaOrgCh 
-var systemChannel = ExpSwift.getChannel(SCALA_SOCKET_CHANNELS.SYSTEM) as! ScalaSystemCh
+var orgchannel = ExpSwift.getChannel(SOCKET_CHANNELS.ORGANIZATION) as! OrganizationChannel 
+var systemChannel = ExpSwift.getChannel(SOCKET_CHANNELS.SYSTEM) as! SystemChannel
 
 ```
 ###  [Channel].listen(options, callback)
 Register a callback for a message on this channel.
 ```swift
 //LISTEN FOR BROADCAST MESSAGE
-var orgchannel = ExpSwift.getChannel(SCALA_SOCKET_CHANNELS.ORGANIZATION) as! ScalaOrgCh
+var orgchannel = ExpSwift.getChannel(OCKET_CHANNELS.ORGANIZATION) as! OrganizationChannel
             var msg1:Dictionary<String,AnyObject> = ["name": "test"]
             orgchannel.listen(msg1,  callback: { (resultListen) -> Void in
                             println(resultListen)
@@ -76,7 +76,7 @@ var orgchannel = ExpSwift.getChannel(SCALA_SOCKET_CHANNELS.ORGANIZATION) as! Sca
 Broadcast a message out on this channel. 
 ```swift
  //SEND BROADCAS MESSAGE
-var orgchannel = ExpSwift.getChannel(SCALA_SOCKET_CHANNELS.ORGANIZATION) as! ScalaOrgCh
+var orgchannel = ExpSwift.getChannel(SOCKET_CHANNELS.ORGANIZATION) as! OrganizationChannel
             var payload:Dictionary<String,String> = ["opening":"knock knock?"]
             var msg2:Dictionary<String,AnyObject> = ["name": "testing","payload":payload]
             orgchannel.broadcast(msg2)
@@ -87,7 +87,7 @@ Broadcasts can be recieved by any device that is connected to the same organizat
 Send a request to another device. Returns a promise.
 ```swift
  //SENT REQUEST
-            var systemChannel = ExpSwift.getChannel(SCALA_SOCKET_CHANNELS.SYSTEM) as! ScalaSystemCh
+            var systemChannel = ExpSwift.getChannel(SOCKET_CHANNELS.SYSTEM) as! SystemChannel
             var msg:Dictionary<String,String> = ["type": "request", "name": "getCurrentExperience"]
             systemChannel.request(msg).then { obj -> Void in
                             println(obj)
@@ -103,7 +103,7 @@ Requests can only reach devices that share the same organization/experience/loca
 Respond to a request. The callback can throw an error to respond with an error. The callback can also return a promise.
 ```swift
 //RESPOND  MESSAGE
-var orgchannel = ExpSwift.getChannel(SCALA_SOCKET_CHANNELS.ORGANIZATION) as! ScalaOrgCh
+var orgchannel = ExpSwift.getChannel(SOCKET_CHANNELS.ORGANIZATION) as! OrganizationChannel
             var msg1:Dictionary<String,AnyObject> = ["name": "testing"]
             orgchannel.respon(msg1, callback:{ (resultListen) -> Void in
                 println(resultListen)
@@ -134,11 +134,11 @@ Get a single device by UUID. Resolves to a [Device Object](#device-object).
         }
 ```
 
-### ExpSwift.getDevices(limit:String,skip:String,sort:String)
+### ExpSwift.getDevices(limit:Int,skip:Int,sort:String)
 Query for multiple devices. Resolves to an array of [Device Objects](#device-object).
 ```swift
  //GET DEVICES
-        ExpSwift.getDevices("10","0","name").then { (devices: Array<Device>) -> Void  in
+        ExpSwift.getDevices(10,0,"name").then { (devices: Array<Device>) -> Void  in
             for device in devices{
                 println(device.name)
             }
@@ -166,11 +166,11 @@ Get a single experience by UUID. Resolves to a [Experience Object](#experience-o
                 println(error)
         }
 ```
-### ExpSwift.getExperiences(limit:String,skip:String,sort:String)
+### ExpSwift.getExperiences(limit:Int,skip:Int,sort:String)
 Query for multiple experiences. Resolves to an array of [Experience Objects](#experience-object).
 ```swift
  //GET EXPERIENCES
-        ExpSwift.getExperiences("10","0","name").then { (experiences: Array<Experience>) -> Void  in
+        ExpSwift.getExperiences(10,0,"name").then { (experiences: Array<Experience>) -> Void  in
             for experience in experiences{
                 println(experience.name)
             }
@@ -192,11 +192,11 @@ Get a single location by UUID. Resolves to a [Location Object](#location-object)
 
 ```
 
-### ExpSwift.getLocations(limit:String,skip:String,sort:String)
+### ExpSwift.getLocations(limit:Int,skip:Int,sort:String)
 Query for multiple locations. Resolves to an array of [Location Objects](#location-object).
 ```swift
 //GET LOCATIONS
-        ExpSwift.getLocations("10","0","name").then { (locations: Array<Location>) -> Void  in
+        ExpSwift.getLocations(10,0,"name").then { (locations: Array<Location>) -> Void  in
             for location in locations{
                 println(location.name)
             }
@@ -218,11 +218,11 @@ Get a single zone by UUID. Resolves to a [Zone Object](#zone-object).
 
 ```
 
-### ExpSwift.getZones(limit:String,skip:String,sort:String)
+### ExpSwift.getZones(limit:Int,skip:Int,sort:String)
 Query for multiple zones. Resolves to an array of [Zone Objects](#zone-object).
 ```swift
 //GET ZONES
-        ExpSwift.getZones("10","0","name").then { (zones: Array<Zone>) -> Void  in
+        ExpSwift.getZones(10,0,"name").then { (zones: Array<Zone>) -> Void  in
             for zone in zones{
                 println(zone.name)
             }
