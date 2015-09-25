@@ -46,6 +46,26 @@ public func scala_init(host: String, uuid: String, secret: String)  -> Promise<B
     }
 }
 
+public func scala_init(host:String , userExp: String , password:String, organization:String) -> Promise<Bool> {
+    
+    return Promise { fulfill, reject in
+        hostUrl=host
+        login(userExp, password, organization).then {(token: Token) -> Void  in
+            tokenSDK = token.token
+            Alamofire.Manager.sharedInstance.session.configuration.HTTPAdditionalHeaders = ["Authorization": "Bearer " + tokenSDK];
+                scalaSocketManager.start_socket().then { (result: Bool) -> Void  in
+                    if result{
+                        fulfill(true)
+                    }
+            }
+        }
+
+    }
+
+}
+
+
+
 
 
 
@@ -218,6 +238,53 @@ public func getZone(uuid:String) -> Promise<Zone>{
             fulfill(zone!)
         }
     }
+}
+
+
+/**
+Get Zone By UUID
+@param uuid.
+@return Promise<Zone>.
+*/
+public func getContentNode(uuid:String) -> Promise<ContentNode>{
+    return Promise { fulfill, reject in
+        let request = Alamofire.request(.GET, hostUrl + "/api/content/" + uuid + "/children")
+        request.responseObject { (request, response, content: ContentNode?, error) in
+            var statusCode = response?.statusCode
+            if(error != nil) {
+                return reject(error!)
+            }
+            if(statusCode < 200 || statusCode > 299) {
+                return reject(NSError(domain: hostUrl + "/api/content", code: statusCode!, userInfo: [:]))
+            }
+            fulfill(content!)
+        }
+    }
+}
+
+
+/**
+Login EXP system
+@param user,password,organization.
+@return Promise<Token>.
+*/
+public func login(user:String,passwd:String,organization:String) ->Promise<Token>{
+    
+    return Promise { fulfill, reject in
+        let request = Alamofire.request(.POST, hostUrl + "/api/auth/login",parameters:["username":user,"password":passwd,"org":organization],encoding: .JSON)
+        request.responseObject { (request, response, token: Token?, error) in
+            var statusCode = response?.statusCode
+            if(error != nil) {
+                return reject(error!)
+            }
+            if(statusCode < 200 || statusCode > 299) {
+                return reject(NSError(domain: hostUrl + "/auth/login", code: statusCode!, userInfo: [:]))
+            }
+            fulfill(token!)
+        }
+    }
+
+
 }
 
 /**

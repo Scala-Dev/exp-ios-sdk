@@ -20,11 +20,11 @@ it, simply add the following line to your Podfile:
 pod "ExpSwift"
 ```
 ### ExpSwift.scala_init(host,uuid,secret)
-
+Init exp connection for device with Host,Uuid,secret. 
 ```swift
 import ExpSwift
 
- ExpSwift.scala_init("http://develop.exp.scala.com:9000","2c9c7750-4437-4687-bd42-5586f2e8079f",
+ ExpSwift.scala_init("http://api-develop.exp.scala.com","2c9c7750-4437-4687-bd42-5586f2e8079f",
  "7b674d4ab63e80c62591ef3fcb51da1505f420d2a9ffda8ed5d24aa6384ad1c1f10985a4fc858b046b065bcdacc105dd").then{ result -> Void in
             println(result)
             }.catch { error in
@@ -32,6 +32,20 @@ import ExpSwift
             }
 
 ```
+### ExpSwift.scala_init(host,user,password,organization)
+Init exp connection for user with Host,User,Password,Organization.
+```swift
+import ExpSwift
+
+ ExpSwift.scala_init("http://api-develop.exp.scala.com","user",
+ "password,organization").then{ result -> Void in
+            println(result)
+            }.catch { error in
+                println(error)
+            }
+
+```
+
 
 # ExpSwift.connection
 ### ExpSwift.connection(name, callback)
@@ -67,7 +81,7 @@ Register a callback for a message on this channel.
 ```swift
 //LISTEN FOR BROADCAST MESSAGE
 var orgchannel = ExpSwift.getChannel(OCKET_CHANNELS.ORGANIZATION) as! OrganizationChannel
-            var msg1:Dictionary<String,AnyObject> = ["name": "test"]
+            var msg1:Dictionary<String,AnyObject> = ["name": "testing"]
             orgchannel.listen(msg1,  callback: { (resultListen) -> Void in
                             println(resultListen)
             })
@@ -150,7 +164,7 @@ Query for multiple devices. Resolves to an array of [Device Objects](#device-obj
 Get the current experience. Resolves to an [Experience Object](#experience-object).
 ```swift
 //GET CURRENT EXPERIENCE
-        ExpSwift.getCurrentDevice().then { experience -> Void  in
+        ExpSwift.getCurrentExperience().then { experience -> Void  in
             println(experience)
             }.catch { error in
                 println(error)
@@ -231,7 +245,43 @@ Query for multiple zones. Resolves to an array of [Zone Objects](#zone-object).
         }
 
 ```
+
+### ExpSwift.getContentNode(uuid)
+Get a content node by UUID. Resolves to a [ContentNode Object](#content-object). Note: The UUID value of 'root' will return the contents of the root folder of the current organization.
+```swift
+ExpSwift.getContentNode("root").then { (content: ContentNode) -> Void  in
+                          println(content.name)
+                        }.catch { error in
+                            println(error)
+                        }
+```
+
+
 # Abstract API Objects
+
+### ContentNode Object
+
+##### content.uuid
+The content's UUID.
+
+##### content.getChildren()
+Get the immediate children of this content node. Resolves to an array of [ContentNode Objects](#content-object).
+```swift
+ content.getChildren().then { (childrens: [ContentNode]) -> Void in
+                            for child in childrens{
+                                println(child.name)
+                            }
+                            }.catch { error in
+                                println(error)
+                            }
+
+```
+
+##### content.getUrl()
+Get the absolute url to the content node data. Useful for image/video tags or to download a content file.
+```swift
+let url = content.getUrl();
+```
 
 ### Device Object
 

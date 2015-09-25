@@ -15,7 +15,7 @@ public final class Zone: ResponseObject,ResponseCollection {
     public let proximity: Proximity?
     public let uuid: String
     public let org: String
-    public let labels: [String]
+    public let labels: [String]?
 
 
     
@@ -25,7 +25,7 @@ public final class Zone: ResponseObject,ResponseCollection {
         self.proximity = Proximity(response:response, representation: representation.valueForKeyPath("proximity")!)!
         self.uuid = representation.valueForKeyPath("uuid") as! String
         self.org = representation.valueForKeyPath("org") as! String
-        self.labels = representation.valueForKeyPath("labels") as! NSArray as! [String]
+        self.labels = representation.valueForKeyPath("labels") as? NSArray as? [String]
     }
     
     
