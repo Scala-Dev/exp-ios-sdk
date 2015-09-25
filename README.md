@@ -19,26 +19,24 @@ it, simply add the following line to your Podfile:
 ```ruby
 pod "ExpSwift"
 ```
-### ExpSwift.scala_init(host,uuid,secret)
+### ExpSwift.runtime.start(host,uuid,secret)
 Init exp connection for device with Host,Uuid,secret. 
 ```swift
 import ExpSwift
 
- ExpSwift.scala_init("http://api-develop.exp.scala.com","2c9c7750-4437-4687-bd42-5586f2e8079f",
- "7b674d4ab63e80c62591ef3fcb51da1505f420d2a9ffda8ed5d24aa6384ad1c1f10985a4fc858b046b065bcdacc105dd").then{ result -> Void in
+ ExpSwift.runtime.start(host,uuid: "12344444",secret: "84920-094823").then{ result -> Void in
             println(result)
             }.catch { error in
                 println(error)
             }
 
 ```
-### ExpSwift.scala_init(host,user,password,organization)
+### ExpSwift.runtime.start(host,user,password,organization)
 Init exp connection for user with Host,User,Password,Organization.
 ```swift
 import ExpSwift
 
- ExpSwift.scala_init("http://api-develop.exp.scala.com","user",
- "password,organization").then{ result -> Void in
+  ExpSwift.runtime.start(host,user: "cesar.oyarzun@scala.com",password: "Com5715031",organization: "scala").then{ result -> Void in
             println(result)
             }.catch { error in
                 println(error)
@@ -47,16 +45,16 @@ import ExpSwift
 ```
 
 
-# ExpSwift.connection
-### ExpSwift.connection(name, callback)
+# ExpSwift.runtime.connection
+### ExpSwift.runtime.connection(name, callback)
 Attaches a listener for connection events. The possible events are `online` (when a connection is established to EXP) and `offline` (when the connection to EXP is lost).
 
 ```swift
-ExpSwift.connection("online", { obj -> Void in
+ExpSwift.runtime.connection("online", { obj -> Void in
             println(obj)
         })
         
-ExpSwift.connection("offline", { obj -> Void in
+ExpSwift.runtime.connection("offline", { obj -> Void in
             println(obj)
         })
 
@@ -250,7 +248,7 @@ Query for multiple zones. Resolves to an array of [Zone Objects](#zone-object).
 Get a content node by UUID. Resolves to a [ContentNode Object](#content-object). Note: The UUID value of 'root' will return the contents of the root folder of the current organization.
 ```swift
 ExpSwift.getContentNode("root").then { (content: ContentNode) -> Void  in
-                          println(content.name)
+                          println(content.document["name"])
                         }.catch { error in
                             println(error)
                         }
@@ -269,7 +267,7 @@ Get the immediate children of this content node. Resolves to an array of [Conten
 ```swift
  content.getChildren().then { (children: [ContentNode]) -> Void in
                             for child in children{
-                                println(child.name)
+                                println(child.document["name"])
                             }
                             }.catch { error in
                                 println(error)

@@ -14,9 +14,11 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+//        let host = "http://api.develop.exp.scala.com:9000"
+//        let host = "http://develop.exp.scala.com:9000"
+        let host = "http://api-develop.exp.scala.com"
 
-        ExpSwift.scala_init("http://develop.exp.scala.com:9000","2c9c7750-4437-4687-bd42-5586f2e8079f","7b674d4ab63e80c62591ef3fcb51da1505f420d2a9ffda8ed5d24aa6384ad1c1f10985a4fc858b046b065bcdacc105dd").then{ result -> Void in
-            println(result)
+        ExpSwift.runtime.start(host,uuid:"74c05552-5b9f-4d06-a3f8-8299ff1e1e3a",secret:"7b674d4ab63e80c62591ef3fcb51da1505f420d2a9ffda8ed5d24aa6384ad1c1f10985a4fc858b046b065bcdacc105dd").then{ result -> Void in
             
             //SENT REQUEST
             var systemChannel = ExpSwift.getChannel(SOCKET_CHANNELS.SYSTEM) as! SystemChannel
@@ -40,7 +42,33 @@ class ViewController: UIViewController {
                             println(resultListen)
             })
         }
+//
+        
+        //USER PASSS
 
+        ExpSwift.runtime.start(host,user: "cesar.oyarzun@scala.com",password: "Com5715031",organization: "scala").then{ result -> Void in
+        
+            //GET CONTENT
+                    ExpSwift.getContentNode("root").then { (content: ContentNode) -> Void  in
+                        println(content.document["name"])
+                        println(content.getUrl())
+                        content.getChildren().then { (childrens: [ContentNode]) -> Void in
+                            for child in childrens{
+                                println(child.getUrl())
+                            }
+                            }.catch { error in
+                                println(error)
+                            }
+                        }.catch { error in
+                            println(error)
+                    }
+        }
+        
+
+        
+     
+        
+        
 
         //GET DEVICES
         ExpSwift.getDevices(10,0,"name").then { (devices: Array<Device>) -> Void  in
@@ -107,13 +135,15 @@ class ViewController: UIViewController {
                 println(error)
         }
         
+
+
         //CALLBACK CONNECTION ONLINE
-        ExpSwift.connection("online", { obj -> Void in
+        ExpSwift.runtime.connection("online", callback: { obj -> Void in
             println(obj)
         })
         
         //CALLBACK CONNECTION OFFLINE
-        ExpSwift.connection("offline", { obj -> Void in
+        ExpSwift.runtime.connection("offline", callback: { obj -> Void in
             println(obj)
         })
 

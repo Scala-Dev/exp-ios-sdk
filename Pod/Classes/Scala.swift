@@ -16,7 +16,8 @@ import JWT
 
 var hostUrl: String = ""
 var tokenSDK: String = ""
-var scalaSocketManager = SocketManager()
+var socketManager = SocketManager()
+public var runtime = Runtime()
 
 
 public enum SOCKET_CHANNELS: String {
@@ -28,41 +29,6 @@ public enum SOCKET_CHANNELS: String {
 
 
 
-/**
-    Initialize the SDK and connect to EXP.
-    @param host,uuid,secret.
-    @return Promise<Bool>.
-*/
-public func scala_init(host: String, uuid: String, secret: String)  -> Promise<Bool> {
-    tokenSDK = JWT.encode(["uuid": uuid], .HS256(secret))
-        return Promise { fulfill, reject in
-            hostUrl=host
-            Alamofire.Manager.sharedInstance.session.configuration.HTTPAdditionalHeaders = ["Authorization": "Bearer " + tokenSDK];
-            scalaSocketManager.start_socket().then { (result: Bool) -> Void  in
-                if result{
-                    fulfill(true)
-                }
-            }
-    }
-}
-
-public func scala_init(host:String , userExp: String , password:String, organization:String) -> Promise<Bool> {
-    
-    return Promise { fulfill, reject in
-        hostUrl=host
-        login(userExp, password, organization).then {(token: Token) -> Void  in
-            tokenSDK = token.token
-            Alamofire.Manager.sharedInstance.session.configuration.HTTPAdditionalHeaders = ["Authorization": "Bearer " + tokenSDK];
-                scalaSocketManager.start_socket().then { (result: Bool) -> Void  in
-                    if result{
-                        fulfill(true)
-                    }
-            }
-        }
-
-    }
-
-}
 
 
 
@@ -293,7 +259,7 @@ Get Current Device
 */
 
 public func getCurrentDevice() ->Promise<Any>{
-    return scalaSocketManager.getCurrentDevice()
+    return socketManager.getCurrentDevice()
 }
 
 /**
@@ -302,19 +268,9 @@ Get Current Experience
 */
 
 public func getCurrentExperience() ->Promise<Any>{
-    return scalaSocketManager.getCurrentExperience()
+    return socketManager.getCurrentExperience()
 }
 
-/**
-Connection Socket
-@param name for connection(offline,line),callback
-@return void
-*/
-public func connection(name:String,callback:String->Void){
-    scalaSocketManager.connection(name,  callback: { (resultListen) -> Void in
-        callback(resultListen)
-    })
-}
 
 
 /**
@@ -323,8 +279,9 @@ public func connection(name:String,callback:String->Void){
     @return AnyObject (ScalaOrgCh,ScalaLocationCh,ScalaSystemCh,ScalaExperienceCh).
 */
 public func getChannel(typeChannel:SOCKET_CHANNELS) -> Any{
-    return scalaSocketManager.getChannel(typeChannel)
+    return socketManager.getChannel(typeChannel)
 }
+
 
 
 

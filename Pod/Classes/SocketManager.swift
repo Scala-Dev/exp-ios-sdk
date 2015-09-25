@@ -188,4 +188,10 @@ public  class SocketManager {
     
     }
     
+    public func disconnect(){
+        if(self.socket.connected){
+            self.socket.close(fast: true)
+        }
+    }
+    
 }
