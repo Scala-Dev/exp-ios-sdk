@@ -267,8 +267,8 @@ The content's UUID.
 ##### content.getChildren()
 Get the immediate children of this content node. Resolves to an array of [ContentNode Objects](#content-object).
 ```swift
- content.getChildren().then { (childrens: [ContentNode]) -> Void in
-                            for child in childrens{
+ content.getChildren().then { (children: [ContentNode]) -> Void in
+                            for child in children{
                                 println(child.name)
                             }
                             }.catch { error in
