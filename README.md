@@ -250,7 +250,7 @@ Query for multiple zones. Resolves to an array of [Zone Objects](#zone-object).
 Get a content node by UUID. Resolves to a [ContentNode Object](#content-object). Note: The UUID value of 'root' will return the contents of the root folder of the current organization.
 ```swift
 ExpSwift.getContentNode("root").then { (content: ContentNode) -> Void  in
-                          println(content.name)
+                          println(content.document["name"])
                         }.catch { error in
                             println(error)
                         }
@@ -269,7 +269,7 @@ Get the immediate children of this content node. Resolves to an array of [Conten
 ```swift
  content.getChildren().then { (children: [ContentNode]) -> Void in
                             for child in children{
-                                println(child.name)
+                                println(child.document["name"])
                             }
                             }.catch { error in
                                 println(error)
