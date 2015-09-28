@@ -19,24 +19,24 @@ it, simply add the following line to your Podfile:
 ```ruby
 pod "ExpSwift"
 ```
-### ExpSwift.runtime.start(host,uuid,secret)
+### ExpSwift.start(host,uuid,secret)
 Init exp connection for device with Host,Uuid,secret. 
 ```swift
 import ExpSwift
 
- ExpSwift.runtime.start(host,uuid: "12344444",secret: "84920-094823").then{ result -> Void in
+  ExpSwift.start(host,"74c05552-5b9f-4d06-a3f8-8299ff1e1e3a","7b674d4ab63e80c62591ef3fcb51da1505f420d2a9ffda8ed5d24aa6384ad1c1f10985a4fc858b046b065bcdacc105dd").then{ result -> Void in
             println(result)
             }.catch { error in
                 println(error)
             }
 
 ```
-### ExpSwift.runtime.start(host,user,password,organization)
+### ExpSwift.start(host,user,password,organization)
 Init exp connection for user with Host,User,Password,Organization.
 ```swift
 import ExpSwift
 
-  ExpSwift.runtime.start(host,user: "cesar.oyarzun@scala.com",password: "Com5715031",organization: "scala").then{ result -> Void in
+  ExpSwift.start(host,"cesar.oyarzun@scala.com","Com5715031","scala").then{ result -> Void in
             println(result)
             }.catch { error in
                 println(error)
@@ -45,16 +45,16 @@ import ExpSwift
 ```
 
 
-# ExpSwift.runtime.connection
-### ExpSwift.runtime.connection(name, callback)
+# ExpSwift.connection
+### ExpSwift.connection(name, callback)
 Attaches a listener for connection events. The possible events are `online` (when a connection is established to EXP) and `offline` (when the connection to EXP is lost).
 
 ```swift
-ExpSwift.runtime.connection("online", { obj -> Void in
+ExpSwift.connection("online", { obj -> Void in
             println(obj)
         })
         
-ExpSwift.runtime.connection("offline", { obj -> Void in
+ExpSwift.connection("offline", { obj -> Void in
             println(obj)
         })
 

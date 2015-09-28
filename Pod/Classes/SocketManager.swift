@@ -188,6 +188,9 @@ public  class SocketManager {
     
     }
     
+    /**
+    Disconnect from exp and remove token
+    */
     public func disconnect(){
         if(self.socket.connected){
             self.socket.close(fast: true)

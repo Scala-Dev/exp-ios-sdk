@@ -17,7 +17,7 @@ import JWT
 var hostUrl: String = ""
 var tokenSDK: String = ""
 var socketManager = SocketManager()
-public var runtime = Runtime()
+var runtime = Runtime()
 
 
 public enum SOCKET_CHANNELS: String {
@@ -29,11 +29,24 @@ public enum SOCKET_CHANNELS: String {
 
 
 
+/**
+    Initialize the SDK and connect to EXP.
+    @param host,uuid,secret.
+    @return Promise<Bool>.
+*/
+public func start(host: String, uuid: String, secret: String)  -> Promise<Bool> {
+        return runtime.start(host, uuid: uuid, secret: secret)
+}
 
+/**
+Initialize the SDK and connect to EXP.
+@param host,user,password,organization.
+@return Promise<Bool>.
+*/
 
-
-
-
+public func start(host:String , user: String , password:String, organization:String) -> Promise<Bool> {
+    return runtime.start(host, user: user, password: password, organization: organization)
+}
 
 /**
     Get list of devices
@@ -271,6 +284,16 @@ public func getCurrentExperience() ->Promise<Any>{
     return socketManager.getCurrentExperience()
 }
 
+/**
+Connection Socket
+@param name for connection(offline,line),callback
+@return void
+*/
+public func connection(name:String,callback:String->Void){
+    runtime.connection(name,  callback: { (resultListen) -> Void in
+        callback(resultListen)
+    })
+}
 
 
 /**
@@ -281,7 +304,6 @@ public func getCurrentExperience() ->Promise<Any>{
 public func getChannel(typeChannel:SOCKET_CHANNELS) -> Any{
     return socketManager.getChannel(typeChannel)
 }
-
 
 
 
