@@ -1,5 +1,5 @@
 //
-//  ScalaOrgCh.swift
+//  OrganizationChannel.swift
 //  Pods
 //
 //  Created by Cesar on 9/15/15.

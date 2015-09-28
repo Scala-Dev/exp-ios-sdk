@@ -1,5 +1,5 @@
 //
-//  Scala.swift
+//  Exp.swift
 //  Pods
 //
 //  Created by Cesar on 9/4/15.
@@ -299,7 +299,7 @@ public func connection(name:String,callback:String->Void){
 /**
     Get Channel By Enum
     @param enum SCALA_SOCKET_CHANNELS.
-    @return AnyObject (ScalaOrgCh,ScalaLocationCh,ScalaSystemCh,ScalaExperienceCh).
+    @return AnyObject (OrganizationChannel,LocationChannel,SystemChannel,ExperienceChannel).
 */
 public func getChannel(typeChannel:SOCKET_CHANNELS) -> Any{
     return socketManager.getChannel(typeChannel)
