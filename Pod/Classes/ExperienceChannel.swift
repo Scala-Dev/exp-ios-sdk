@@ -1,5 +1,5 @@
 //
-//  ScalaExperienceCh.swift
+//  ExperienceChannel.swift
 //  Pods
 //
 //  Created by Cesar on 9/15/15.

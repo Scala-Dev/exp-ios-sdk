@@ -1,5 +1,5 @@
 //
-//  Scala.swift
+//  Exp.swift
 //  Pods
 //
 //  Created by Cesar on 9/4/15.
@@ -16,7 +16,8 @@ import JWT
 
 var hostUrl: String = ""
 var tokenSDK: String = ""
-var scalaSocketManager = SocketManager()
+var socketManager = SocketManager()
+var runtime = Runtime()
 
 
 public enum SOCKET_CHANNELS: String {
@@ -33,21 +34,19 @@ public enum SOCKET_CHANNELS: String {
     @param host,uuid,secret.
     @return Promise<Bool>.
 */
-public func scala_init(host: String, uuid: String, secret: String)  -> Promise<Bool> {
-    tokenSDK = JWT.encode(["uuid": uuid], .HS256(secret))
-        return Promise { fulfill, reject in
-            hostUrl=host
-            Alamofire.Manager.sharedInstance.session.configuration.HTTPAdditionalHeaders = ["Authorization": "Bearer " + tokenSDK];
-            scalaSocketManager.start_socket().then { (result: Bool) -> Void  in
-                if result{
-                    fulfill(true)
-                }
-            }
-    }
+public func start(host: String, uuid: String, secret: String)  -> Promise<Bool> {
+        return runtime.start(host, uuid: uuid, secret: secret)
 }
 
+/**
+Initialize the SDK and connect to EXP.
+@param host,user,password,organization.
+@return Promise<Bool>.
+*/
 
-
+public func start(host:String , user: String , password:String, organization:String) -> Promise<Bool> {
+    return runtime.start(host, user: user, password: password, organization: organization)
+}
 
 /**
     Get list of devices
@@ -220,13 +219,58 @@ public func getZone(uuid:String) -> Promise<Zone>{
     }
 }
 
+
+/**
+Get Zone By UUID
+@param uuid.
+@return Promise<Zone>.
+*/
+public func getContentNode(uuid:String) -> Promise<ContentNode>{
+    return Promise { fulfill, reject in
+        let request = Alamofire.request(.GET, hostUrl + "/api/content/" + uuid + "/children")
+        request.responseObject { (request, response, content: ContentNode?, error) in
+            var statusCode = response?.statusCode
+            if(error != nil) {
+                return reject(error!)
+            }
+            if(statusCode < 200 || statusCode > 299) {
+                return reject(NSError(domain: hostUrl + "/api/content", code: statusCode!, userInfo: [:]))
+            }
+            fulfill(content!)
+        }
+    }
+}
+
+
+/**
+Login EXP system
+@param user,password,organization.
+@return Promise<Token>.
+*/
+func login(user:String,passwd:String,organization:String) ->Promise<Token>{
+    
+    return Promise { fulfill, reject in
+        let request = Alamofire.request(.POST, hostUrl + "/api/auth/login",parameters:["username":user,"password":passwd,"org":organization],encoding: .JSON)
+        request.responseObject { (request, response, token: Token?, error) in
+            var statusCode = response?.statusCode
+            if(error != nil) {
+                return reject(error!)
+            }
+            if(statusCode < 200 || statusCode > 299) {
+                return reject(NSError(domain: hostUrl + "/auth/login", code: statusCode!, userInfo: [:]))
+            }
+            fulfill(token!)
+        }
+    }
+}
+
 /**
 Get Current Device
 @return Promise<Any>
 */
 
 public func getCurrentDevice() ->Promise<Any>{
-    return scalaSocketManager.getCurrentDevice()
+    return socketManager.getCurrentDevice()
 }
 
 /**
@@ -235,7 +279,7 @@ Get Current Experience
 */
 
 public func getCurrentExperience() ->Promise<Any>{
-    return scalaSocketManager.getCurrentExperience()
+    return socketManager.getCurrentExperience()
 }
 
 /**
@@ -244,7 +288,7 @@ Connection Socket
 @return void
 */
 public func connection(name:String,callback:String->Void){
-    scalaSocketManager.connection(name,  callback: { (resultListen) -> Void in
+    runtime.connection(name,  callback: { (resultListen) -> Void in
         callback(resultListen)
     })
 }
@@ -253,10 +297,10 @@ public func connection(name:String,callback:String->Void){
 /**
     Get Channel By Enum
     @param enum SCALA_SOCKET_CHANNELS.
-    @return AnyObject (ScalaOrgCh,ScalaLocationCh,ScalaSystemCh,ScalaExperienceCh).
+    @return AnyObject (OrganizationChannel,LocationChannel,SystemChannel,ExperienceChannel).
 */
 public func getChannel(typeChannel:SOCKET_CHANNELS) -> Any{
-    return scalaSocketManager.getChannel(typeChannel)
+    return socketManager.getChannel(typeChannel)
 }
 
 

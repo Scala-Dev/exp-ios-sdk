@@ -1,5 +1,5 @@
 //
-//  ScalaConfig.swift
+//  Config.swift
 //  Pods
 //
 //  Created by Cesar on 9/15/15.

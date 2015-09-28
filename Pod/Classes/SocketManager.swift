@@ -1,5 +1,5 @@
 //
-//  ScalaSocketManager.swift
+//  SocketManager.swift
 //  Pods
 //
 //  Created by Cesar on 9/17/15.
@@ -169,8 +169,8 @@ public  class SocketManager {
     
     /**
         Get Socket Channel By Enum
-        @param enum SCALA_SOCKET_CHANNELS. default is SYSTEM CHANNEL
-        @return AnyObject (ScalaOrgCh,ScalaLocationCh,ScalaSystemCh,ScalaExperienceCh).
+        @param enum SOCKET_CHANNELS. default is SYSTEM CHANNEL
+        @return AnyObject (OrganizationChannel,LocationChannel,SystemChannel,ExperienceChannel).
     */
     public func getChannel(typeChannel:SOCKET_CHANNELS) -> Any{
         switch typeChannel{
@@ -186,6 +186,15 @@ public  class SocketManager {
                 return systemChannel!
         }
     
+    }
+    
+    /**
+    Disconnect from exp and remove token
+    */
+    public func disconnect(){
+        if(self.socket.connected){
+            self.socket.close(fast: true)
+        }
     }
     
 }

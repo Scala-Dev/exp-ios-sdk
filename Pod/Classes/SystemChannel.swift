@@ -1,5 +1,5 @@
 //
-//  ScalaSocket.swift
+//  SystemChannel.swift
 //  Pods
 //
 //  Created by Cesar on 9/10/15.

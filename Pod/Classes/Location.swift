@@ -19,7 +19,7 @@ public final class Location: ResponseObject,ResponseCollection {
     public let telephone: String?
     public let uuid: String
     public let org: String
-    public let labels: [String]
+    public let labels: [String]?
     
     @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
         self.name = representation.valueForKeyPath("name") as! String
@@ -31,7 +31,7 @@ public final class Location: ResponseObject,ResponseCollection {
         self.telephone = representation.valueForKeyPath("telephone") as? String
         self.uuid = representation.valueForKeyPath("uuid") as! String
         self.org = representation.valueForKeyPath("org") as! String
-        self.labels = representation.valueForKeyPath("labels") as! NSArray as! [String]
+        self.labels = representation.valueForKeyPath("labels") as? NSArray as? [String]
     }
     
     
