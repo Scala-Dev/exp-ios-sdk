@@ -247,7 +247,7 @@ Login EXP system
 @param user,password,organization.
 @return Promise<Token>.
 */
-public func login(user:String,passwd:String,organization:String) ->Promise<Token>{
+func login(user:String,passwd:String,organization:String) ->Promise<Token>{
     
     return Promise { fulfill, reject in
         let request = Alamofire.request(.POST, hostUrl + "/api/auth/login",parameters:["username":user,"password":passwd,"org":organization],encoding: .JSON)
@@ -262,8 +262,6 @@ public func login(user:String,passwd:String,organization:String) ->Promise<Token
             fulfill(token!)
         }
     }
-
-
 }
 
 /**
