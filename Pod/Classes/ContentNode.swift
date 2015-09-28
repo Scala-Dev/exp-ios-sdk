@@ -48,7 +48,7 @@ public final class ContentNode: ResponseObject,ResponseCollection {
             if(!children.isEmpty){
                 fulfill(children)
             }else{
-                reject(NSError())
+                fulfill([])
             }
         }
         return childrenPromise
