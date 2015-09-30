@@ -64,9 +64,10 @@ public final class ContentNode: ResponseObject,ResponseCollection {
         if("scala:content:url" == subtype){
             urlPath = self.document["url"] as! String
         }else{
-            urlPath = self.document["path"]!.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+            let scapeUrl = self.document["path"]!.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+            urlPath = hostUrl + "/api/delivery" + scapeUrl
         }
         
-        return hostUrl + "/api/delivery" + urlPath
+        return urlPath
     }
 }
