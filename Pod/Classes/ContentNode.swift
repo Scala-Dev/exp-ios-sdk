@@ -59,7 +59,14 @@ public final class ContentNode: ResponseObject,ResponseCollection {
     @return String.
     */
     public func getUrl () ->String{
-        var escapeUrl = self.document["path"]!.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
-        return hostUrl + "/api/delivery" + escapeUrl!
+        var urlPath = ""
+        let subtype = self.document["subtype"] as! String;
+        if("scala:content:url" == subtype){
+            urlPath = self.document["url"] as! String
+        }else{
+            urlPath = self.document["path"]!.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+        }
+        
+        return hostUrl + "/api/delivery" + urlPath
     }
 }
