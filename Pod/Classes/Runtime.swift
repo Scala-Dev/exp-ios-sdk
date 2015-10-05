@@ -23,7 +23,12 @@ public class Runtime{
         tokenSDK = JWT.encode(["uuid": uuid], .HS256(secret))
         return Promise { fulfill, reject in
             hostUrl=host
-            Alamofire.Manager.sharedInstance.session.configuration.HTTPAdditionalHeaders = ["Authorization": "Bearer " + tokenSDK];
+            // Creating an Instance of the Alamofire Manager
+            var manager = Manager.sharedInstance
+            // Specifying the Headers we need
+            manager.session.configuration.HTTPAdditionalHeaders = [
+                "Authorization": "Bearer " + tokenSDK
+            ]
             socketManager.start_socket().then { (result: Bool) -> Void  in
                 if result{
                     fulfill(true)
@@ -44,7 +49,15 @@ public class Runtime{
             hostUrl=host
             login(user, password, organization).then {(token: Token) -> Void  in
                 tokenSDK = token.token
-                Alamofire.Manager.sharedInstance.session.configuration.HTTPAdditionalHeaders = ["Authorization": "Bearer " + tokenSDK];
+               
+                // Creating an Instance of the Alamofire Manager
+                var manager = Manager.sharedInstance
+                // Specifying the Headers we need
+                manager.session.configuration.HTTPAdditionalHeaders = [
+                    "Authorization": "Bearer " + tokenSDK
+                ]
+                
+                
                 socketManager.start_socket().then { (result: Bool) -> Void  in
                     if result{
                         fulfill(true)

@@ -12,13 +12,16 @@ import Foundation
 
 public final class Experience: ResponseObject,ResponseCollection {
     public let name: String
-    public let plans: [Plan]
+    public var plans: [Plan] = []
     public let uuid: String
    
     @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
         self.name = representation.valueForKeyPath("name") as! String
-        self.plans = Plan.collection(response:response, representation: representation.valueForKeyPath("plans")!)
         self.uuid = representation.valueForKeyPath("uuid") as! String
+        if let plansPath = representation.valueForKeyPath("plans") as? [[String: AnyObject]] {
+            self.plans = Plan.collection(response:response, representation: representation.valueForKeyPath("plans")!)
+        }
+    
     }
     
     
