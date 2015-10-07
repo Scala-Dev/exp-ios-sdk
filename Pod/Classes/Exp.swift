@@ -243,6 +243,49 @@ public func getContentNode(uuid:String) -> Promise<ContentNode>{
 
 
 /**
+Get list of Zones
+@param limit,skip,sort.
+@return Promise<Array<Zone>>.
+*/
+public func findData (limit:Int, skip:Int, sort:String) -> Promise<Array<Data>>{
+    return Promise { fulfill, reject in
+        let request = Alamofire.request(.GET, hostUrl + "/api/data?" + "limit=" + String(limit) + "&skip=" + String(skip) + "&sort=" + sort )
+        request.responseCollection { (request, response, data: [Data]?, error) in
+            var statusCode = response?.statusCode
+            if(error != nil) {
+                return reject(error!)
+            }
+            if(statusCode < 200 || statusCode > 299) {
+                return reject(NSError(domain: hostUrl + "/api/data", code: statusCode!, userInfo: [:]))
+            }
+            fulfill(data!)
+        }
+    }
+}
+
+/**
+Get Data by Group and Key
+@param uuid.
+@return Promise<Data>.
+*/
+public func getData (group: String,  key: String) -> Promise<Data>{
+    return Promise { fulfill, reject in
+        let request = Alamofire.request(.GET, hostUrl + "/api/data/" + group + "/" + key)
+        request.responseObject { (request, response, data: Data?, error) in
+            var statusCode = response?.statusCode
+            if(error != nil) {
+                return reject(error!)
+            }
+            if(statusCode < 200 || statusCode > 299) {
+                return reject(NSError(domain: hostUrl + "/api/data", code: statusCode!, userInfo: [:]))
+            }
+            fulfill(data!)
+        }
+    }
+}
+
+
+/**
 Login EXP system
 @param user,password,organization.
 @return Promise<Token>.

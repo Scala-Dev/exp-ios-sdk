@@ -11,17 +11,18 @@ import Foundation
 
 
 public final class Experience: ResponseObject,ResponseCollection {
-    public let name: String
-    public var plans: [Plan] = []
+    public var document: [String:AnyObject] = [String:AnyObject]()
     public let uuid: String
-   
-    @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
-        self.name = representation.valueForKeyPath("name") as! String
-        self.uuid = representation.valueForKeyPath("uuid") as! String
-        if let plansPath = representation.valueForKeyPath("plans") as? [[String: AnyObject]] {
-            self.plans = Plan.collection(response:response, representation: representation.valueForKeyPath("plans")!)
-        }
     
+    @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
+        if let representation = representation as? [String: AnyObject] {
+            for documentRep in representation{
+                document.updateValue(documentRep.1, forKey: documentRep.0)
+            }
+            self.uuid = representation["uuid"] as! String
+        } else {
+            self.uuid = ""
+        }
     }
     
     
