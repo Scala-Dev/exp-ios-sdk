@@ -61,13 +61,40 @@ public final class ContentNode: ResponseObject,ResponseCollection {
     public func getUrl () ->String{
         var urlPath = ""
         let subtype = self.document["subtype"] as! String;
+        
         if("scala:content:url" == subtype){
             urlPath = self.document["url"] as! String
-        }else{
-            let scapeUrl = self.document["path"]!.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
-            urlPath = hostUrl + "/api/delivery" + scapeUrl
+        }else if("scala:content:app" == subtype){
+            let escapeUrl = self.document["path"]!.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+            urlPath = hostUrl + "/api/delivery" + escapeUrl + "/index.html"
+        }else if("scala:content:file" == subtype){
+            let escapeUrl = self.document["path"]!.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+            urlPath = hostUrl + "/api/delivery" + escapeUrl
         }
         
         return urlPath
+    }
+    
+    /**
+    Get Url to a file variant
+    @return String.
+    */
+    public func getVariantUrl (name: String) ->String{
+        var urlPath = ""
+        let subtype = self.document["subtype"] as! String;
+        if("scala:content:file" == subtype && hasVariant(name)){
+            urlPath = getUrl() + "?variant=" + name.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+        }
+        
+        return urlPath
+    }
+    
+    public func hasVariant (name: String) ->Bool{
+        if (self.document["variants"] != nil) {
+            let variants = self.document["variants"] as! [String:AnyObject]
+            return variants[name] != nil
+        }
+        
+        return false;
     }
 }
