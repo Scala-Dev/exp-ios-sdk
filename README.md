@@ -308,6 +308,12 @@ Get the absolute url to the content node data. Useful for image/video tags or to
 let url = content.getUrl();
 ```
 
+##### content.getVariantUrl(name:String)
+Get the absolute url to the content node's variant data. Useful for image/video thumbnails or transcoded videos. Returns empty String for folders or if content does not contain the variant
+```swift
+let url = content.getVariantUrl("320.png");
+```
+
 ### Device Object
 
 ##### device.uuid
