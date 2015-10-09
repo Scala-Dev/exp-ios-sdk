@@ -16,7 +16,7 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         //        let host = "http://api.develop.exp.scala.com:9000"
         //        let host = "http://develop.exp.scala.com:9000"
-        let host = "http://api-develop.exp.scala.com"
+        let host = "https://api-develop.exp.scala.com"
         
         ExpSwift.start(host,"74c05552-5b9f-4d06-a3f8-8299ff1e1e3a","7b674d4ab63e80c62591ef3fcb51da1505f420d2a9ffda8ed5d24aa6384ad1c1f10985a4fc858b046b065bcdacc105dd").then{ result -> Void in
             
@@ -65,9 +65,9 @@ class ViewController: UIViewController {
         
         
         //GET DEVICES
-        ExpSwift.getDevices(["limit":10, "skip":0, "sort":"name"]).then { (devices: SearchResults<Device>) -> Void in
+        ExpSwift.findDevices(["limit":10, "skip":0, "sort":"name"]).then { (devices: SearchResults<Device>) -> Void in
             for device in devices.getResults() {
-                println(device.getDocuent()["name"])
+                println(device.get("name"))
             }
         }.catch { error in
             println(error)
@@ -76,22 +76,22 @@ class ViewController: UIViewController {
         //GET DEVICE
         
         ExpSwift.getDevice("8930ff64-1063-4a03-b1bc-33e1ba463d7a").then { (device: Device) -> Void in
-            println(device.getDocuent()["name"])
+            println(device.get("name"))
         }.catch { error in
             println(error)
         }
         
         //GET EXPERIENCE
         ExpSwift.getExperience("58dc59e4-a44c-4b6e-902b-e6744c09d933").then { (experience: Experience) -> Void in
-            println(experience.getDocuent()["name"])
+            println(experience.get("name"))
         }.catch { error in
             println(error)
         }
         
         //GET EXPERIENCES
-        ExpSwift.getExperiences(["limit":10, "skip":0, "sort":"name"]).then { (experiences: SearchResults<Experience>) -> Void in
+        ExpSwift.findExperiences(["limit":10, "skip":0, "sort":"name"]).then { (experiences: SearchResults<Experience>) -> Void in
             for experience in experiences.getResults() {
-                println(experience.getDocuent()["name"])
+                println(experience.get("name"))
             }
         }.catch { error in
             println(error)
@@ -99,7 +99,7 @@ class ViewController: UIViewController {
         
         //GET LOCATION
         ExpSwift.getLocation("3e2e25df-8324-4912-91c3-810751f527a4").then { (location: Location) -> Void  in
-            println(location.getDocuent()["name"])
+            println(location.get("name"))
         }.catch { error in
             println(error)
         }
@@ -107,7 +107,7 @@ class ViewController: UIViewController {
         //GET LOCATIONS
         ExpSwift.findLocations(["limit":10, "skip":0, "sort":"name"]).then { (locations: SearchResults<Location>) -> Void in
             for location in locations.getResults() {
-                println(location.getDocuent()["name"])
+                println(location.get("name"))
             }
         }.catch { error in
             println(error)
@@ -116,7 +116,7 @@ class ViewController: UIViewController {
         //GET ZONES
         ExpSwift.findZones(["limit":10, "skip":0, "sort":"name"]).then { (zones: SearchResults<Zone>) -> Void in
             for zone in zones.getResults() {
-                println(zone.getDocuent()["name"])
+                println(zone.get("name"))
             }
         }.catch { error in
             println(error)
@@ -124,7 +124,7 @@ class ViewController: UIViewController {
         
         //GET ZONE
         ExpSwift.getZone("1").then { (zone: Zone) -> Void in
-            println(zone.getDocuent()["name"])
+            println(zone.get("name"))
         }.catch { error in
             println(error)
         }
