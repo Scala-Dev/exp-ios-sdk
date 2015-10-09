@@ -20,6 +20,7 @@ public final class ContentNode: Model,ResponseObject,ResponseCollection {
         case FILE = "scala:content:file"
         case FOLDER = "scala:content:folder"
         case URL = "scala:content:url"
+        case UNKNOWN = ""
     }
     
     @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
@@ -28,7 +29,7 @@ public final class ContentNode: Model,ResponseObject,ResponseCollection {
             self.subtype = CONTENT_TYPES(rawValue: representation["subtype"] as! String)!
         } else {
             self.uuid = ""
-            self.subtype = CONTENT_TYPES.FILE
+            self.subtype = CONTENT_TYPES.UNKNOWN
         }
         
         if let childrenPath = representation.valueForKeyPath("children") as? [[String: AnyObject]] {
@@ -96,10 +97,7 @@ public final class ContentNode: Model,ResponseObject,ResponseCollection {
     public func getVariantUrl (name: String) -> String {
 
         if(CONTENT_TYPES.FILE == self.subtype && hasVariant(name)){
-            var urlPath = getUrl()
-            if (!urlPath.isEmpty) {
-                return urlPath + "?variant=" + name.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
-            }
+            return getUrl() + "?variant=" + name.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
         }
         
         return ""
