@@ -13,6 +13,13 @@ public final class ContentNode: ResponseObject,ResponseCollection {
     public var document: [String:AnyObject] = [String:AnyObject]()
     public var children: [ContentNode] = []
     
+    public enum CONTENT_TYPES : String {
+        case APP = "scala:content:app"
+        case FILE = "scala:content:file"
+        case FOLDER = "scala:content:folder"
+        case URL = "scala:content:url"
+    }
+    
     
     @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
          if let representation = representation as? [String: AnyObject] {
@@ -21,6 +28,7 @@ public final class ContentNode: ResponseObject,ResponseCollection {
                     document.updateValue(documentRep.1, forKey: documentRep.0)
                 }
             }
+            
         }
         if let childrenPath = representation.valueForKeyPath("children") as? [[String: AnyObject]] {
             self.children = ContentNode.collection(response:response, representation: childrenPath)
@@ -58,35 +66,38 @@ public final class ContentNode: ResponseObject,ResponseCollection {
     Get Url
     @return String.
     */
-    public func getUrl () ->String{
-        var urlPath = ""
-        let subtype = self.document["subtype"] as! String;
+    public func getUrl () -> String? {
+        let subtype: CONTENT_TYPES = CONTENT_TYPES(rawValue: self.document["subtype"] as! String)!
         
-        if("scala:content:url" == subtype){
-            urlPath = self.document["url"] as! String
-        }else if("scala:content:app" == subtype){
+        switch(subtype) {
+        case .FILE:
             let escapeUrl = self.document["path"]!.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
-            urlPath = hostUrl + "/api/delivery" + escapeUrl + "/index.html"
-        }else if("scala:content:file" == subtype){
+            return hostUrl + "/api/delivery" + escapeUrl
+        case .APP:
             let escapeUrl = self.document["path"]!.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
-            urlPath = hostUrl + "/api/delivery" + escapeUrl
+            return hostUrl + "/api/delivery" + escapeUrl + "/index.html"
+        case .URL:
+            return self.document["url"] as? String
+        default:
+            return nil
         }
-        
-        return urlPath
     }
     
     /**
     Get Url to a file variant
     @return String.
     */
-    public func getVariantUrl (name: String) ->String{
-        var urlPath = ""
-        let subtype = self.document["subtype"] as! String;
-        if("scala:content:file" == subtype && hasVariant(name)){
-            urlPath = getUrl() + "?variant=" + name.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+    public func getVariantUrl (name: String) -> String? {
+        let subtype: CONTENT_TYPES = CONTENT_TYPES(rawValue: self.document["subtype"] as! String)!
+        
+        if(CONTENT_TYPES.FILE == subtype && hasVariant(name)){
+            var urlPath = getUrl()
+            if (urlPath != nil) {
+                return urlPath! + "?variant=" + name.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+            }
         }
         
-        return urlPath
+        return nil
     }
     
     public func hasVariant (name: String) ->Bool{
