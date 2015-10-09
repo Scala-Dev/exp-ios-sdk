@@ -25,7 +25,7 @@ extension Alamofire.Request {
             if codeKey == nil{
                 let results: AnyObject? = result?["results"]
                 if let response = response, results: AnyObject = results {
-                    let total: Int64 = result?["total"] as! Int64
+                    let total: Int64 = (result?["total"] as! NSNumber).longLongValue
                     let collection: [T] = T.collection(response: response, representation: results)
 
                     let searchResults = SearchResults<T>(results: collection, total: total)
