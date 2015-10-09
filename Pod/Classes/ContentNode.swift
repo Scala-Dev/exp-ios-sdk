@@ -66,7 +66,7 @@ public final class ContentNode: ResponseObject,ResponseCollection {
     Get Url
     @return String.
     */
-    public func getUrl () -> String? {
+    public func getUrl () -> String {
         let subtype: CONTENT_TYPES = CONTENT_TYPES(rawValue: self.document["subtype"] as! String)!
         
         switch(subtype) {
@@ -77,9 +77,9 @@ public final class ContentNode: ResponseObject,ResponseCollection {
             let escapeUrl = self.document["path"]!.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
             return hostUrl + "/api/delivery" + escapeUrl + "/index.html"
         case .URL:
-            return self.document["url"] as? String
+            return self.document["url"] as! String
         default:
-            return nil
+            return ""
         }
     }
     
@@ -87,17 +87,17 @@ public final class ContentNode: ResponseObject,ResponseCollection {
     Get Url to a file variant
     @return String.
     */
-    public func getVariantUrl (name: String) -> String? {
+    public func getVariantUrl (name: String) -> String {
         let subtype: CONTENT_TYPES = CONTENT_TYPES(rawValue: self.document["subtype"] as! String)!
         
         if(CONTENT_TYPES.FILE == subtype && hasVariant(name)){
             var urlPath = getUrl()
-            if (urlPath != nil) {
-                return urlPath! + "?variant=" + name.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+            if (!urlPath.isEmpty) {
+                return urlPath + "?variant=" + name.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
             }
         }
         
-        return nil
+        return ""
     }
     
     public func hasVariant (name: String) ->Bool{
