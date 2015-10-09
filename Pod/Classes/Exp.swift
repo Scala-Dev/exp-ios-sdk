@@ -13,7 +13,6 @@ import PromiseKit
 import JWT
 
 
-
 var hostUrl: String = ""
 var tokenSDK: String = ""
 var socketManager = SocketManager()
@@ -26,7 +25,6 @@ public enum SOCKET_CHANNELS: String {
     case LOCATION = "location"
     case EXPERIENCE = "experience"
 }
-
 
 
 /**
@@ -50,24 +48,34 @@ public func start(host:String , user: String , password:String, organization:Str
 
 /**
     Get list of devices
-    @param limit,skip,sort.
+    @param dictionary of search params
     @return Promise<Array<Device>>.
 */
-public func getDevices(limit:Int, skip:Int, sort:String) -> Promise<Array<Device>>{
-        return Promise { fulfill, reject in
-                let request = Alamofire.request(.GET, hostUrl + "/api/devices?" + "limit=" + String(limit) + "&skip=" + String(skip) + "&sort=" + sort )
-                   request.responseCollection { (request, response, devices: [Device]?, error) in
-                    
-                    var statusCode = response?.statusCode
-                        if(error != nil) {
-                            return reject(error!)
-                        }
-                        if(statusCode < 200 || statusCode > 299) {
-                            return reject(NSError(domain: hostUrl + "/api/devices", code: statusCode!, userInfo: [:]))
-                        }
-                        fulfill(devices!)
-                }
+public func findDevices(params:[String:AnyObject]) -> Promise<SearchResults<Device>>{
+    return Promise { fulfill, reject in
+        let request = Alamofire.request(.GET, hostUrl + "/api/devices", parameters: params )
+        request.responseCollection { (request, response, devices: SearchResults<Device>?, error) in
+            
+            var statusCode = response?.statusCode
+            if(error != nil) {
+                return reject(error!)
+            }
+            if(statusCode < 200 || statusCode > 299) {
+                return reject(NSError(domain: hostUrl + "/api/devices", code: statusCode!, userInfo: [:]))
+            }
+            fulfill(devices!)
+        }
     }
+}
+
+/**
+Get list of devices
+@param dictionary of search params
+@return Promise<Array<Device>>.
+*/
+@availability(*, deprecated=0.0.1, message="use findDevices() instead")
+public func getDevices(params:[String:AnyObject]) -> Promise<SearchResults<Device>>{
+    return findDevices(params)
 }
 
 
@@ -115,13 +123,13 @@ public func getExperience(uuid:String) -> Promise<Experience>{
 
 /**
     Get list of Experiences
-    @param limit,skip,sort.
+    @param dictionary of search params
     @return Promise<Array<Experience>>.
 */
-public func getExperiences(limit:Int, skip:Int, sort:String) -> Promise<Array<Experience>>{
+public func findExperiences(params:[String:AnyObject]) -> Promise<SearchResults<Experience>>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/experiences?" + "limit=" + String(limit) + "&skip=" + String(skip) + "&sort=" + sort )
-        request.responseCollection { (request, response, experiences: [Experience]?, error) in
+        let request = Alamofire.request(.GET, hostUrl + "/api/experiences", parameters: params )
+        request.responseCollection { (request, response, experiences: SearchResults<Experience>?, error) in
             var statusCode = response?.statusCode
             if(error != nil) {
                 return reject(error!)
@@ -132,6 +140,16 @@ public func getExperiences(limit:Int, skip:Int, sort:String) -> Promise<Array<Ex
             fulfill(experiences!)
         }
     }
+}
+
+/**
+Get list of Experiences
+@param dictionary of search params
+@return Promise<Array<Experience>>.
+*/
+@availability(*, deprecated=0.0.1, message="use findExperiences() instead")
+public func getExperiences(params:[String:AnyObject]) -> Promise<SearchResults<Experience>>{
+    return findExperiences(params)
 }
 
 
@@ -158,13 +176,13 @@ public func getLocation(uuid:String) -> Promise<Location>{
 
 /**
     Get list of Location
-    @param limit,skip,sort.
+    @param dictionary of search params
     @return Promise<Array<Experience>>.
 */
-public func getLocations(limit:Int, skip:Int, sort:String) -> Promise<Array<Location>>{
+public func findLocations(params:[String:AnyObject]) -> Promise<SearchResults<Location>>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/locations?" + "limit=" + String(limit) + "&skip=" + String(skip) + "&sort=" + sort )
-        request.responseCollection { (request, response, locations: [Location]?, error) in
+        let request = Alamofire.request(.GET, hostUrl + "/api/locations", parameters: params)
+        request.responseCollection { (request, response, locations: SearchResults<Location>?, error) in
             var statusCode = response?.statusCode
             if(error != nil) {
                 return reject(error!)
@@ -178,14 +196,24 @@ public func getLocations(limit:Int, skip:Int, sort:String) -> Promise<Array<Loca
 }
 
 /**
+Get list of Location
+    @param dictionary of search params
+@return Promise<Array<Experience>>.
+*/
+@availability(*, deprecated=0.0.1, message="use findLocations() instead")
+public func getLocations(params:[String:AnyObject]) -> Promise<SearchResults<Location>>{
+    return findLocations(params)
+}
+
+/**
     Get list of Zones
-    @param limit,skip,sort.
+    @param dictionary of search params
     @return Promise<Array<Zone>>.
 */
-public func getZones(limit:Int, skip:Int, sort:String) -> Promise<Array<Zone>>{
+public func findZones(params:[String:AnyObject]) -> Promise<SearchResults<Zone>>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/zones?" + "limit=" + String(limit) + "&skip=" + String(skip) + "&sort=" + sort )
-        request.responseCollection { (request, response, zones: [Zone]?, error) in
+        let request = Alamofire.request(.GET, hostUrl + "/api/zones", parameters: params )
+        request.responseCollection { (request, response, zones: SearchResults<Zone>?, error) in
             var statusCode = response?.statusCode
             if(error != nil) {
                 return reject(error!)
@@ -196,6 +224,16 @@ public func getZones(limit:Int, skip:Int, sort:String) -> Promise<Array<Zone>>{
             fulfill(zones!)
         }
     }
+}
+
+/**
+Get list of Zones
+@param dictionary of search params
+@return Promise<Array<Zone>>.
+*/
+@availability(*, deprecated=0.0.1, message="use findZones() instead")
+public func getZones(params:[String:AnyObject]) -> Promise<SearchResults<Zone>>{
+    return findZones(params)
 }
 
 /**
@@ -247,10 +285,11 @@ Get list of Zones
 @param limit,skip,sort.
 @return Promise<Array<Zone>>.
 */
-public func findData (limit:Int, skip:Int, sort:String) -> Promise<Array<Data>>{
+public func findData(params:[String:AnyObject]) -> Promise<SearchResults<Data>>{
+    
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/data?" + "limit=" + String(limit) + "&skip=" + String(skip) + "&sort=" + sort )
-        request.responseCollection { (request, response, data: [Data]?, error) in
+        let request = Alamofire.request(.GET, hostUrl + "/api/data", parameters: params )
+        request.responseCollection { (request, response, data: SearchResults<Data>?, error) in
             var statusCode = response?.statusCode
             if(error != nil) {
                 return reject(error!)
@@ -268,9 +307,9 @@ Get Data by Group and Key
 @param uuid.
 @return Promise<Data>.
 */
-public func getData (group: String,  key: String) -> Promise<Data>{
+public func getData(group: String,  key: String) -> Promise<Data>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/data/" + group + "/" + key)
+        let request = Alamofire.request(.GET, hostUrl + "/api/data/" + group.encodeURIComponent()! + "/" + key.encodeURIComponent()!)
         request.responseObject { (request, response, data: Data?, error) in
             var statusCode = response?.statusCode
             if(error != nil) {

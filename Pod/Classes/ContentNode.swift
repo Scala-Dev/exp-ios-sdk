@@ -9,18 +9,13 @@
 import Foundation
 import PromiseKit
 
-public final class ContentNode: ResponseObject,ResponseCollection {
-    public var document: [String:AnyObject] = [String:AnyObject]()
-    public var children: [ContentNode] = []
+public final class ContentNode: Model,ResponseObject,ResponseCollection {
+    
+    var children: [ContentNode] = []
     public let uuid: String
     
     @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
         if let representation = representation as? [String: AnyObject] {
-            for documentRep in representation{
-                if("children" != documentRep.0){
-                    document.updateValue(documentRep.1, forKey: documentRep.0)
-                }
-            }
             self.uuid = representation["uuid"] as! String
         } else {
             self.uuid = ""
@@ -29,6 +24,11 @@ public final class ContentNode: ResponseObject,ResponseCollection {
         if let childrenPath = representation.valueForKeyPath("children") as? [[String: AnyObject]] {
             self.children = ContentNode.collection(response:response, representation: childrenPath)
         }
+        
+        super.init(response: response, representation: representation)
+        
+        // remove children from document
+        document["children"] = nil
     }
     
     @objc public static func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [ContentNode] {
@@ -62,7 +62,7 @@ public final class ContentNode: ResponseObject,ResponseCollection {
     Get Url
     @return String.
     */
-    public func getUrl () ->String{
+    public func getUrl() ->String{
         var urlPath = ""
         let subtype = self.document["subtype"] as! String;
         
@@ -83,7 +83,7 @@ public final class ContentNode: ResponseObject,ResponseCollection {
     Get Url to a file variant
     @return String.
     */
-    public func getVariantUrl (name: String) ->String{
+    public func getVariantUrl(name: String) ->String{
         var urlPath = ""
         let subtype = self.document["subtype"] as! String;
         if("scala:content:file" == subtype && hasVariant(name)){
@@ -93,7 +93,7 @@ public final class ContentNode: ResponseObject,ResponseCollection {
         return urlPath
     }
     
-    public func hasVariant (name: String) ->Bool{
+    public func hasVariant(name: String) ->Bool{
         if (self.document["variants"] != nil) {
             let variants = self.document["variants"] as! [String:AnyObject]
             return variants[name] != nil
@@ -101,4 +101,5 @@ public final class ContentNode: ResponseObject,ResponseCollection {
         
         return false;
     }
+
 }

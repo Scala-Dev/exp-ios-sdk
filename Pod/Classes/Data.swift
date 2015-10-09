@@ -8,15 +8,21 @@
 
 import Foundation
 
-public final class Data: ResponseObject,ResponseCollection {
-    public var document: [String:AnyObject] = [String:AnyObject]()
+public final class Data: Model,ResponseObject,ResponseCollection {
+
+    public let group: String
+    public let key: String
     
     @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
         if let representation = representation as? [String: AnyObject] {
-            for documentRep in representation{
-                document.updateValue(documentRep.1, forKey: documentRep.0)
-            }
+            self.group = representation["group"] as! String
+            self.key = representation["key"] as! String
+        } else {
+            self.group = ""
+            self.key = ""
         }
+        
+        super.init(response: response, representation: representation)
     }
     
     @objc public static func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [Data] {
@@ -31,4 +37,6 @@ public final class Data: ResponseObject,ResponseCollection {
         }
         return dataItems
     }
+    
+
 }
