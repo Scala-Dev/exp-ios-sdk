@@ -10,18 +10,18 @@ import Foundation
 
 
 
-public final class Experience: ResponseObject,ResponseCollection {
-    public let name: String
-    public var plans: [Plan] = []
+public final class Experience: Model,ResponseObject,ResponseCollection {
+
     public let uuid: String
-   
-    @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
-        self.name = representation.valueForKeyPath("name") as! String
-        self.uuid = representation.valueForKeyPath("uuid") as! String
-        if let plansPath = representation.valueForKeyPath("plans") as? [[String: AnyObject]] {
-            self.plans = Plan.collection(response:response, representation: representation.valueForKeyPath("plans")!)
-        }
     
+    @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
+        if let representation = representation as? [String: AnyObject] {
+            self.uuid = representation["uuid"] as! String
+        } else {
+            self.uuid = ""
+        }
+        
+        super.init(response: response, representation: representation)
     }
     
     
@@ -37,4 +37,5 @@ public final class Experience: ResponseObject,ResponseCollection {
         }
         return experiences
     }
+    
 }

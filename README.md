@@ -130,7 +130,7 @@ Get the current device. Resolves to a [Device Object](#device-object).
 ```swift
 //GET CURRENT DEVICE
         ExpSwift.getCurrentDevice().then { device -> Void  in
-            println(device)
+            println(device.get("name"))
             }.catch { error in
                 println(error)
         }
@@ -140,19 +140,19 @@ Get a single device by UUID. Resolves to a [Device Object](#device-object).
 ```swift
  //GET DEVICE
         ExpSwift.getDevice("8930ff64-1063-4a03-b1bc-33e1ba463d7a").then { (device: Device) -> Void  in
-                println(device.name)
+                println(device.get("name"))
             }.catch { error in
                 println(error)
         }
 ```
 
-### ExpSwift.getDevices(limit:Int,skip:Int,sort:String)
+### ExpSwift.findDevices(params:[String:AnyObject])
 Query for multiple devices. Resolves to an array of [Device Objects](#device-object).
 ```swift
  //GET DEVICES
-        ExpSwift.getDevices(10,0,"name").then { (devices: Array<Device>) -> Void  in
-            for device in devices{
-                println(device.name)
+        ExpSwift.findDevices(["limit":10, "skip":0, "sort":"name"]).then { (devices: SearchResults<Device>) -> Void  in
+            for device in devices.getResults() {
+                println(device.get("name"))
             }
         }.catch { error in
             println(error)
@@ -163,7 +163,7 @@ Get the current experience. Resolves to an [Experience Object](#experience-objec
 ```swift
 //GET CURRENT EXPERIENCE
         ExpSwift.getCurrentExperience().then { experience -> Void  in
-            println(experience)
+            println(experience.get("name"))
             }.catch { error in
                 println(error)
         }
@@ -173,18 +173,18 @@ Get a single experience by UUID. Resolves to a [Experience Object](#experience-o
 ```swift
 //GET EXPERIENCE
         ExpSwift.getExperience("58dc59e4-a44c-4b6e-902b-e6744c09d933").then { (experience: Experience) -> Void  in
-            println(experience.name)
+            println(experience.get("name"))
         }.catch { error in
                 println(error)
         }
 ```
-### ExpSwift.getExperiences(limit:Int,skip:Int,sort:String)
+### ExpSwift.findExperiences(params:[String:AnyObject])
 Query for multiple experiences. Resolves to an array of [Experience Objects](#experience-object).
 ```swift
  //GET EXPERIENCES
-        ExpSwift.getExperiences(10,0,"name").then { (experiences: Array<Experience>) -> Void  in
-            for experience in experiences{
-                println(experience.name)
+        ExpSwift.findExperiences(["limit":10, "skip":0, "sort":"name"]).then { (experiences: SearchResults<Experience>) -> Void  in
+            for experience in experiences.getResults() {
+                println(experience.get("name"))
             }
         }.catch { error in
                 println(error)
@@ -197,20 +197,20 @@ Get a single location by UUID. Resolves to a [Location Object](#location-object)
 ```swift
  //GET LOCATION
         ExpSwift.getLocation("3e2e25df-8324-4912-91c3-810751f527a4").then { (location: Location) -> Void  in
-            println(location.name)
+            println(location.get("name"))
             }.catch { error in
                 println(error)
         }
 
 ```
 
-### ExpSwift.getLocations(limit:Int,skip:Int,sort:String)
+### ExpSwift.findLocations(params:[String:AnyObject])
 Query for multiple locations. Resolves to an array of [Location Objects](#location-object).
 ```swift
 //GET LOCATIONS
-        ExpSwift.getLocations(10,0,"name").then { (locations: Array<Location>) -> Void  in
-            for location in locations{
-                println(location.name)
+        ExpSwift.findLocations(["limit":10, "skip":0, "sort":"name"]).then { (locations: SearchResults<Location>) -> Void  in
+            for location in locations.getResults() {
+                println(location.get("name"))
             }
             }.catch { error in
                 println(error)
@@ -223,20 +223,20 @@ Get a single zone by UUID. Resolves to a [Zone Object](#zone-object).
 ```swift
 //GET ZONE
         ExpSwift.getZone("1").then { (zone: Zone) -> Void  in
-                println(zone.name)
+                println(zone.get("name"))
             }.catch { error in
                 println(error)
         }
 
 ```
 
-### ExpSwift.getZones(limit:Int,skip:Int,sort:String)
+### ExpSwift.findZones(params:[String:AnyObject])
 Query for multiple zones. Resolves to an array of [Zone Objects](#zone-object).
 ```swift
 //GET ZONES
-        ExpSwift.getZones(10,0,"name").then { (zones: Array<Zone>) -> Void  in
-            for zone in zones{
-                println(zone.name)
+        ExpSwift.findZones(["limit":10, "skip":0, "sort":"name"]).then { (zones: SearchResults<Zone>) -> Void  in
+            for zone in zones.getResults() {
+                println(zone.get("name"))
             }
             }.catch { error in
                 println(error)
@@ -248,10 +248,37 @@ Query for multiple zones. Resolves to an array of [Zone Objects](#zone-object).
 Get a content node by UUID. Resolves to a [ContentNode Object](#content-object). Note: The UUID value of 'root' will return the contents of the root folder of the current organization.
 ```swift
 ExpSwift.getContentNode("root").then { (content: ContentNode) -> Void  in
-                          println(content.document["name"])
+                          println(content.get("name"))
                         }.catch { error in
                             println(error)
                         }
+```
+
+
+### ExpSwift.getData(group:String, key:String)
+Get a single data item by group and key. Resolves to a [Data Object](#data-object).
+```swift
+//GET DATA
+ExpSwift.getData("cats", "fluffbottom").then { (data: Data) -> Void  in
+println(data.get("value"))
+}.catch { error in
+println(error)
+}
+
+```
+
+### ExpSwift.findData(params:[String:AnyObject])
+Query for multiple data items. Resolves to an SearchResults object containing [Data Objects](#data-object).
+```swift
+//GET ZONES
+ExpSwift.findData(["limit":10, "skip":0, "sort":"key", "group":"cats"]).then { (zones: SearchResults<Data>) -> Void  in
+for dataItem in data.getResults() {
+println(dataItem.get("value"))
+}
+}.catch { error in
+println(error)
+}
+
 ```
 
 
@@ -267,7 +294,7 @@ Get the immediate children of this content node. Resolves to an array of [Conten
 ```swift
  content.getChildren().then { (children: [ContentNode]) -> Void in
                             for child in children{
-                                println(child.document["name"])
+                                println(child.get("name"))
                             }
                             }.catch { error in
                                 println(error)
@@ -276,7 +303,7 @@ Get the immediate children of this content node. Resolves to an array of [Conten
 ```
 
 ##### content.getUrl()
-Get the absolute url to the content node data. Useful for image/video tags or to download a content file.
+Get the absolute url to the content node data. Useful for image/video tags or to download a content file. Returns empty String for folders
 ```swift
 let url = content.getUrl();
 ```
@@ -303,6 +330,15 @@ The location's UUID.
 ##### zone.uuid
 The zone's UUID.
 
+### Data Object
+##### data.group
+The data item's group.
+
+##### data.key
+The data item's key.
+
+##### data.value
+The data item's value.
 
 
 ## Author

@@ -15,8 +15,8 @@ import Alamofire
 }
 
 extension Alamofire.Request {
-    public func responseCollection<T: ResponseCollection>(completionHandler: (NSURLRequest, NSHTTPURLResponse?, [T]?, NSError?) -> Void) -> Self {
-        let responseSerializer = GenericResponseSerializer<[T]> { request, response, data in
+    public func responseCollection<T: ResponseCollection>(completionHandler: (NSURLRequest, NSHTTPURLResponse?, SearchResults<T>?, NSError?) -> Void) -> Self {
+        let responseSerializer = GenericResponseSerializer<SearchResults<T>> { request, response, data in
             let JSONSerializer = Request.JSONResponseSerializer(options: .AllowFragments)
             let (JSON: AnyObject?, serializationError) = JSONSerializer.serializeResponse(request, response, data)
             let result = JSON as? NSDictionary
@@ -25,7 +25,12 @@ extension Alamofire.Request {
             if codeKey == nil{
                 let results: AnyObject? = result?["results"]
                 if let response = response, results: AnyObject = results {
-                    return (T.collection(response: response, representation: results), nil)
+                    let total: Int64 = (result?["total"] as! NSNumber).longLongValue
+                    let collection: [T] = T.collection(response: response, representation: results)
+
+                    let searchResults = SearchResults<T>(results: collection, total: total)
+                    
+                    return (searchResults, nil)
                 } else {
                     return (nil, serializationError)
                 }

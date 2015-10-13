@@ -9,25 +9,18 @@
 import Foundation
 
 
-public final class Device: ResponseObject,ResponseCollection {
-    public let name: String
-    public let experienceUuid: String
-    public let org: String
+public final class Device: Model,ResponseObject,ResponseCollection {
+    
     public let uuid: String
-    public let primaryType: String
-    public let subtype: String
-    public let zoneUuid: String?
-    public let status: Bool
 
     @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
-        self.name = representation.valueForKeyPath("name") as! String
-        self.experienceUuid = representation.valueForKeyPath("experienceUuid") as! String
-        self.org = representation.valueForKeyPath("org") as! String
-        self.uuid = representation.valueForKeyPath("uuid") as! String
-        self.primaryType = representation.valueForKeyPath("primaryType") as! String
-        self.subtype = representation.valueForKeyPath("subtype") as! String
-        self.zoneUuid = representation.valueForKeyPath("zoneUuid") as? String
-        self.status = representation.valueForKeyPath("status") as! Bool
+        if let representation = representation as? [String: AnyObject] {
+            self.uuid = representation["uuid"] as! String
+        } else {
+            self.uuid = ""
+        }
+        
+        super.init(response: response, representation: representation)
     }
     
     @objc public static func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [Device] {
@@ -35,11 +28,12 @@ public final class Device: ResponseObject,ResponseCollection {
         
         if let representation = representation as? [[String: AnyObject]] {
             for deviceRepresentation in representation {
-                    if let device = Device(response: response, representation: deviceRepresentation) {
-                                            devices.append(device)
+                if let device = Device(response: response, representation: deviceRepresentation) {
+                    devices.append(device)
                 }
             }
         }
         return devices
     }
+    
 }
