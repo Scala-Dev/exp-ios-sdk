@@ -151,7 +151,7 @@ Query for multiple devices. Resolves to an array of [Device Objects](#device-obj
 ```swift
  //GET DEVICES
         ExpSwift.findDevices(["limit":10, "skip":0, "sort":"name"]).then { (devices: SearchResults<Device>) -> Void  in
-            for device in devices.results {
+            for device in devices.getResults() {
                 println(device.get("name"))
             }
         }.catch { error in
@@ -183,7 +183,7 @@ Query for multiple experiences. Resolves to an array of [Experience Objects](#ex
 ```swift
  //GET EXPERIENCES
         ExpSwift.findExperiences(["limit":10, "skip":0, "sort":"name"]).then { (experiences: SearchResults<Experience>) -> Void  in
-            for experience in experiences.results {
+            for experience in experiences.getResults() {
                 println(experience.get("name"))
             }
         }.catch { error in
@@ -209,7 +209,7 @@ Query for multiple locations. Resolves to an array of [Location Objects](#locati
 ```swift
 //GET LOCATIONS
         ExpSwift.findLocations(["limit":10, "skip":0, "sort":"name"]).then { (locations: SearchResults<Location>) -> Void  in
-            for location in locations.results {
+            for location in locations.getResults() {
                 println(location.get("name"))
             }
             }.catch { error in
@@ -235,7 +235,7 @@ Query for multiple zones. Resolves to an array of [Zone Objects](#zone-object).
 ```swift
 //GET ZONES
         ExpSwift.findZones(["limit":10, "skip":0, "sort":"name"]).then { (zones: SearchResults<Zone>) -> Void  in
-            for zone in zones.results {
+            for zone in zones.getResults() {
                 println(zone.get("name"))
             }
             }.catch { error in
@@ -272,7 +272,7 @@ Query for multiple data items. Resolves to an SearchResults object containing [D
 ```swift
 //GET ZONES
 ExpSwift.findData(["limit":10, "skip":0, "sort":"key", "group":"cats"]).then { (zones: SearchResults<Data>) -> Void  in
-for dataItem in data.results {
+for dataItem in data.getResults() {
 println(dataItem.get("value"))
 }
 }.catch { error in
