@@ -104,12 +104,18 @@ public final class ContentNode: Model,ResponseObject,ResponseCollection {
     }
     
     public func hasVariant(name: String) ->Bool{
+        var hasVariant = false
         if (self.document["variants"] != nil) {
-            let variants = self.document["variants"] as! [String:AnyObject]
-            return variants[name] != nil
+            let varia = self.document["variants"] as! [AnyObject]
+            for variaitem in varia{
+                let variants = variaitem as! [String:AnyObject]
+                if(variants["name"] as! String == name){
+                    hasVariant = true
+                    break
+                }
+            }
         }
-        
-        return false;
+        return hasVariant;
     }
 
 }
