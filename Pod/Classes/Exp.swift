@@ -205,63 +205,13 @@ public func getLocations(params:[String:AnyObject]) -> Promise<SearchResults<Loc
     return findLocations(params)
 }
 
-/**
-    Get list of Zones
-    @param dictionary of search params
-    @return Promise<Array<Zone>>.
-*/
-public func findZones(params:[String:AnyObject]) -> Promise<SearchResults<Zone>>{
-    return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/zones", parameters: params )
-        request.responseCollection { (request, response, zones: SearchResults<Zone>?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/zones", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(zones!)
-        }
-    }
-}
 
-/**
-Get list of Zones
-@param dictionary of search params
-@return Promise<Array<Zone>>.
-*/
-@availability(*, deprecated=0.0.1, message="use findZones() instead")
-public func getZones(params:[String:AnyObject]) -> Promise<SearchResults<Zone>>{
-    return findZones(params)
-}
-
-/**
-    Get Zone By UUID
-    @param uuid.
-    @return Promise<Zone>.
-*/
-public func getZone(uuid:String) -> Promise<Zone>{
-    return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/zones/" + uuid )
-        request.responseObject { (request, response, zone: Zone?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/zones", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(zone!)
-        }
-    }
-}
 
 
 /**
-Get Zone By UUID
+Get Content Node By UUID
 @param uuid.
-@return Promise<Zone>.
+@return Promise<ContentNode>.
 */
 public func getContentNode(uuid:String) -> Promise<ContentNode>{
     return Promise { fulfill, reject in
@@ -281,9 +231,9 @@ public func getContentNode(uuid:String) -> Promise<ContentNode>{
 
 
 /**
-Get list of Zones
-@param limit,skip,sort.
-@return Promise<Array<Zone>>.
+Find Data with params
+@param [String:AnyObject].
+@return Promise<SearchResults<Data>>.
 */
 public func findData(params:[String:AnyObject]) -> Promise<SearchResults<Data>>{
     

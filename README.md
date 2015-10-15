@@ -218,31 +218,6 @@ Query for multiple locations. Resolves to an array of [Location Objects](#locati
 
 ```
 
-### ExpSwift.getZone(uuid:String)
-Get a single zone by UUID. Resolves to a [Zone Object](#zone-object).
-```swift
-//GET ZONE
-        ExpSwift.getZone("1").then { (zone: Zone) -> Void  in
-                println(zone.get("name"))
-            }.catch { error in
-                println(error)
-        }
-
-```
-
-### ExpSwift.findZones(params:[String:AnyObject])
-Query for multiple zones. Resolves to an array of [Zone Objects](#zone-object).
-```swift
-//GET ZONES
-        ExpSwift.findZones(["limit":10, "skip":0, "sort":"name"]).then { (zones: SearchResults<Zone>) -> Void  in
-            for zone in zones.getResults() {
-                println(zone.get("name"))
-            }
-            }.catch { error in
-                println(error)
-        }
-
-```
 
 ### ExpSwift.getContentNode(uuid)
 Get a content node by UUID. Resolves to a [ContentNode Object](#content-object). Note: The UUID value of 'root' will return the contents of the root folder of the current organization.
@@ -324,6 +299,9 @@ The devices UUID
 
 ##### location.uuid
 The location's UUID.
+
+##### location.getZones()
+Return array of Zones Object [Zone].
 
 
 ### Zone Object
