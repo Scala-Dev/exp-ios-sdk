@@ -46,22 +46,25 @@ class ViewController: UIViewController {
         
         //USER PASSS START
         
-        //        ExpSwift.start(host,"cesar.oyarzun@scala.com","Com5715031","scala").then{ result -> Void in
-        //            //GET CONTENT
-        //                    ExpSwift.getContentNode("root").then { (content: ContentNode) -> Void  in
-        //                        println(content.document["name"])
-        //                        println(content.getUrl())
-        //                        content.getChildren().then { (childrens: [ContentNode]) -> Void in
-        //                            for child in childrens{
-        //                                println(child.getUrl())
-        //                            }
-        //                            }.catch { error in
-        //                                println(error)
-        //                            }
-        //                        }.catch { error in
-        //                            println(error)
-        //                    }
-        //        }
+//                ExpSwift.start(host,"cesar.oyarzun@scala.com","5715031Com","scala").then{ result -> Void in
+                    //GET CONTENT
+                    //GET CONTENT DETAIL PRODUCT COLLECTION
+//                    ExpSwift.getContentNode("abf651e6-44ca-4e71-a074-23245f44f6d9").then { (content: ContentNode) -> Void  in
+//                        content.getChildren().then { (childrens: [ContentNode]) -> Void in
+//                            for child in childrens{
+//                                println(child)
+//                                println(child.getVariantUrl("100.png"))
+//                                let url = NSURL(string:child.getVariantUrl("100.png"))
+//                                let data = NSData(contentsOfURL: url!)
+//                                //                    var image = UIImage(data: data!)
+//                                //                    self.product_options.append(image!)
+//                            }
+//                            //                self.collectionView.reloadData()
+//                        }
+//                    }
+//        }
+        
+      
         
         
         //GET DEVICES
@@ -74,7 +77,6 @@ class ViewController: UIViewController {
         }
         
         //GET DEVICE
-        
         ExpSwift.getDevice("8930ff64-1063-4a03-b1bc-33e1ba463d7a").then { (device: Device) -> Void in
             println(device.get("name"))
         }.catch { error in
@@ -96,7 +98,7 @@ class ViewController: UIViewController {
         }.catch { error in
             println(error)
         }
-        
+
         //GET LOCATION
         ExpSwift.getLocation("3e2e25df-8324-4912-91c3-810751f527a4").then { (location: Location) -> Void  in
             println(location.get("name"))
@@ -112,24 +114,6 @@ class ViewController: UIViewController {
         }.catch { error in
             println(error)
         }
-        
-        //GET ZONES
-        ExpSwift.findZones(["limit":10, "skip":0, "sort":"name"]).then { (zones: SearchResults<Zone>) -> Void in
-            for zone in zones.getResults() {
-                println(zone.get("name"))
-            }
-        }.catch { error in
-            println(error)
-        }
-        
-        //GET ZONE
-        ExpSwift.getZone("1").then { (zone: Zone) -> Void in
-            println(zone.get("name"))
-        }.catch { error in
-            println(error)
-        }
-        
-        
         
         //CALLBACK CONNECTION ONLINE
         ExpSwift.connection("online", { obj -> Void in

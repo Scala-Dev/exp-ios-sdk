@@ -11,13 +11,13 @@ import Foundation
 
 public final class Zone: Model,ResponseObject,ResponseCollection {
 
-    public let uuid: String
+    public let name: String
     
     @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
         if let representation = representation as? [String: AnyObject] {
-            self.uuid = representation["uuid"] as! String
+            self.name = representation["name"] as! String
         } else {
-            self.uuid = ""
+            self.name = ""
         }
         
         super.init(response: response, representation: representation)
