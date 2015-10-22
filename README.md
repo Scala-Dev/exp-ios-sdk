@@ -74,6 +74,15 @@ var orgchannel = ExpSwift.getChannel(SOCKET_CHANNELS.ORGANIZATION) as! Organizat
 var systemChannel = ExpSwift.getChannel(SOCKET_CHANNELS.SYSTEM) as! SystemChannel
 
 ```
+
+###  [Channel].fling(uuid)
+Fling content on a channel. UUID is the UUID of the content object you are flinging.
+```swift
+//FLING CONTENT
+ var organizationChannel = ExpSwift.getChannel(SOCKET_CHANNELS.ORGANIZATION) as! OrganizationChannel
+     organizationChannel.fling("8930ff64-1063-4a03-b1bc-33e1ba463d7a")
+```
+
 ###  [Channel].listen(options, callback)
 Register a callback for a message on this channel.
 ```swift
@@ -256,6 +265,30 @@ println(error)
 
 ```
 
+### ExpSwift.getThing(uuid:String)
+Get a single thing by UUID. Resolves to a [Thing Object](#thing-object).
+```swift
+ //GET THING
+        ExpSwift.getThing("8930ff64-1063-4a03-b1bc-33e1ba463d7a").then { (thing: Thing) -> Void  in
+                println(thing.get("name"))
+            }.catch { error in
+                println(error)
+        }
+```
+
+### ExpSwift.findThings(params:[String:AnyObject])
+Query for multiple things. Resolves to an array of [Thing Objects](#thing-object).
+```swift
+ //FIND THINGS
+        ExpSwift.findThings(["limit":10, "skip":0, "sort":"name"]).then { (things: SearchResults<Thing>) -> Void  in
+            for thing in things.getResults() {
+                println(thing.get("name"))
+            }
+        }.catch { error in
+            println(error)
+        }
+```
+
 
 # Abstract API Objects
 
@@ -293,6 +326,11 @@ let url = content.getVariantUrl("320.png");
 
 ##### device.uuid
 The devices UUID
+
+### Thing Object
+
+##### thing.uuid
+The thing UUID
 
 
 ### Location Object
