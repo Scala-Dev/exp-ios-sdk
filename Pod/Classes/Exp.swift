@@ -297,6 +297,51 @@ func login(user:String,passwd:String,organization:String) ->Promise<Token>{
 }
 
 /**
+Get Thing by UUID
+@param uuid.
+@return Promise<Thing>.
+*/
+public func getThing(uuid:String) -> Promise<Thing>{
+    return Promise { fulfill, reject in
+        let request = Alamofire.request(.GET, hostUrl + "/api/things/" + uuid )
+        request.responseObject { (request, response, thing: Thing?, error) in
+            var statusCode = response?.statusCode
+            if(error != nil) {
+                return reject(error!)
+            }
+            if(statusCode < 200 || statusCode > 299) {
+                return reject(NSError(domain: hostUrl + "/api/things", code: statusCode!, userInfo: [:]))
+            }
+            fulfill(thing!)
+        }
+    }
+}
+
+/**
+Get list of things
+@param dictionary of search params
+@return Promise<Array<Thing>>.
+*/
+public func findThings(params:[String:AnyObject]) -> Promise<SearchResults<Thing>>{
+    return Promise { fulfill, reject in
+        let request = Alamofire.request(.GET, hostUrl + "/api/things", parameters: params )
+        request.responseCollection { (request, response, devices: SearchResults<Thing>?, error) in
+            
+            var statusCode = response?.statusCode
+            if(error != nil) {
+                return reject(error!)
+            }
+            if(statusCode < 200 || statusCode > 299) {
+                return reject(NSError(domain: hostUrl + "/api/things", code: statusCode!, userInfo: [:]))
+            }
+            fulfill(devices!)
+        }
+    }
+}
+
+
+
+/**
 Get Current Device
 @return Promise<Any>
 */
