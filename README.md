@@ -10,6 +10,13 @@
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ## Requirements
+CocoaPods (https://cocoapods.org/)
+Swift 1.2 (Xcode 6.4 recommended)
+
+Note: Xcode 7.x uses Swift 2 and is will not work with Swift 1.2 projects
+
+You can download Xcode 6.4 and install it outside of Applications, if you have already upgraded to Xcode 7.x
+http://developer.apple.com/devcenter/download.action?path=/Developer_Tools/Xcode_6.4/Xcode_6.4.dmg
 
 ## Installation
 
