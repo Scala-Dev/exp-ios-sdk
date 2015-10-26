@@ -37,7 +37,8 @@ public  class SystemChannel: Channel {
             var dictionary:Dictionary<String,Any> = self.request[id] as! Dictionary
             if((error?.isEmpty) == nil){
                 let fun = dictionary["fulfill"] as! Any -> Void
-                fun(responseDic["payload"])
+                let payload:Dictionary<String,AnyObject> = responseDic["payload"] as! Dictionary
+                fun(payload)
             }else{
                 let errorLog:String = error!
                 let rej = dictionary["reject"] as! NSError -> Void
