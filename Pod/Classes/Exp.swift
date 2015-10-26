@@ -325,7 +325,7 @@ Get list of things
 public func findThings(params:[String:AnyObject]) -> Promise<SearchResults<Thing>>{
     return Promise { fulfill, reject in
         let request = Alamofire.request(.GET, hostUrl + "/api/things", parameters: params )
-        request.responseCollection { (request, response, devices: SearchResults<Thing>?, error) in
+        request.responseCollection { (request, response, things: SearchResults<Thing>?, error) in
             
             var statusCode = response?.statusCode
             if(error != nil) {
@@ -334,7 +334,7 @@ public func findThings(params:[String:AnyObject]) -> Promise<SearchResults<Thing
             if(statusCode < 200 || statusCode > 299) {
                 return reject(NSError(domain: hostUrl + "/api/things", code: statusCode!, userInfo: [:]))
             }
-            fulfill(devices!)
+            fulfill(things!)
         }
     }
 }
