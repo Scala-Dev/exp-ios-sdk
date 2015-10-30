@@ -13,7 +13,7 @@ import PromiseKit
 import JWT
 
 
-var hostUrl: String = ""
+var hostUrl: String = "https://api.exp.scala.com"
 var tokenSDK: String = ""
 var socketManager = SocketManager()
 var runtime = Runtime()
@@ -28,9 +28,9 @@ public enum SOCKET_CHANNELS: String {
 
 
 /**
-    Initialize the SDK and connect to EXP.
-    @param host,uuid,secret.
-    @return Promise<Bool>.
+Initialize the SDK and connect to EXP.
+@param host,uuid,secret.
+@return Promise<Bool>.
 */
 public func start(host: String, uuid: String, secret: String)  -> Promise<Bool> {
         return runtime.start(host, uuid: uuid, secret: secret)
@@ -41,9 +41,17 @@ Initialize the SDK and connect to EXP.
 @param host,user,password,organization.
 @return Promise<Bool>.
 */
-
 public func start(host:String , user: String , password:String, organization:String) -> Promise<Bool> {
     return runtime.start(host, user: user, password: password, organization: organization)
+}
+
+/**
+Initialize the SDK and connect to EXP.
+@param options.
+@return Promise<Bool>.
+*/
+public func start(options:[String:String]) -> Promise<Bool> {
+    return runtime.start(options)
 }
 
 /**

@@ -20,21 +20,7 @@ public class Runtime{
     @return Promise<Bool>.
     */
     public func start(host: String, uuid: String, secret: String)  -> Promise<Bool> {
-        tokenSDK = JWT.encode(["uuid": uuid], .HS256(secret))
-        return Promise { fulfill, reject in
-            hostUrl=host
-            // Creating an Instance of the Alamofire Manager
-            var manager = Manager.sharedInstance
-            // Specifying the Headers we need
-            manager.session.configuration.HTTPAdditionalHeaders = [
-                "Authorization": "Bearer " + tokenSDK
-            ]
-            socketManager.start_socket().then { (result: Bool) -> Void  in
-                if result{
-                    fulfill(true)
-                }
-            }
-        }
+        return start(["host": host, "deviceUuid": uuid, "secret": secret])
     }
     
     /**
@@ -42,28 +28,94 @@ public class Runtime{
     @param host,user,password,organization.
     @return Promise<Bool>.
     */
-    
     public func start(host:String , user: String , password:String, organization:String) -> Promise<Bool> {
+        return start(["host": host, "username": user, "password": password, "organization": organization])
+    }
+    
+    
+    /**
+    Initialize the SDK and connect to EXP.
+    @param options
+    @return Promise<Bool>.
+    */
+    public func start(options:[String:String]) -> Promise<Bool> {
         
         return Promise { fulfill, reject in
-            hostUrl=host
-            login(user, password, organization).then {(token: Token) -> Void  in
-                tokenSDK = token.token
-               
+            if let host = options["host"] {
+                hostUrl=host
+            }
+            
+            if let user = options["username"], password = options["password"], organization = options["organization"] {
+                login(user, password, organization).then {(token: Token) -> Void  in
+                    tokenSDK = token.token
+                    
+                    // Creating an Instance of the Alamofire Manager
+                    var manager = Manager.sharedInstance
+                    // Specifying the Headers we need
+                    manager.session.configuration.HTTPAdditionalHeaders = [
+                        "Authorization": "Bearer " + tokenSDK
+                    ]
+                    
+                    
+                    socketManager.start_socket().then { (result: Bool) -> Void  in
+                        if result{
+                            fulfill(true)
+                        }
+                    }
+                }
+            }
+            
+            if let deviceUuid = options["uuid"], secret = options["secret"] {
+                tokenSDK = JWT.encode(["uuid": deviceUuid], .HS256(secret))
+
                 // Creating an Instance of the Alamofire Manager
                 var manager = Manager.sharedInstance
                 // Specifying the Headers we need
                 manager.session.configuration.HTTPAdditionalHeaders = [
                     "Authorization": "Bearer " + tokenSDK
                 ]
-                
-                
                 socketManager.start_socket().then { (result: Bool) -> Void  in
                     if result{
                         fulfill(true)
                     }
                 }
+
             }
+            
+            if let deviceUuid = options["deviceUuid"], secret = options["secret"] {
+                tokenSDK = JWT.encode(["uuid": deviceUuid], .HS256(secret))
+                
+                // Creating an Instance of the Alamofire Manager
+                var manager = Manager.sharedInstance
+                // Specifying the Headers we need
+                manager.session.configuration.HTTPAdditionalHeaders = [
+                    "Authorization": "Bearer " + tokenSDK
+                ]
+                socketManager.start_socket().then { (result: Bool) -> Void  in
+                    if result{
+                        fulfill(true)
+                    }
+                }
+                
+            }
+            
+            if let networkUuid = options["networkUuid"], apiKey = options["apiKey"] {
+                tokenSDK = JWT.encode(["networkUuid": networkUuid], .HS256(apiKey))
+                
+                // Creating an Instance of the Alamofire Manager
+                var manager = Manager.sharedInstance
+                // Specifying the Headers we need
+                manager.session.configuration.HTTPAdditionalHeaders = [
+                    "Authorization": "Bearer " + tokenSDK
+                ]
+                socketManager.start_socket().then { (result: Bool) -> Void  in
+                    if result{
+                        fulfill(true)
+                    }
+                }
+                
+            }
+            
         }
     }
     

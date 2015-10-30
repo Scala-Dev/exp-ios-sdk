@@ -26,6 +26,7 @@ it, simply add the following line to your Podfile:
 ```ruby
 pod "ExpSwift"
 ```
+
 ### ExpSwift.start(host,uuid,secret)
 Init exp connection for device with Host,Uuid,secret. 
 ```swift
@@ -38,6 +39,7 @@ import ExpSwift
             }
 
 ```
+
 ### ExpSwift.start(host,user,password,organization)
 Init exp connection for user with Host,User,Password,Organization.
 ```swift
@@ -50,6 +52,35 @@ import ExpSwift
             }
 
 ```
+
+### ExpSwift.start(options)
+Init exp connection for user with options object.
+```swift
+import ExpSwift
+
+ExpSwift.start(["host": "https://api.exp.scala.com", "username":"cesar.oyarzun@scala.com", "password":"Com5715031", "organization":"scala").then{ result -> Void in
+println(result)
+}.catch { error in
+println(error)
+}
+
+```
+#### Options Fields
+User authentication:
+"host" (optional)
+"username" (required)
+"password" (required)
+"organization" (required)
+
+Device authentication:
+"host" (optional)
+"deviceUuid" (required)
+"secret" (required)
+
+Network authentication:
+"host" (optional)
+"networkUuid" (required)
+"apiKey" (required)
 
 
 # ExpSwift.connection
