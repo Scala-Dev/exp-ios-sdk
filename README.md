@@ -21,10 +21,12 @@ http://developer.apple.com/devcenter/download.action?path=/Developer_Tools/Xcode
 ## Installation
 
 ExpSwift is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+it, add the following line to your Podfile:
 
 ```ruby
-pod "ExpSwift"
+use_frameworks!
+
+pod "ExpSwift", :git => 'https://github.com/ScalaInc/exp-ios-sdk.git', :branch => 'develop'
 ```
 
 ### ExpSwift.start(host,uuid,secret)
