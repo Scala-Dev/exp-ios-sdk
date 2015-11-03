@@ -65,8 +65,8 @@ public class Runtime{
                 }
             }
             
-            if let deviceUuid = options["uuid"], secret = options["secret"] {
-                tokenSDK = JWT.encode(["uuid": deviceUuid], .HS256(secret))
+            if let uuid = options["uuid"], secret = options["secret"] {
+                tokenSDK = JWT.encode(["uuid": uuid], .HS256(secret))
 
                 // Creating an Instance of the Alamofire Manager
                 var manager = Manager.sharedInstance
