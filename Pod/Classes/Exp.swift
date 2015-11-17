@@ -59,32 +59,54 @@ public func start(options:[String:String]) -> Promise<Bool> {
     @param dictionary of search params
     @return Promise<Array<Device>>.
 */
-public func findDevices(params:[String:AnyObject]) -> Promise<SearchResults<Device>>{
+//public func findDevices(params:[String:AnyObject]) -> Promise<Device>{
+//    return Promise { fulfill, reject in
+//        let request = Alamofire.request(.GET, hostUrl + "/api/devices", parameters: params )
+//        request.responseCollection { (request, response, devices: Device, error) in
+//            
+//            var statusCode = response?.statusCode
+//            if(error != nil) {
+//                return reject(error!)
+//            }
+//            if(statusCode < 200 || statusCode > 299) {
+//                return reject(NSError(domain: hostUrl + "/api/devices", code: statusCode!, userInfo: [:]))
+//            }
+//            fulfill(devices!)
+//        }
+//    }
+//}
+
+public func findDevices(params:[String:AnyObject]) -> Promise<Device>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/devices", parameters: params )
-        request.responseCollection { (request, response, devices: SearchResults<Device>?, error) in
-            
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/devices", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(devices!)
+        Alamofire.request(.GET, hostUrl + "/api/devices", parameters: params )
+            .responseCollection { (response: Response<[Device], NSError>) in
+                debugPrint(response)
         }
+//        let request = Alamofire.request(.GET, hostUrl + "/api/devices", parameters: params )
+//        request.responseCollection { (request, response, devices: Device, error) in
+//            
+//            var statusCode = response?.statusCode
+//            if(error != nil) {
+//                return reject(error!)
+//            }
+//            if(statusCode < 200 || statusCode > 299) {
+//                return reject(NSError(domain: hostUrl + "/api/devices", code: statusCode!, userInfo: [:]))
+//            }
+//            fulfill(devices!)
+//        }
     }
 }
+
 
 /**
 Get list of devices
 @param dictionary of search params
 @return Promise<Array<Device>>.
 */
-@availability(*, deprecated=0.0.1, message="use findDevices() instead")
-public func getDevices(params:[String:AnyObject]) -> Promise<SearchResults<Device>>{
-    return findDevices(params)
-}
+//@availability(*, deprecated=0.0.1, message="use findDevices() instead")
+//public func getDevices(params:[String:AnyObject]) -> Promise<SearchResults<Device>>{
+//    return findDevices(params)
+//}
 
 
 /**
@@ -94,17 +116,17 @@ public func getDevices(params:[String:AnyObject]) -> Promise<SearchResults<Devic
 */
 public func getDevice(uuid:String) -> Promise<Device>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/devices/" + uuid )
-        request.responseObject { (request, response, device: Device?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/devices", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(device!)
-        }
+//        let request = Alamofire.request(.GET, hostUrl + "/api/devices/" + uuid )
+//        request.responseObject { (request, response, device: Device?, error) in
+//            var statusCode = response?.statusCode
+//            if(error != nil) {
+//                return reject(error!)
+//            }
+//            if(statusCode < 200 || statusCode > 299) {
+//                return reject(NSError(domain: hostUrl + "/api/devices", code: statusCode!, userInfo: [:]))
+//            }
+//            fulfill(device!)
+//        }
     }
 }
 
@@ -115,17 +137,17 @@ public func getDevice(uuid:String) -> Promise<Device>{
 */
 public func getExperience(uuid:String) -> Promise<Experience>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/experiences/" + uuid )
-        request.responseObject { (request, response, experience: Experience?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/experiences", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(experience!)
-        }
+//        let request = Alamofire.request(.GET, hostUrl + "/api/experiences/" + uuid )
+//        request.responseObject { (request, response, experience: Experience?, error) in
+//            var statusCode = response?.statusCode
+//            if(error != nil) {
+//                return reject(error!)
+//            }
+//            if(statusCode < 200 || statusCode > 299) {
+//                return reject(NSError(domain: hostUrl + "/api/experiences", code: statusCode!, userInfo: [:]))
+//            }
+//            fulfill(experience!)
+//        }
     }
 }
 
@@ -136,17 +158,17 @@ public func getExperience(uuid:String) -> Promise<Experience>{
 */
 public func findExperiences(params:[String:AnyObject]) -> Promise<SearchResults<Experience>>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/experiences", parameters: params )
-        request.responseCollection { (request, response, experiences: SearchResults<Experience>?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/experiences", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(experiences!)
-        }
+//        let request = Alamofire.request(.GET, hostUrl + "/api/experiences", parameters: params )
+//        request.responseCollection { (request, response, experiences: SearchResults<Experience>?, error) in
+//            var statusCode = response?.statusCode
+//            if(error != nil) {
+//                return reject(error!)
+//            }
+//            if(statusCode < 200 || statusCode > 299) {
+//                return reject(NSError(domain: hostUrl + "/api/experiences", code: statusCode!, userInfo: [:]))
+//            }
+//            fulfill(experiences!)
+//        }
     }
 }
 
@@ -155,10 +177,10 @@ Get list of Experiences
 @param dictionary of search params
 @return Promise<Array<Experience>>.
 */
-@availability(*, deprecated=0.0.1, message="use findExperiences() instead")
-public func getExperiences(params:[String:AnyObject]) -> Promise<SearchResults<Experience>>{
-    return findExperiences(params)
-}
+//@availability(*, deprecated=0.0.1, message="use findExperiences() instead")
+//public func getExperiences(params:[String:AnyObject]) -> Promise<SearchResults<Experience>>{
+//    return findExperiences(params)
+//}
 
 
 /**
@@ -168,17 +190,17 @@ public func getExperiences(params:[String:AnyObject]) -> Promise<SearchResults<E
 */
 public func getLocation(uuid:String) -> Promise<Location>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/locations/" + uuid )
-        request.responseObject { (request, response, location: Location?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/locations", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(location!)
-        }
+//        let request = Alamofire.request(.GET, hostUrl + "/api/locations/" + uuid )
+//        request.responseObject { (request, response, location: Location?, error) in
+//            var statusCode = response?.statusCode
+//            if(error != nil) {
+//                return reject(error!)
+//            }
+//            if(statusCode < 200 || statusCode > 299) {
+//                return reject(NSError(domain: hostUrl + "/api/locations", code: statusCode!, userInfo: [:]))
+//            }
+//            fulfill(location!)
+//        }
     }
 }
 
@@ -189,17 +211,17 @@ public func getLocation(uuid:String) -> Promise<Location>{
 */
 public func findLocations(params:[String:AnyObject]) -> Promise<SearchResults<Location>>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/locations", parameters: params)
-        request.responseCollection { (request, response, locations: SearchResults<Location>?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/locations", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(locations!)
-        }
+//        let request = Alamofire.request(.GET, hostUrl + "/api/locations", parameters: params)
+//        request.responseCollection { (request, response, locations: SearchResults<Location>?, error) in
+//            var statusCode = response?.statusCode
+//            if(error != nil) {
+//                return reject(error!)
+//            }
+//            if(statusCode < 200 || statusCode > 299) {
+//                return reject(NSError(domain: hostUrl + "/api/locations", code: statusCode!, userInfo: [:]))
+//            }
+//            fulfill(locations!)
+//        }
     }
 }
 
@@ -208,10 +230,10 @@ Get list of Location
     @param dictionary of search params
 @return Promise<Array<Experience>>.
 */
-@availability(*, deprecated=0.0.1, message="use findLocations() instead")
-public func getLocations(params:[String:AnyObject]) -> Promise<SearchResults<Location>>{
-    return findLocations(params)
-}
+//@availability(*, deprecated=0.0.1, message="use findLocations() instead")
+//public func getLocations(params:[String:AnyObject]) -> Promise<SearchResults<Location>>{
+//    return findLocations(params)
+//}
 
 
 
@@ -223,17 +245,17 @@ Get Content Node By UUID
 */
 public func getContentNode(uuid:String) -> Promise<ContentNode>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/content/" + uuid + "/children")
-        request.responseObject { (request, response, content: ContentNode?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/content", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(content!)
-        }
+//        let request = Alamofire.request(.GET, hostUrl + "/api/content/" + uuid + "/children")
+//        request.responseObject { (request, response, content: ContentNode?, error) in
+//            var statusCode = response?.statusCode
+//            if(error != nil) {
+//                return reject(error!)
+//            }
+//            if(statusCode < 200 || statusCode > 299) {
+//                return reject(NSError(domain: hostUrl + "/api/content", code: statusCode!, userInfo: [:]))
+//            }
+//            fulfill(content!)
+//        }
     }
 }
 
@@ -246,17 +268,17 @@ Find Data with params
 public func findData(params:[String:AnyObject]) -> Promise<SearchResults<Data>>{
     
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/data", parameters: params )
-        request.responseCollection { (request, response, data: SearchResults<Data>?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/data", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(data!)
-        }
+        _ = Alamofire.request(.GET, hostUrl + "/api/data", parameters: params )
+//        request.responseCollection { (request, response, data: SearchResults<Data>?, error) in
+//            var statusCode = response?.statusCode
+//            if(error != nil) {
+//                return reject(error!)
+//            }
+//            if(statusCode < 200 || statusCode > 299) {
+//                return reject(NSError(domain: hostUrl + "/api/data", code: statusCode!, userInfo: [:]))
+//            }
+//            fulfill(data!)
+//        }
     }
 }
 
@@ -267,17 +289,17 @@ Get Data by Group and Key
 */
 public func getData(group: String,  key: String) -> Promise<Data>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/data/" + group.encodeURIComponent()! + "/" + key.encodeURIComponent()!)
-        request.responseObject { (request, response, data: Data?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/data", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(data!)
-        }
+//        let request = Alamofire.request(.GET, hostUrl + "/api/data/" + group.encodeURIComponent()! + "/" + key.encodeURIComponent()!)
+//        request.responseObject { (request, response, data: Data?, error) in
+//            var statusCode = response?.statusCode
+//            if(error != nil) {
+//                return reject(error!)
+//            }
+//            if(statusCode < 200 || statusCode > 299) {
+//                return reject(NSError(domain: hostUrl + "/api/data", code: statusCode!, userInfo: [:]))
+//            }
+//            fulfill(data!)
+//        }
     }
 }
 
@@ -290,17 +312,17 @@ Login EXP system
 func login(user:String,passwd:String,organization:String) ->Promise<Token>{
     
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.POST, hostUrl + "/api/auth/login",parameters:["username":user,"password":passwd,"org":organization],encoding: .JSON)
-        request.responseObject { (request, response, token: Token?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/auth/login", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(token!)
-        }
+//        let request = Alamofire.request(.POST, hostUrl + "/api/auth/login",parameters:["username":user,"password":passwd,"org":organization],encoding: .JSON)
+//        request.responseObject { (request, response, token: Token?, error) in
+//            var statusCode = response?.statusCode
+//            if(error != nil) {
+//                return reject(error!)
+//            }
+//            if(statusCode < 200 || statusCode > 299) {
+//                return reject(NSError(domain: hostUrl + "/auth/login", code: statusCode!, userInfo: [:]))
+//            }
+//            fulfill(token!)
+//        }
     }
 }
 
@@ -311,17 +333,17 @@ Get Thing by UUID
 */
 public func getThing(uuid:String) -> Promise<Thing>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/things/" + uuid )
-        request.responseObject { (request, response, thing: Thing?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/things", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(thing!)
-        }
+//        let request = Alamofire.request(.GET, hostUrl + "/api/things/" + uuid )
+//        request.responseObject { (request, response, thing: Thing?, error) in
+//            var statusCode = response?.statusCode
+//            if(error != nil) {
+//                return reject(error!)
+//            }
+//            if(statusCode < 200 || statusCode > 299) {
+//                return reject(NSError(domain: hostUrl + "/api/things", code: statusCode!, userInfo: [:]))
+//            }
+//            fulfill(thing!)
+//        }
     }
 }
 
@@ -332,18 +354,18 @@ Get list of things
 */
 public func findThings(params:[String:AnyObject]) -> Promise<SearchResults<Thing>>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/things", parameters: params )
-        request.responseCollection { (request, response, things: SearchResults<Thing>?, error) in
-            
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/things", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(things!)
-        }
+//        let request = Alamofire.request(.GET, hostUrl + "/api/things", parameters: params )
+//        request.responseCollection { (request, response, things: SearchResults<Thing>?, error) in
+//            
+//            var statusCode = response?.statusCode
+//            if(error != nil) {
+//                return reject(error!)
+//            }
+//            if(statusCode < 200 || statusCode > 299) {
+//                return reject(NSError(domain: hostUrl + "/api/things", code: statusCode!, userInfo: [:]))
+//            }
+//            fulfill(things!)
+//        }
     }
 }
 

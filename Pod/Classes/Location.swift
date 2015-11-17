@@ -28,7 +28,7 @@ public final class Location: Model,ResponseObject,ResponseCollection {
         super.init(response: response, representation: representation)
     }
     
-    @objc public static func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [Location] {
+     public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Location] {
         var locations: [Location] = []
         
         if let representation = representation as? [[String: AnyObject]] {

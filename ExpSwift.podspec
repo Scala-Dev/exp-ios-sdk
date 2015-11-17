@@ -35,8 +35,8 @@ Pod::Spec.new do |s|
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
-   s.dependency 'PromiseKit', '<= 2.2.1'
-   s.dependency 'Alamofire','<= 1.3.1'
-   s.dependency 'Socket.IO-Client-Swift', '<= 2.4.5'
-   s.dependency 'JSONWebToken', '<= 1.3.0'
+   s.dependency 'PromiseKit'
+   s.dependency 'Alamofire'
+   s.dependency 'Socket.IO-Client-Swift'
+   s.dependency 'JSONWebToken'
 end

@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '33DA15ABBBB41E6AB99B304B'
+               BlueprintIdentifier = '0C795D599248BF13D5E20C30'
                BlueprintName = 'ExpSwift-ExpSwift'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'ExpSwift.bundle'>

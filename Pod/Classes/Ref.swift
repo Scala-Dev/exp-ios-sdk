@@ -36,7 +36,7 @@ public final class Ref: ResponseObject,ResponseCollection {
     
     
     
-    @objc public static func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [Ref] {
+    public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Ref] {
         var refs: [Ref] = []
         
         if let representation = representation as? [[String: AnyObject]] {

@@ -25,7 +25,7 @@ public final class Experience: Model,ResponseObject,ResponseCollection {
     }
     
     
-    @objc public static func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [Experience] {
+     public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Experience] {
         var experiences: [Experience] = []
         
         if let representation = representation as? [[String: AnyObject]] {

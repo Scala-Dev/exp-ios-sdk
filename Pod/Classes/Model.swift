@@ -26,7 +26,8 @@ public class Model {
     
     public func get(name:String) -> AnyObject? {
         var dict = self.document
-        var paths = split(name) {$0 == "."}
+        
+        var paths = name.characters.split {$0 == "."}.map
         for path in paths {
             if (paths.last == path) {
                 return dict[path]

@@ -25,7 +25,7 @@ public final class Data: Model,ResponseObject,ResponseCollection {
         super.init(response: response, representation: representation)
     }
     
-    @objc public static func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [Data] {
+     public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Data] {
         var dataItems: [Data] = []
         
         if let representation = representation as? [[String: AnyObject]] {

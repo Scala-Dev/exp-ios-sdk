@@ -23,7 +23,7 @@ public final class Device: Model,ResponseObject,ResponseCollection {
         super.init(response: response, representation: representation)
     }
     
-    @objc public static func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [Device] {
+    public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Device] {
         var devices: [Device] = []
         
         if let representation = representation as? [[String: AnyObject]] {

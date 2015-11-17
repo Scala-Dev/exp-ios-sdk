@@ -23,7 +23,7 @@ public final class Zone: Model,ResponseObject,ResponseCollection {
         super.init(response: response, representation: representation)
     }
 
-    @objc public static func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [Zone] {
+    public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Zone] {
         var zones: [Zone] = []
         
         if let representation = representation as? [[String: AnyObject]] {
