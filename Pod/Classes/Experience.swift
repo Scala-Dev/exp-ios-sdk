@@ -14,7 +14,7 @@ public final class Experience: Model,ResponseObject,ResponseCollection {
 
     public let uuid: String
     
-    @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
+    required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
         if let representation = representation as? [String: AnyObject] {
             self.uuid = representation["uuid"] as! String
         } else {

@@ -11,7 +11,7 @@ public final class Token: ResponseObject {
     
     public let token: String
     
-    @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
+    required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
         self.token = representation.valueForKeyPath("token") as! String
     }
 }

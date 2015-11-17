@@ -20,7 +20,7 @@ public final class Ref: ResponseObject,ResponseCollection {
     public let subtype: String
     public let name: String
     
-    @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
+    required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
         self.major = representation.valueForKeyPath("major") as! String
         self.minor = representation.valueForKeyPath("minor") as! String
         self.manufacturer = representation.valueForKeyPath("manufacturer") as! String

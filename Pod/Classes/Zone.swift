@@ -13,7 +13,7 @@ public final class Zone: Model,ResponseObject,ResponseCollection {
 
     public let name: String
     
-    @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
+    required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
         if let representation = representation as? [String: AnyObject] {
             self.name = representation["name"] as! String
         } else {

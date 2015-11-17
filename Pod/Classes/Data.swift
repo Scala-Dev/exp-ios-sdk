@@ -13,7 +13,7 @@ public final class Data: Model,ResponseObject,ResponseCollection {
     public let group: String
     public let key: String
     
-    @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
+    required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
         if let representation = representation as? [String: AnyObject] {
             self.group = representation["group"] as! String
             self.key = representation["key"] as! String

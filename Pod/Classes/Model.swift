@@ -12,7 +12,7 @@ public class Model {
     
     var document: [String:AnyObject] = [String:AnyObject]()
     
-    @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
+     required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
         if let representation = representation as? [String: AnyObject] {
             for documentRep in representation{
                 self.document.updateValue(documentRep.1, forKey: documentRep.0)
@@ -26,8 +26,7 @@ public class Model {
     
     public func get(name:String) -> AnyObject? {
         var dict = self.document
-        
-        var paths = name.characters.split {$0 == "."}.map
+        let paths = name.characters.split {$0 == "."}.map(String.init)
         for path in paths {
             if (paths.last == path) {
                 return dict[path]

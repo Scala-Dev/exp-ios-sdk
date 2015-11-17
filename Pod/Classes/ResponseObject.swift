@@ -10,7 +10,7 @@ import Foundation
 import Alamofire
 
 
-@objc public protocol ResponseObject {
+public protocol ResponseObject {
     init?(response: NSHTTPURLResponse, representation: AnyObject)
 }
 
