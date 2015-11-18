@@ -19,11 +19,67 @@ var socketManager = SocketManager()
 var runtime = Runtime()
 
 
+
 public enum SOCKET_CHANNELS: String {
     case SYSTEM = "system"
     case ORGANIZATION = "organization"
     case LOCATION = "location"
     case EXPERIENCE = "experience"
+}
+
+
+enum Router: URLRequestConvertible {
+    case GetDevices([String: AnyObject])
+    case GetDevice(String)
+    var method: Alamofire.Method {
+        switch self {
+        case .GetDevices:
+            return .GET
+        case .GetDevice:
+            return .GET
+        }
+    }
+    
+    var path: String {
+        switch self {
+            case .GetDevice(let uuid):
+                return "/api/devices/\(uuid)"
+        case .GetDevices:
+            return "/api/devices"
+        }
+    }
+    
+    var URLRequest: NSMutableURLRequest {
+        let URL = NSURL(string: hostUrl)!
+        let mutableURLRequest = NSMutableURLRequest(URL: URL.URLByAppendingPathComponent(path))
+        mutableURLRequest.HTTPMethod = method.rawValue
+
+        mutableURLRequest.setValue("Bearer \(tokenSDK)", forHTTPHeaderField: "Authorization")
+        switch self {
+        case .GetDevices(let parameters):
+            return Alamofire.ParameterEncoding.JSON.encode(mutableURLRequest, parameters: parameters).0
+        default:
+            return mutableURLRequest
+        }
+    }
+}
+
+
+class Session {
+    static let sharedInstance = Session()
+    private var manager : Manager?
+    
+    func ApiManager()->Manager{
+        if let m = self.manager{
+            return m
+        }else{
+            let serverTrustPolicies: [String: ServerTrustPolicy] = ["api-develop.exp.scala.com": .DisableEvaluation]
+            let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+            let tempmanager = Alamofire.Manager(configuration: configuration,serverTrustPolicyManager: ServerTrustPolicyManager(policies: serverTrustPolicies))
+            self.manager = tempmanager
+            return self.manager!
+        }
+    }
 }
 
 
@@ -33,7 +89,7 @@ Initialize the SDK and connect to EXP.
 @return Promise<Bool>.
 */
 public func start(host: String, uuid: String, secret: String)  -> Promise<Bool> {
-        return runtime.start(host, uuid: uuid, secret: secret)
+    return runtime.start(host, uuid: uuid, secret: secret)
 }
 
 /**
@@ -76,26 +132,24 @@ public func start(options:[String:String]) -> Promise<Bool> {
 //    }
 //}
 
-public func findDevices(params:[String:AnyObject]) -> Promise<Device>{
+public func findDevices(params:[String:AnyObject]) -> Promise<[Device]>{
     return Promise { fulfill, reject in
-        Alamofire.request(.GET, hostUrl + "/api/devices", parameters: params )
+      let req = Session.sharedInstance.ApiManager().request(Router.GetDevices(params))
             .responseCollection { (response: Response<[Device], NSError>) in
-                debugPrint(response)
+//                debugPrint(response)
+                switch response.result{
+                case .Success(let data):
+//                    debugPrint(response.result)
+                    fulfill(data)
+                case .Failure(let error):
+//                    debugPrint(response.result)
+                    return reject(error)
+                }
         }
-//        let request = Alamofire.request(.GET, hostUrl + "/api/devices", parameters: params )
-//        request.responseCollection { (request, response, devices: Device, error) in
-//            
-//            var statusCode = response?.statusCode
-//            if(error != nil) {
-//                return reject(error!)
-//            }
-//            if(statusCode < 200 || statusCode > 299) {
-//                return reject(NSError(domain: hostUrl + "/api/devices", code: statusCode!, userInfo: [:]))
-//            }
-//            fulfill(devices!)
-//        }
+        debugPrint(req)
     }
 }
+
 
 
 /**
@@ -116,6 +170,32 @@ Get list of devices
 */
 public func getDevice(uuid:String) -> Promise<Device>{
     return Promise { fulfill, reject in
+//        let serverTrustPolicies: [String: ServerTrustPolicy] = [
+//            "api-develop.exp.scala.com": .DisableEvaluation,
+//            "*.exp.scala.com": .DisableEvaluation
+//        ]
+//        
+//        manager = Manager(
+//            configuration: NSURLSessionConfiguration.defaultSessionConfiguration(),
+//            serverTrustPolicyManager: ServerTrustPolicyManager(policies: serverTrustPolicies)
+//        )
+//        let headers = ["Authorization": "Bearer " + tokenSDK]
+        debugPrint(tokenSDK)
+//        Alamofire.request(.GET, hostUrl + "/api/devices/"+uuid, headers: headers )
+//        let headers = [
+//            "Authorization": tokenSDK,
+//        ]
+        Session.sharedInstance.ApiManager().request( Router.GetDevice(uuid) )
+            .responseObject { (response: Response<Device, NSError>) in
+                debugPrint(response)
+                switch response.result{
+                case .Success(let data):
+                    debugPrint(response.result)
+                case .Failure(let error):
+                    debugPrint(response.result)
+                }
+        }
+
 //        let request = Alamofire.request(.GET, hostUrl + "/api/devices/" + uuid )
 //        request.responseObject { (request, response, device: Device?, error) in
 //            var statusCode = response?.statusCode

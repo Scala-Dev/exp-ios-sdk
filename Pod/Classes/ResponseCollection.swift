@@ -26,7 +26,12 @@ extension Alamofire.Request {
             switch result {
             case .Success(let value):
                 if let response = response {
-                    debugPrint(value)
+                    var dic = value as! NSDictionary
+                    if let codeKey = dic.objectForKey("code") as? String{
+                        let failureReason = dic.objectForKey("message") as! String
+                        let error = Error.errorWithCode(.JSONSerializationFailed, failureReason: failureReason)
+                        return .Failure(error)
+                    }
                     return .Success(T.collection(response: response, representation: value))
                 } else {
                     let failureReason = "Response collection could not be serialized due to nil response"
