@@ -48,15 +48,6 @@ public class Runtime{
             if let user = options["username"], password = options["password"], organization = options["organization"] {
                 login(user, passwd: password, organization: organization).then {(token: Token) -> Void  in
                     tokenSDK = token.token
-                    
-                    // Creating an Instance of the Alamofire Manager
-                    let manager = Manager.sharedInstance
-                    // Specifying the Headers we need
-                    manager.session.configuration.HTTPAdditionalHeaders = [
-                        "Authorization": "Bearer " + tokenSDK
-                    ]
-                    
-                    
                     socketManager.start_socket().then { (result: Bool) -> Void  in
                         if result{
                             fulfill(true)
@@ -67,13 +58,6 @@ public class Runtime{
             
             if let uuid = options["uuid"], secret = options["secret"] {
                 tokenSDK = JWT.encode(["uuid": uuid], algorithm: .HS256(secret))
-
-                // Creating an Instance of the Alamofire Manager
-                let manager = Manager.sharedInstance
-                // Specifying the Headers we need
-                manager.session.configuration.HTTPAdditionalHeaders = [
-                    "Authorization": "Bearer " + tokenSDK
-                ]
                 socketManager.start_socket().then { (result: Bool) -> Void  in
                     if result{
                         fulfill(true)
@@ -84,13 +68,6 @@ public class Runtime{
             
             if let deviceUuid = options["deviceUuid"], secret = options["secret"] {
                 tokenSDK = JWT.encode(["uuid": deviceUuid], algorithm: .HS256(secret))
-                
-                // Creating an Instance of the Alamofire Manager
-                let manager = Manager.sharedInstance
-                // Specifying the Headers we need
-                manager.session.configuration.HTTPAdditionalHeaders = [
-                    "Authorization": "Bearer " + tokenSDK
-                ]
                 socketManager.start_socket().then { (result: Bool) -> Void  in
                     if result{
                         fulfill(true)
@@ -101,13 +78,6 @@ public class Runtime{
             
             if let networkUuid = options["networkUuid"], apiKey = options["apiKey"] {
                 tokenSDK = JWT.encode(["networkUuid": networkUuid], algorithm: .HS256(apiKey))
-                
-                // Creating an Instance of the Alamofire Manager
-                let manager = Manager.sharedInstance
-                // Specifying the Headers we need
-                manager.session.configuration.HTTPAdditionalHeaders = [
-                    "Authorization": "Bearer " + tokenSDK
-                ]
                 socketManager.start_socket().then { (result: Bool) -> Void  in
                     if result{
                         fulfill(true)

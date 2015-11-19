@@ -24,8 +24,8 @@ extension Request {
             
             switch result {
             case .Success(let value):
-                var dic = value as! NSDictionary
-                if let codeKey = dic.objectForKey("code") as? String{
+                let dic = value as! NSDictionary
+                if let _ = dic.objectForKey("code") as? String{
                     let failureReason = dic.objectForKey("message") as! String
                     let error = Error.errorWithCode(.JSONSerializationFailed, failureReason: failureReason)
                     return .Failure(error)
@@ -42,23 +42,6 @@ extension Request {
             case .Failure(let error):
                 return .Failure(error)
             }
-            
-//            let (JSON: AnyObject?, serializationError) = JSONResponseSerializer.serializeResponse(request, response, data)
-//            let result = JSON as? NSDictionary
-//            let codeKey: AnyObject? = result?["code"]
-//            if codeKey == nil{
-//                if let response = response, JSON: AnyObject = JSON {
-//                    return (T(response: response, representation: JSON), nil)
-//                } else {
-//                    return (nil,serializationError)
-//                }
-//                
-//            }else{
-//                // if there is ERROR return the message and code error
-//                let code:String = codeKey as! String
-//                let message:String = result?["message"] as! String
-//                return (nil, NSError(domain: hostUrl, code: Config.EXP_REST_API_ERROR, userInfo: ["code":code,"message":message]))
-//            } 
         }
         
         return response(responseSerializer: responseSerializer, completionHandler: completionHandler)
