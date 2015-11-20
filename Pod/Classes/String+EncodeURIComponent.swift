@@ -11,7 +11,7 @@ import Foundation
 extension String {
     
     func encodeURIComponent() -> String? {
-        var characterSet = NSMutableCharacterSet.alphanumericCharacterSet()
+        let characterSet = NSMutableCharacterSet.alphanumericCharacterSet()
         characterSet.addCharactersInString("-_.!~*'()")
         
         return self.stringByAddingPercentEncodingWithAllowedCharacters(characterSet)

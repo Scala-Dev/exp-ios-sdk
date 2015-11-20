@@ -39,7 +39,7 @@ Permission is granted to anyone to use this software for any purpose,including c
 
 ## ExpSwift
 
-Copyright (c) 2015 Cesar Oyarzun <cesar.oyarzun@scala.com>
+Copyright (c) 2015 Scala  <cesar.oyarzun@scala.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

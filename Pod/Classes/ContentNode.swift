@@ -23,7 +23,7 @@ public final class ContentNode: Model,ResponseObject,ResponseCollection {
         case UNKNOWN = ""
     }
     
-    @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
+    required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
         if let representation = representation as? [String: AnyObject] {
             self.uuid = representation["uuid"] as! String
             self.subtype = CONTENT_TYPES(rawValue: representation["subtype"] as! String)!
@@ -42,7 +42,7 @@ public final class ContentNode: Model,ResponseObject,ResponseCollection {
         document["children"] = nil
     }
     
-    @objc public static func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [ContentNode] {
+     public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [ContentNode] {
         var contents: [ContentNode] = []
             if let representation = representation as? [[String: AnyObject]] {
                 for contentRepresentation in representation {

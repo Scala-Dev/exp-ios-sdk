@@ -20,7 +20,7 @@ public final class Ref: ResponseObject,ResponseCollection {
     public let subtype: String
     public let name: String
     
-    @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
+    required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
         self.major = representation.valueForKeyPath("major") as! String
         self.minor = representation.valueForKeyPath("minor") as! String
         self.manufacturer = representation.valueForKeyPath("manufacturer") as! String
@@ -36,7 +36,7 @@ public final class Ref: ResponseObject,ResponseCollection {
     
     
     
-    @objc public static func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [Ref] {
+    public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Ref] {
         var refs: [Ref] = []
         
         if let representation = representation as? [[String: AnyObject]] {
