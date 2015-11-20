@@ -38,7 +38,7 @@ import ExpSwift
 
   ExpSwift.start(host,"74c05552-5b9f-4d06-a3f8-8299ff1e1e3a","7b674d4ab63e80c62591ef3fcb51da1505f420d2a9ffda8ed5d24aa6384ad1c1f10985a4fc858b046b065bcdacc105dd").then{ result -> Void in
             println(result)
-            }.catch { error in
+            }.error { error in
                 println(error)
             }
 
@@ -51,7 +51,7 @@ import ExpSwift
 
   ExpSwift.start(host,"cesar.oyarzun@scala.com","Com5715031","scala").then{ result -> Void in
             println(result)
-            }.catch { error in
+            }.error { error in
                 println(error)
             }
 
@@ -64,7 +64,7 @@ import ExpSwift
 
 ExpSwift.start(["host": "https://api.exp.scala.com", "username":"cesar.oyarzun@scala.com", "password":"Com5715031", "organization":"scala").then{ result -> Void in
 println(result)
-}.catch { error in
+}.error { error in
 println(error)
 }
 
@@ -154,7 +154,7 @@ Send a request to another device. Returns a promise.
             var msg:Dictionary<String,String> = ["type": "request", "name": "getCurrentExperience"]
             systemChannel.request(msg).then { obj -> Void in
                             println(obj)
-            }.catch { error in
+            }.error { error in
                 println(error)
             }
 ```
@@ -182,7 +182,7 @@ Get the current device. Resolves to a [Device Object](#device-object).
 //GET CURRENT DEVICE
         ExpSwift.getCurrentDevice().then { device -> Void  in
             println(device.get("name"))
-            }.catch { error in
+            }.error { error in
                 println(error)
         }
 ```
@@ -192,7 +192,7 @@ Get a single device by UUID. Resolves to a [Device Object](#device-object).
  //GET DEVICE
         ExpSwift.getDevice("8930ff64-1063-4a03-b1bc-33e1ba463d7a").then { (device: Device) -> Void  in
                 println(device.get("name"))
-            }.catch { error in
+            }.error { error in
                 println(error)
         }
 ```
@@ -205,7 +205,7 @@ Query for multiple devices. Resolves to an array of [Device Objects](#device-obj
             for device in devices.getResults() {
                 println(device.get("name"))
             }
-        }.catch { error in
+        }.error { error in
             println(error)
         }
 ```
@@ -215,7 +215,7 @@ Get the current experience. Resolves to an [Experience Object](#experience-objec
 //GET CURRENT EXPERIENCE
         ExpSwift.getCurrentExperience().then { experience -> Void  in
             println(experience.get("name"))
-            }.catch { error in
+            }.error { error in
                 println(error)
         }
 ```
@@ -225,7 +225,7 @@ Get a single experience by UUID. Resolves to a [Experience Object](#experience-o
 //GET EXPERIENCE
         ExpSwift.getExperience("58dc59e4-a44c-4b6e-902b-e6744c09d933").then { (experience: Experience) -> Void  in
             println(experience.get("name"))
-        }.catch { error in
+        }.error { error in
                 println(error)
         }
 ```
@@ -237,7 +237,7 @@ Query for multiple experiences. Resolves to an array of [Experience Objects](#ex
             for experience in experiences.getResults() {
                 println(experience.get("name"))
             }
-        }.catch { error in
+        }.error { error in
                 println(error)
         }
 
@@ -249,7 +249,7 @@ Get a single location by UUID. Resolves to a [Location Object](#location-object)
  //GET LOCATION
         ExpSwift.getLocation("3e2e25df-8324-4912-91c3-810751f527a4").then { (location: Location) -> Void  in
             println(location.get("name"))
-            }.catch { error in
+            }.error { error in
                 println(error)
         }
 
@@ -263,7 +263,7 @@ Query for multiple locations. Resolves to an array of [Location Objects](#locati
             for location in locations.getResults() {
                 println(location.get("name"))
             }
-            }.catch { error in
+            }.error { error in
                 println(error)
         }
 
@@ -275,7 +275,7 @@ Get a content node by UUID. Resolves to a [ContentNode Object](#content-object).
 ```swift
 ExpSwift.getContentNode("root").then { (content: ContentNode) -> Void  in
                           println(content.get("name"))
-                        }.catch { error in
+                        }.error { error in
                             println(error)
                         }
 ```
@@ -287,7 +287,7 @@ Get a single data item by group and key. Resolves to a [Data Object](#data-objec
 //GET DATA
 ExpSwift.getData("cats", "fluffbottom").then { (data: Data) -> Void  in
 println(data.get("value"))
-}.catch { error in
+}.error { error in
 println(error)
 }
 
@@ -301,7 +301,7 @@ ExpSwift.findData(["limit":10, "skip":0, "sort":"key", "group":"cats"]).then { (
 for dataItem in data.getResults() {
 println(dataItem.get("value"))
 }
-}.catch { error in
+}.error { error in
 println(error)
 }
 
@@ -313,7 +313,7 @@ Get a single thing by UUID. Resolves to a [Thing Object](#thing-object).
  //GET THING
         ExpSwift.getThing("8930ff64-1063-4a03-b1bc-33e1ba463d7a").then { (thing: Thing) -> Void  in
                 println(thing.get("name"))
-            }.catch { error in
+            }.error { error in
                 println(error)
         }
 ```
@@ -326,7 +326,7 @@ Query for multiple things. Resolves to an array of [Thing Objects](#thing-object
             for thing in things.getResults() {
                 println(thing.get("name"))
             }
-        }.catch { error in
+        }.error { error in
             println(error)
         }
 ```
@@ -346,7 +346,7 @@ Get the immediate children of this content node. Resolves to an array of [Conten
                             for child in children{
                                 println(child.get("name"))
                             }
-                            }.catch { error in
+                            }.error { error in
                                 println(error)
                             }
 
