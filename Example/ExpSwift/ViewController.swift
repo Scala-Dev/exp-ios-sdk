@@ -43,21 +43,42 @@ class ViewController: UIViewController {
             })
             
            
-             }.then {result -> Void in
-                ExpSwift.findDevices(["limit":10, "skip":0, "sort":"name"]).then { (devices: SearchResults<Device>) -> Void in
-                            for device in devices.getResults() {
-                                debugPrint(device.get("name"))
-                            }
-                    debugPrint(devices)
-                        }.error { error in
-                            debugPrint(error)
-                        }
-
-                    ExpSwift.getDevice("5251de59-6123-4789-b73f-d4120174c7ac").then { (device: Device) -> Void in
-                        debugPrint(device)
-                    }.error { error in
-                        debugPrint(error)
+         }.then {result -> Void in
+            ExpSwift.findDevices(["limit":10, "skip":0, "sort":"name"]).then { (devices: SearchResults<Device>) -> Void in
+                for device in devices.getResults() {
+                    debugPrint(device.get("name"))
                 }
+                debugPrint(devices)
+            }.error { error in
+                debugPrint(error)
+            }
+
+            ExpSwift.getDevice("5251de59-6123-4789-b73f-d4120174c7ac").then { (device: Device) -> Void in
+                debugPrint(device)
+            }.error { error in
+                debugPrint(error)
+            }
+            
+            ExpSwift.getContentNode("root").then { (content: ContentNode) -> Void  in
+                print(content.get("path"))
+                content.getChildren().then { (children: [ContentNode]) -> Void in
+                    for child in children{
+                        print(child.get("path"))
+                        child.getChildren().then { (children: [ContentNode]) -> Void in
+                            for child in children{
+                                print(child.get("path"))
+                            }
+                        }.error { error in
+                            print(error)
+                        }
+                    }
+                }.error { error in
+                    print(error)
+                }
+                
+            }.error { error in
+                print(error)
+            }
         }
         
         

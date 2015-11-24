@@ -86,7 +86,7 @@ enum Router: URLRequestConvertible {
             case .findLocations:
                 return "/api/locations"
             case .getContentNode(let uuid):
-                return "/api/content/\(uuid)"
+                return "/api/content/\(uuid)/children"
             case .findData:
                 return "/api/data"
             case .getData(let group, let key):

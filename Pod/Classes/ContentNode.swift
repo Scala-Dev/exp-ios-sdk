@@ -8,6 +8,7 @@
 
 import Foundation
 import PromiseKit
+import Alamofire
 
 public final class ContentNode: Model,ResponseObject,ResponseCollection {
 
@@ -59,14 +60,25 @@ public final class ContentNode: Model,ResponseObject,ResponseCollection {
     @return Promise<[Content]>.
     */
     public func getChildren() ->Promise<[ContentNode]>{
-        let childrenPromise = Promise<[ContentNode]> { fulfill, reject in
-            if(!children.isEmpty){
+        if (!children.isEmpty) {
+            return Promise<[ContentNode]> { fulfill, reject in
                 fulfill(children)
-            }else{
-                fulfill([])
+            }
+        } else {
+            return Promise { fulfill, reject in
+                Alamofire.request(Router.getContentNode(uuid) )
+                    .responseObject { (response: Response<ContentNode, NSError>) in
+                        switch response.result{
+                        case .Success(let data):
+                            self.children = data.children
+                            
+                            fulfill(self.children)
+                        case .Failure(let error):
+                            return reject(error)
+                        }
+                }
             }
         }
-        return childrenPromise
     }
     
     /**
