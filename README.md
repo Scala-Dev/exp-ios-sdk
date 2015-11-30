@@ -280,6 +280,20 @@ ExpSwift.getContentNode("root").then { (content: ContentNode) -> Void  in
                         }
 ```
 
+### ExpSwift.findContentNodes(params:[String:AnyObject])
+Query for multiple content nodes. Resolves to a SearchResults object containing [ContentNode Objects](#content-object).
+```swift
+//GET CONTENT
+ExpSwift.findContentNodes(["limit":10, "skip":0, "sort":"name", "name":"images"]).then { (data: SearchResults<ContentNode>) -> Void  in
+for contentNode in data.getResults() {
+println(contentNode.get("name"))
+}
+}.error { error in
+println(error)
+}
+
+```
+
 
 ### ExpSwift.getData(group:String, key:String)
 Get a single data item by group and key. Resolves to a [Data Object](#data-object).
@@ -296,8 +310,8 @@ println(error)
 ### ExpSwift.findData(params:[String:AnyObject])
 Query for multiple data items. Resolves to an SearchResults object containing [Data Objects](#data-object).
 ```swift
-//GET ZONES
-ExpSwift.findData(["limit":10, "skip":0, "sort":"key", "group":"cats"]).then { (zones: SearchResults<Data>) -> Void  in
+//GET DATA
+ExpSwift.findData(["limit":10, "skip":0, "sort":"key", "group":"cats"]).then { (data: SearchResults<Data>) -> Void  in
 for dataItem in data.getResults() {
 println(dataItem.get("value"))
 }

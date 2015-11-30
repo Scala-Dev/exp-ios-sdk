@@ -36,6 +36,7 @@ enum Router: URLRequestConvertible {
     case getLocation(String)
     case findLocations([String: AnyObject])
     case getContentNode(String)
+    case findContentNodes([String: AnyObject])
     case findData([String: AnyObject])
     case getData(String,String)
     case getThing(String)
@@ -56,6 +57,8 @@ enum Router: URLRequestConvertible {
         case .findLocations:
             return .GET
         case .getContentNode:
+            return .GET
+        case .findContentNodes:
             return .GET
         case .findData:
             return .GET
@@ -87,6 +90,8 @@ enum Router: URLRequestConvertible {
                 return "/api/locations"
             case .getContentNode(let uuid):
                 return "/api/content/\(uuid)/children"
+            case .findContentNodes:
+                return "/api/content"
             case .findData:
                 return "/api/data"
             case .getData(let group, let key):
@@ -115,6 +120,8 @@ enum Router: URLRequestConvertible {
             case .findLocations(let parameters):
                 return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
             case .findData(let parameters):
+                return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+            case .findContentNodes(let parameters):
                 return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
             case .login(let parameters):
                 return Alamofire.ParameterEncoding.JSON.encode(mutableURLRequest, parameters: parameters).0
@@ -275,6 +282,25 @@ public func getContentNode(uuid:String) -> Promise<ContentNode>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.getContentNode(uuid) )
             .responseObject { (response: Response<ContentNode, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+/**
+ Get list of content node
+ @param dictionary of search params
+ @return Promise<Array<Device>>.
+ */
+public func findContentNodes(params:[String:AnyObject]) -> Promise<SearchResults<ContentNode>>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.findContentNodes(params))
+            .responseCollection { (response: Response<SearchResults<ContentNode>, NSError>) in
                 switch response.result{
                 case .Success(let data):
                     fulfill(data)

@@ -59,26 +59,35 @@ class ViewController: UIViewController {
                 debugPrint(error)
             }
             
-            ExpSwift.getContentNode("root").then { (content: ContentNode) -> Void  in
-                print(content.get("path"))
-                content.getChildren().then { (children: [ContentNode]) -> Void in
-                    for child in children{
-                        print(child.get("path"))
-                        child.getChildren().then { (children: [ContentNode]) -> Void in
-                            for child in children{
-                                print(child.get("path"))
-                            }
-                        }.error { error in
-                            print(error)
-                        }
-                    }
-                }.error { error in
-                    print(error)
+            ExpSwift.findContentNodes(["limit":10, "skip":0, "sort":"name", "name": "10-26-2015"]).then { (devices: SearchResults<ContentNode>) -> Void in
+                for device in devices.getResults() {
+                    debugPrint(device.get("name"))
                 }
-                
-            }.error { error in
-                print(error)
+                debugPrint(devices)
+                }.error { error in
+                    debugPrint(error)
             }
+            
+//            ExpSwift.getContentNode("root").then { (content: ContentNode) -> Void  in
+//                print(content.get("path"))
+//                content.getChildren().then { (children: [ContentNode]) -> Void in
+//                    for child in children{
+//                        print(child.get("path"))
+//                        child.getChildren().then { (children: [ContentNode]) -> Void in
+//                            for child in children{
+//                                print(child.get("path"))
+//                            }
+//                        }.error { error in
+//                            print(error)
+//                        }
+//                    }
+//                }.error { error in
+//                    print(error)
+//                }
+//                
+//            }.error { error in
+//                print(error)
+//            }
         }
         
         
