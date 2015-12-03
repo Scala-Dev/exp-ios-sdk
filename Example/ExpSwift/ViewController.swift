@@ -68,6 +68,7 @@ class ViewController: UIViewController {
                     debugPrint(error)
             }
             
+            
 //            ExpSwift.getContentNode("root").then { (content: ContentNode) -> Void  in
 //                print(content.get("path"))
 //                content.getChildren().then { (children: [ContentNode]) -> Void in
@@ -162,6 +163,18 @@ class ViewController: UIViewController {
             }
         }.error { error in
             debugPrint(error)
+        }
+        
+        ExpSwift.findFeeds(["limit":2, "skip":0, "sort":"name"]).then { (feeds: SearchResults<Feed>) -> Void in
+            for feed in feeds.getResults() {
+                debugPrint(feed.get("name"))
+                
+                feed.getData().then { (data) -> Void in
+                    print(data)
+                }
+            }
+            }.error { error in
+                debugPrint(error)
         }
         
         //CALLBACK CONNECTION ONLINE

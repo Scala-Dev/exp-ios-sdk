@@ -42,6 +42,7 @@ enum Router: URLRequestConvertible {
     case getThing(String)
     case findThings([String: AnyObject])
     case getFeed(String)
+    case getFeedData(String)
     case findFeeds([String: AnyObject])
     case login([String: AnyObject])
     var method: Alamofire.Method {

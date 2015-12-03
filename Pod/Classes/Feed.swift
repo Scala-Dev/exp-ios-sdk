@@ -7,7 +7,8 @@
 //
 
 import Foundation
-
+import PromiseKit
+import Alamofire
 
 public final class Feed: Model,ResponseObject,ResponseCollection {
     
@@ -33,26 +34,26 @@ public final class Feed: Model,ResponseObject,ResponseCollection {
                 }
             }
         }
-        return devices
+        return feeds
     }
     
     /**
-     Get Children from Node
-     @return Promise<[Content]>.
+     Get output from Feed
+     @return Promise<AnyObject>.
      */
     public func getData() ->Promise<AnyObject>{
 
         return Promise { fulfill, reject in
-            Alamofire.request(Router.getFeedData(uuid) )
-                .responseObject { (response: Response<AnyObject, NSError>) in
-                    switch response.result{
+            Alamofire.request(Router.getFeedData(uuid))
+                .responseJSON {response in
+                    switch response.result {
                     case .Success(let data):
-                        
                         fulfill(data)
                     case .Failure(let error):
                         return reject(error)
                     }
-            }
+                }
+
         }
         
     }
