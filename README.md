@@ -345,6 +345,32 @@ Query for multiple things. Resolves to an array of [Thing Objects](#thing-object
         }
 ```
 
+### ExpSwift.getFeed(uuid:String)
+Get a single feed by UUID. Resolves to a [Feed Object](#feed-object).
+```swift
+//GET FEED
+ExpSwift.getFeed("3e2e25df-8324-4912-91c3-810751f527a4").then { (feed: Feed) -> Void  in
+println(feed.get("name"))
+}.error { error in
+println(error)
+}
+
+```
+
+### ExpSwift.findFeeds(params:[String:AnyObject])
+Query for multiple feeds. Resolves to an array of [Feed Objects](#feed-object).
+```swift
+//GET FEEDS
+ExpSwift.findLocations(["limit":10, "skip":0, "sort":"name"]).then { (locations: SearchResults<Feed>) -> Void  in
+for feed in feeds.getResults() {
+println(feed("name"))
+}
+}.error { error in
+println(error)
+}
+
+```
+
 
 # Abstract API Objects
 
@@ -399,8 +425,9 @@ Return array of Zones Object [Zone].
 
 
 ### Zone Object
-##### zone.uuid
-The zone's UUID.
+##### zone.name
+The zone's name.
+
 
 ### Data Object
 ##### data.group
@@ -411,6 +438,25 @@ The data item's key.
 
 ##### data.value
 The data item's value.
+
+
+### Feed Object
+
+##### feed.uuid
+The feed's UUID
+
+##### feed.getData()
+Get the feed's data. Resolves to the output of the feed query.
+```swift
+feed.getData().then { (data: [AnyObject]) -> Void in
+
+println(data)
+
+}.error { error in
+println(error)
+}
+
+```
 
 
 ## Author
