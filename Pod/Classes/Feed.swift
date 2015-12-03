@@ -36,5 +36,26 @@ public final class Feed: Model,ResponseObject,ResponseCollection {
         return devices
     }
     
+    /**
+     Get Children from Node
+     @return Promise<[Content]>.
+     */
+    public func getData() ->Promise<AnyObject>{
+
+        return Promise { fulfill, reject in
+            Alamofire.request(Router.getFeedData(uuid) )
+                .responseObject { (response: Response<AnyObject, NSError>) in
+                    switch response.result{
+                    case .Success(let data):
+                        
+                        fulfill(data)
+                    case .Failure(let error):
+                        return reject(error)
+                    }
+            }
+        }
+        
+    }
+    
 }
 

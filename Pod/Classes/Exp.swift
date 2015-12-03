@@ -72,6 +72,8 @@ enum Router: URLRequestConvertible {
             return .GET
         case .getFeed:
             return .GET
+        case .getFeedData:
+            return .GET
         case .findFeeds:
             return .GET
         case .login:
@@ -108,6 +110,8 @@ enum Router: URLRequestConvertible {
                 return "/api/things"
             case .getFeed(let uuid):
                 return "/api/connectors/feeds/\(uuid)"
+            case .getFeedData(let uuid):
+                return "/api/connectors/feeds/\(uuid)/data"
             case .findFeeds:
                 return "/api/connectors/feeds"
             case .login:
