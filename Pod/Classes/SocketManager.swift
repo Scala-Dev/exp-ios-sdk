@@ -218,6 +218,7 @@ public  class SocketManager {
     */
     public func disconnect(){
          self.socket.close()
+         self.channelCache = [:]
     }
     
 }
