@@ -45,4 +45,4 @@ SPEC CHECKSUMS:
   PromiseKit: 665540a1eb43156446872dcf49ed7dee6ebbe13b
   Socket.IO-Client-Swift: e9e173cf20d6fa33c1c1c4f6354c7b168259eeb6
 
-COCOAPODS: 0.38.2
+COCOAPODS: 0.39.0.beta.3

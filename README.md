@@ -110,11 +110,20 @@ There are four channels available:
 - "experience": Messages to/from devices in the current experience.
 - "location": Messages to/from devices in the current location.
 
+There is also the option for Dynamic Channels just by getting the channel with a name.
+
+
+
 ### How to get channels
 ```swift
 var orgchannel = ExpSwift.getChannel(SOCKET_CHANNELS.ORGANIZATION) as! OrganizationChannel 
 var systemChannel = ExpSwift.getChannel(SOCKET_CHANNELS.SYSTEM) as! SystemChannel
 
+```
+###Dynamic Channels
+You can get your own channel by name with 
+```swift
+var myChannel:CommonChannel = ExpSwift.getChannel("myChannel")
 ```
 
 ###  [Channel].fling(uuid)
