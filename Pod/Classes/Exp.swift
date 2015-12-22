@@ -136,6 +136,8 @@ enum Router: URLRequestConvertible {
                 return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
             case .findData(let parameters):
                 return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+            case .findThings(let parameters):
+                return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
             case .findContentNodes(let parameters):
                 return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
             case .findFeeds(let parameters):
@@ -515,5 +517,11 @@ public func getChannel(nameChannel:String) -> CommonChannel{
     return socketManager.getChannel(nameChannel)
 }
 
+/**
+ Stop Connection EXP
+*/
+public func stop(){
+    runtime.stop()
+}
 
 
