@@ -409,39 +409,31 @@ public func findFeeds(params:[String:AnyObject]) -> Promise<SearchResults<Feed>>
 }
 
 
-/**
-Login EXP system
-@param user,password,organization.
-@return Promise<Token>.
-*/
-func login(user:String,passwd:String,organization:String) ->Promise<Token>{
-    return Promise { fulfill, reject in
-        Alamofire.request(Router.login(["username":user,"password":passwd,"org":organization]))
-            .responseObject { (response: Response<Token, NSError>) in
-                switch response.result{
-                case .Success(let data):
-                    fulfill(data)
-                case .Failure(let error):
-                    return reject(error)
-                }
-        }
-        
-    }
-}
+
 
 /**
  Login EXP system
  @param user,password,organization.
  @return Promise<Token>.
  */
-func login(options:[String:String]) ->Promise<Token>{
+func login(options:[String:String]) ->Promise<Auth>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.login(options))
-            .responseObject { (response: Response<Token, NSError>) in
+            .responseObject { (response: Response<Auth, NSError>) in
                 switch response.result{
                 case .Success(let data):
                     fulfill(data)
+                    let expiration = data.get("expiration") as! Double
+                    let startDate = NSDate(timeIntervalSince1970: expiration/1000)
+                    let timeout = startDate.timeIntervalSinceDate(NSDate())
+                    after(NSTimeInterval(Int64(timeout))).then{ result -> Void in
+                        runtime.start(runtime.optionsRuntime)
+                    }
                 case .Failure(let error):
+                    // try again in 5 seconds
+                    after(NSTimeInterval(runtime.timeout)).then{ result -> Void in
+                        runtime.start(runtime.optionsRuntime)
+                    }
                     return reject(error)
                 }
         }
