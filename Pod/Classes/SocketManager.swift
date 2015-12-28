@@ -72,11 +72,7 @@ public  class SocketManager {
                         self.experienceChannel?.onResponse(response)
                         self.organizationChannel?.onResponse(response)
                     }else{
-                        if(self.channelCache.indexForKey(channel as! String) != nil){
-                            let commChannel:CommonChannel = self.channelCache[channel as! String]!
-                            commChannel.onResponse(response)
-                        }else{
-                            let channelEnum:SOCKET_CHANNELS = SOCKET_CHANNELS(rawValue: channel as! String)!
+                        if let channelEnum:SOCKET_CHANNELS = SOCKET_CHANNELS(rawValue: channel as! String)!{
                             switch channelEnum{
                             case .SYSTEM :
                                 self.systemChannel?.onResponse(response)
@@ -87,6 +83,9 @@ public  class SocketManager {
                             case .ORGANIZATION:
                                 self.organizationChannel?.onResponse(response)
                             }
+                        }else if(self.channelCache.indexForKey(channel as! String) != nil){
+                            let commChannel:CommonChannel = self.channelCache[channel as! String]!
+                            commChannel.onResponse(response)
                         }
                     }
                     
@@ -98,11 +97,7 @@ public  class SocketManager {
                         self.experienceChannel?.onRequest(response)
                         self.organizationChannel?.onRequest(response)
                     }else{
-                        if(self.channelCache.indexForKey(channel as! String) != nil){
-                            let commChannel:CommonChannel = self.channelCache[channel as! String]!
-                            commChannel.onRequest(response)
-                        }else{
-                            let channelEnum:SOCKET_CHANNELS = SOCKET_CHANNELS(rawValue: channel as! String)!
+                        if let channelEnum:SOCKET_CHANNELS = SOCKET_CHANNELS(rawValue: channel as! String)!{
                             switch channelEnum{
                                 case .SYSTEM :
                                     self.systemChannel?.onRequest(response)
@@ -113,6 +108,9 @@ public  class SocketManager {
                                 case .ORGANIZATION:
                                     self.organizationChannel?.onRequest(response)
                             }
+                        }else if(self.channelCache.indexForKey(channel as! String) != nil){
+                                let commChannel:CommonChannel = self.channelCache[channel as! String]!
+                                commChannel.onRequest(response)
                         }
                     }
                 }else if( Config.BROADCAST == type ){
@@ -123,11 +121,7 @@ public  class SocketManager {
                         self.experienceChannel?.onBroadcast(response)
                         self.organizationChannel?.onBroadcast(response)
                     }else{
-                        if(self.channelCache.indexForKey(channel as! String) != nil){
-                            let commChannel:CommonChannel = self.channelCache[channel as! String]!
-                            commChannel.onBroadcast(response)
-                        }else{
-                            let channelEnum:SOCKET_CHANNELS = SOCKET_CHANNELS(rawValue: channel as! String)!
+                        if let channelEnum:SOCKET_CHANNELS = SOCKET_CHANNELS(rawValue: channel as! String)!{
                             switch channelEnum{
                                 case .SYSTEM :
                                     self.systemChannel?.onBroadcast(response)
@@ -138,6 +132,9 @@ public  class SocketManager {
                                 case .ORGANIZATION:
                                     self.organizationChannel?.onBroadcast(response)
                             }
+                        }else if(self.channelCache.indexForKey(channel as! String) != nil){
+                                let commChannel:CommonChannel = self.channelCache[channel as! String]!
+                                commChannel.onBroadcast(response)
                         }
                     }
 
