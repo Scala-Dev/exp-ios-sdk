@@ -9,30 +9,21 @@
 import Foundation
 
 
-public final class Zone: ResponseObject,ResponseCollection {
-    public let name: String?
-    public let locationUuid: String?
-    public let proximity: Proximity?
-    public let uuid: String
-    public let org: String
-    public let labels: [String]?
+public final class Zone: Model,ResponseObject,ResponseCollection {
 
-
+    public let name: String
     
-    @objc required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
-        self.name = representation.valueForKeyPath("name") as? String
-        self.locationUuid = representation.valueForKeyPath("locationUuid") as? String
-        self.proximity = Proximity(response:response, representation: representation.valueForKeyPath("proximity")!)!
-        self.uuid = representation.valueForKeyPath("uuid") as! String
-        self.org = representation.valueForKeyPath("org") as! String
-        self.labels = representation.valueForKeyPath("labels") as? NSArray as? [String]
+    required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
+        if let representation = representation as? [String: AnyObject] {
+            self.name = representation["name"] as! String
+        } else {
+            self.name = ""
+        }
+        
+        super.init(response: response, representation: representation)
     }
-    
-    
-    
-    
-    
-    @objc public static func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [Zone] {
+
+    public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Zone] {
         var zones: [Zone] = []
         
         if let representation = representation as? [[String: AnyObject]] {
@@ -44,4 +35,5 @@ public final class Zone: ResponseObject,ResponseCollection {
         }
         return zones
     }
+    
 }

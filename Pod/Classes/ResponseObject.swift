@@ -10,31 +10,38 @@ import Foundation
 import Alamofire
 
 
-@objc public protocol ResponseObject {
+public protocol ResponseObject {
     init?(response: NSHTTPURLResponse, representation: AnyObject)
 }
 
 extension Request {
-    public func responseObject<T: ResponseObject>(completionHandler: (NSURLRequest, NSHTTPURLResponse?, T?, NSError?) -> Void) -> Self {
+ public func responseObject<T: ResponseObject>(completionHandler: Response<T, NSError> -> Void) -> Self {
         
-        let responseSerializer = GenericResponseSerializer<T> { request, response, data in
+        let responseSerializer = ResponseSerializer<T, NSError> { request, response, data, error in
+            guard error == nil else { return .Failure(error!) }
             let JSONResponseSerializer = Request.JSONResponseSerializer(options: .AllowFragments)
-            let (JSON: AnyObject?, serializationError) = JSONResponseSerializer.serializeResponse(request, response, data)
-            let result = JSON as? NSDictionary
-            let codeKey: AnyObject? = result?["code"]
-            if codeKey == nil{
-                if let response = response, JSON: AnyObject = JSON {
-                    return (T(response: response, representation: JSON), nil)
-                } else {
-                    return (nil,serializationError)
+            let result = JSONResponseSerializer.serializeResponse(request, response, data, error)
+            
+            switch result {
+            case .Success(let value):
+                let dic = value as! NSDictionary
+                if let _ = dic.objectForKey("code") as? String{
+                    let failureReason = dic.objectForKey("message") as! String
+                    let error = Error.errorWithCode(.JSONSerializationFailed, failureReason: failureReason)
+                    return .Failure(error)
                 }
-                
-            }else{
-                // if there is ERROR return the message and code error
-                let code:String = codeKey as! String
-                let message:String = result?["message"] as! String
-                return (nil, NSError(domain: hostUrl, code: Config.EXP_REST_API_ERROR, userInfo: ["code":code,"message":message]))
-            } 
+                if let response = response,
+                    responseObject = T(response: response, representation: value)
+                {
+                    return .Success(responseObject)
+                } else {
+                    let failureReason = "JSON could not be serialized into response object: \(value)"
+                    let error = Error.errorWithCode(.JSONSerializationFailed, failureReason: failureReason)
+                    return .Failure(error)
+                }
+            case .Failure(let error):
+                return .Failure(error)
+            }
         }
         
         return response(responseSerializer: responseSerializer, completionHandler: completionHandler)

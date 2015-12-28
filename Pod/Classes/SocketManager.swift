@@ -60,9 +60,9 @@ public  class SocketManager {
 
             }
             self.socket.on(Config.SOCKET_MESSAGE) {data, ack in
-                var response = data?.firstObject as! NSDictionary
-                let type = response["type"] as! String
-                let channel: AnyObject? = response["channel"]
+                let response = data[0] as! NSDictionary
+                let type = response.objectForKey("type") as! String
+                let channel: AnyObject? = response.objectForKey("channel")
                 if ( Config.RESPONSE == type ){
                     //if channel is null call all the channels
                     if(channel == nil){
@@ -81,8 +81,6 @@ public  class SocketManager {
                                 self.experienceChannel?.onResponse(response)
                             case .ORGANIZATION:
                                 self.organizationChannel?.onResponse(response)
-                            default:
-                                self.systemChannel?.onResponse(response)
                         }
                     }
                     
@@ -104,8 +102,6 @@ public  class SocketManager {
                                 self.experienceChannel?.onRequest(response)
                             case .ORGANIZATION:
                                 self.organizationChannel?.onRequest(response)
-                            default:
-                                self.systemChannel?.onRequest(response)
                         }
                     }
                 }else if( Config.BROADCAST == type ){
@@ -126,8 +122,6 @@ public  class SocketManager {
                                 self.experienceChannel?.onBroadcast(response)
                             case .ORGANIZATION:
                                 self.organizationChannel?.onBroadcast(response)
-                            default:
-                                self.systemChannel?.onBroadcast(response)
                         }
                     }
 
@@ -143,7 +137,7 @@ public  class SocketManager {
         @return Promise<Any>.
     */
     public func getCurrentExperience() ->Promise<Any>{
-        var msg:Dictionary<String,String> = ["type": "request", "name": "getCurrentExperience"]
+        let msg:Dictionary<String,String> = ["type": "request", "name": "getCurrentExperience"]
         return systemChannel!.request(msg)
     }
     
@@ -152,7 +146,7 @@ public  class SocketManager {
         @return Promise<Any>.
     */
     public func getCurrentDevice() ->Promise<Any>{
-        var msg:Dictionary<String,String> = ["type": "request", "name": "getCurrentDevice"]
+        let msg:Dictionary<String,String> = ["type": "request", "name": "getCurrentDevice"]
         return systemChannel!.request(msg)
     }
 
@@ -182,8 +176,6 @@ public  class SocketManager {
                 return organizationChannel!
             case .EXPERIENCE:
                 return experienceChannel!
-            default:
-                return systemChannel!
         }
     
     }
@@ -192,9 +184,7 @@ public  class SocketManager {
     Disconnect from exp and remove token
     */
     public func disconnect(){
-        if(self.socket.connected){
-            self.socket.close(fast: true)
-        }
+         self.socket.close()
     }
     
 }

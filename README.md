@@ -10,15 +10,27 @@
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ## Requirements
+CocoaPods (https://cocoapods.org/)
+Swift 2 (Xcode 7.x required)
+
+Note: Xcode 7.x uses Swift 2 and is will not work with Swift 1.2 projects
+
+This project now supports Swift 2, if you still require Swift 1.2 you can use the `swift-1.2` branch in your Podfile
+
+You can download Xcode 6.4 and install it outside of Applications, if you have already upgraded to Xcode 7.x
+http://developer.apple.com/devcenter/download.action?path=/Developer_Tools/Xcode_6.4/Xcode_6.4.dmg
 
 ## Installation
 
 ExpSwift is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+it, add the following line to your Podfile:
 
 ```ruby
-pod "ExpSwift"
+use_frameworks!
+
+pod "ExpSwift", :git => 'https://github.com/ScalaInc/exp-ios-sdk.git', :branch => 'develop'
 ```
+
 ### ExpSwift.start(host,uuid,secret)
 Init exp connection for device with Host,Uuid,secret. 
 ```swift
@@ -26,11 +38,12 @@ import ExpSwift
 
   ExpSwift.start(host,"74c05552-5b9f-4d06-a3f8-8299ff1e1e3a","7b674d4ab63e80c62591ef3fcb51da1505f420d2a9ffda8ed5d24aa6384ad1c1f10985a4fc858b046b065bcdacc105dd").then{ result -> Void in
             println(result)
-            }.catch { error in
+            }.error { error in
                 println(error)
             }
 
 ```
+
 ### ExpSwift.start(host,user,password,organization)
 Init exp connection for user with Host,User,Password,Organization.
 ```swift
@@ -38,11 +51,40 @@ import ExpSwift
 
   ExpSwift.start(host,"cesar.oyarzun@scala.com","Com5715031","scala").then{ result -> Void in
             println(result)
-            }.catch { error in
+            }.error { error in
                 println(error)
             }
 
 ```
+
+### ExpSwift.start(options)
+Init exp connection for user with options object.
+```swift
+import ExpSwift
+
+ExpSwift.start(["host": "https://api.exp.scala.com", "username":"cesar.oyarzun@scala.com", "password":"Com5715031", "organization":"scala").then{ result -> Void in
+println(result)
+}.error { error in
+println(error)
+}
+
+```
+#### Options Fields
+User authentication:
+"host" (optional)
+"username" (required)
+"password" (required)
+"organization" (required)
+
+Device authentication:
+"host" (optional)
+"deviceUuid" (required)
+"secret" (required)
+
+Network authentication:
+"host" (optional)
+"networkUuid" (required)
+"apiKey" (required)
 
 
 # ExpSwift.connection
@@ -74,6 +116,15 @@ var orgchannel = ExpSwift.getChannel(SOCKET_CHANNELS.ORGANIZATION) as! Organizat
 var systemChannel = ExpSwift.getChannel(SOCKET_CHANNELS.SYSTEM) as! SystemChannel
 
 ```
+
+###  [Channel].fling(uuid)
+Fling content on a channel. UUID is the UUID of the content object you are flinging.
+```swift
+//FLING CONTENT
+ var organizationChannel = ExpSwift.getChannel(SOCKET_CHANNELS.ORGANIZATION) as! OrganizationChannel
+     organizationChannel.fling("8930ff64-1063-4a03-b1bc-33e1ba463d7a")
+```
+
 ###  [Channel].listen(options, callback)
 Register a callback for a message on this channel.
 ```swift
@@ -103,7 +154,7 @@ Send a request to another device. Returns a promise.
             var msg:Dictionary<String,String> = ["type": "request", "name": "getCurrentExperience"]
             systemChannel.request(msg).then { obj -> Void in
                             println(obj)
-            }.catch { error in
+            }.error { error in
                 println(error)
             }
 ```
@@ -130,8 +181,8 @@ Get the current device. Resolves to a [Device Object](#device-object).
 ```swift
 //GET CURRENT DEVICE
         ExpSwift.getCurrentDevice().then { device -> Void  in
-            println(device)
-            }.catch { error in
+            println(device.get("name"))
+            }.error { error in
                 println(error)
         }
 ```
@@ -140,21 +191,21 @@ Get a single device by UUID. Resolves to a [Device Object](#device-object).
 ```swift
  //GET DEVICE
         ExpSwift.getDevice("8930ff64-1063-4a03-b1bc-33e1ba463d7a").then { (device: Device) -> Void  in
-                println(device.name)
-            }.catch { error in
+                println(device.get("name"))
+            }.error { error in
                 println(error)
         }
 ```
 
-### ExpSwift.getDevices(limit:Int,skip:Int,sort:String)
+### ExpSwift.findDevices(params:[String:AnyObject])
 Query for multiple devices. Resolves to an array of [Device Objects](#device-object).
 ```swift
  //GET DEVICES
-        ExpSwift.getDevices(10,0,"name").then { (devices: Array<Device>) -> Void  in
-            for device in devices{
-                println(device.name)
+        ExpSwift.findDevices(["limit":10, "skip":0, "sort":"name"]).then { (devices: SearchResults<Device>) -> Void  in
+            for device in devices.getResults() {
+                println(device.get("name"))
             }
-        }.catch { error in
+        }.error { error in
             println(error)
         }
 ```
@@ -163,8 +214,8 @@ Get the current experience. Resolves to an [Experience Object](#experience-objec
 ```swift
 //GET CURRENT EXPERIENCE
         ExpSwift.getCurrentExperience().then { experience -> Void  in
-            println(experience)
-            }.catch { error in
+            println(experience.get("name"))
+            }.error { error in
                 println(error)
         }
 ```
@@ -173,20 +224,20 @@ Get a single experience by UUID. Resolves to a [Experience Object](#experience-o
 ```swift
 //GET EXPERIENCE
         ExpSwift.getExperience("58dc59e4-a44c-4b6e-902b-e6744c09d933").then { (experience: Experience) -> Void  in
-            println(experience.name)
-        }.catch { error in
+            println(experience.get("name"))
+        }.error { error in
                 println(error)
         }
 ```
-### ExpSwift.getExperiences(limit:Int,skip:Int,sort:String)
+### ExpSwift.findExperiences(params:[String:AnyObject])
 Query for multiple experiences. Resolves to an array of [Experience Objects](#experience-object).
 ```swift
  //GET EXPERIENCES
-        ExpSwift.getExperiences(10,0,"name").then { (experiences: Array<Experience>) -> Void  in
-            for experience in experiences{
-                println(experience.name)
+        ExpSwift.findExperiences(["limit":10, "skip":0, "sort":"name"]).then { (experiences: SearchResults<Experience>) -> Void  in
+            for experience in experiences.getResults() {
+                println(experience.get("name"))
             }
-        }.catch { error in
+        }.error { error in
                 println(error)
         }
 
@@ -197,61 +248,127 @@ Get a single location by UUID. Resolves to a [Location Object](#location-object)
 ```swift
  //GET LOCATION
         ExpSwift.getLocation("3e2e25df-8324-4912-91c3-810751f527a4").then { (location: Location) -> Void  in
-            println(location.name)
-            }.catch { error in
+            println(location.get("name"))
+            }.error { error in
                 println(error)
         }
 
 ```
 
-### ExpSwift.getLocations(limit:Int,skip:Int,sort:String)
+### ExpSwift.findLocations(params:[String:AnyObject])
 Query for multiple locations. Resolves to an array of [Location Objects](#location-object).
 ```swift
 //GET LOCATIONS
-        ExpSwift.getLocations(10,0,"name").then { (locations: Array<Location>) -> Void  in
-            for location in locations{
-                println(location.name)
+        ExpSwift.findLocations(["limit":10, "skip":0, "sort":"name"]).then { (locations: SearchResults<Location>) -> Void  in
+            for location in locations.getResults() {
+                println(location.get("name"))
             }
-            }.catch { error in
+            }.error { error in
                 println(error)
         }
 
 ```
 
-### ExpSwift.getZone(uuid:String)
-Get a single zone by UUID. Resolves to a [Zone Object](#zone-object).
-```swift
-//GET ZONE
-        ExpSwift.getZone("1").then { (zone: Zone) -> Void  in
-                println(zone.name)
-            }.catch { error in
-                println(error)
-        }
-
-```
-
-### ExpSwift.getZones(limit:Int,skip:Int,sort:String)
-Query for multiple zones. Resolves to an array of [Zone Objects](#zone-object).
-```swift
-//GET ZONES
-        ExpSwift.getZones(10,0,"name").then { (zones: Array<Zone>) -> Void  in
-            for zone in zones{
-                println(zone.name)
-            }
-            }.catch { error in
-                println(error)
-        }
-
-```
 
 ### ExpSwift.getContentNode(uuid)
 Get a content node by UUID. Resolves to a [ContentNode Object](#content-object). Note: The UUID value of 'root' will return the contents of the root folder of the current organization.
 ```swift
 ExpSwift.getContentNode("root").then { (content: ContentNode) -> Void  in
-                          println(content.document["name"])
-                        }.catch { error in
+                          println(content.get("name"))
+                        }.error { error in
                             println(error)
                         }
+```
+
+### ExpSwift.findContentNodes(params:[String:AnyObject])
+Query for multiple content nodes. Resolves to a SearchResults object containing [ContentNode Objects](#content-object).
+```swift
+//GET CONTENT
+ExpSwift.findContentNodes(["limit":10, "skip":0, "sort":"name", "name":"images"]).then { (data: SearchResults<ContentNode>) -> Void  in
+for contentNode in data.getResults() {
+println(contentNode.get("name"))
+}
+}.error { error in
+println(error)
+}
+
+```
+
+
+### ExpSwift.getData(group:String, key:String)
+Get a single data item by group and key. Resolves to a [Data Object](#data-object).
+```swift
+//GET DATA
+ExpSwift.getData("cats", "fluffbottom").then { (data: Data) -> Void  in
+println(data.get("value"))
+}.error { error in
+println(error)
+}
+
+```
+
+### ExpSwift.findData(params:[String:AnyObject])
+Query for multiple data items. Resolves to an SearchResults object containing [Data Objects](#data-object).
+```swift
+//GET DATA
+ExpSwift.findData(["limit":10, "skip":0, "sort":"key", "group":"cats"]).then { (data: SearchResults<Data>) -> Void  in
+for dataItem in data.getResults() {
+println(dataItem.get("value"))
+}
+}.error { error in
+println(error)
+}
+
+```
+
+### ExpSwift.getThing(uuid:String)
+Get a single thing by UUID. Resolves to a [Thing Object](#thing-object).
+```swift
+ //GET THING
+        ExpSwift.getThing("8930ff64-1063-4a03-b1bc-33e1ba463d7a").then { (thing: Thing) -> Void  in
+                println(thing.get("name"))
+            }.error { error in
+                println(error)
+        }
+```
+
+### ExpSwift.findThings(params:[String:AnyObject])
+Query for multiple things. Resolves to an array of [Thing Objects](#thing-object).
+```swift
+ //FIND THINGS
+        ExpSwift.findThings(["limit":10, "skip":0, "sort":"name"]).then { (things: SearchResults<Thing>) -> Void  in
+            for thing in things.getResults() {
+                println(thing.get("name"))
+            }
+        }.error { error in
+            println(error)
+        }
+```
+
+### ExpSwift.getFeed(uuid:String)
+Get a single feed by UUID. Resolves to a [Feed Object](#feed-object).
+```swift
+//GET FEED
+ExpSwift.getFeed("3e2e25df-8324-4912-91c3-810751f527a4").then { (feed: Feed) -> Void  in
+println(feed.get("name"))
+}.error { error in
+println(error)
+}
+
+```
+
+### ExpSwift.findFeeds(params:[String:AnyObject])
+Query for multiple feeds. Resolves to an array of [Feed Objects](#feed-object).
+```swift
+//GET FEEDS
+ExpSwift.findLocations(["limit":10, "skip":0, "sort":"name"]).then { (locations: SearchResults<Feed>) -> Void  in
+for feed in feeds.getResults() {
+println(feed("name"))
+}
+}.error { error in
+println(error)
+}
+
 ```
 
 
@@ -267,18 +384,24 @@ Get the immediate children of this content node. Resolves to an array of [Conten
 ```swift
  content.getChildren().then { (children: [ContentNode]) -> Void in
                             for child in children{
-                                println(child.document["name"])
+                                println(child.get("name"))
                             }
-                            }.catch { error in
+                            }.error { error in
                                 println(error)
                             }
 
 ```
 
 ##### content.getUrl()
-Get the absolute url to the content node data. Useful for image/video tags or to download a content file.
+Get the absolute url to the content node data. Useful for image/video tags or to download a content file. Returns empty String for folders
 ```swift
 let url = content.getUrl();
+```
+
+##### content.getVariantUrl(name:String)
+Get the absolute url to the content node's variant data. Useful for image/video thumbnails or transcoded videos. Returns empty String for folders or if content does not contain the variant
+```swift
+let url = content.getVariantUrl("320.png");
 ```
 
 ### Device Object
@@ -286,17 +409,54 @@ let url = content.getUrl();
 ##### device.uuid
 The devices UUID
 
+### Thing Object
+
+##### thing.uuid
+The thing UUID
+
 
 ### Location Object
 
 ##### location.uuid
 The location's UUID.
 
+##### location.getZones()
+Return array of Zones Object [Zone].
+
 
 ### Zone Object
-##### zone.uuid
-The zone's UUID.
+##### zone.name
+The zone's name.
 
+
+### Data Object
+##### data.group
+The data item's group.
+
+##### data.key
+The data item's key.
+
+##### data.value
+The data item's value.
+
+
+### Feed Object
+
+##### feed.uuid
+The feed's UUID
+
+##### feed.getData()
+Get the feed's data. Resolves to the output of the feed query.
+```swift
+feed.getData().then { (data: [AnyObject]) -> Void in
+
+println(data)
+
+}.error { error in
+println(error)
+}
+
+```
 
 
 ## Author

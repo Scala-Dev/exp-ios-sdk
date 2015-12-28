@@ -13,11 +13,11 @@ import PromiseKit
 import JWT
 
 
-
-var hostUrl: String = ""
+var hostUrl: String = "https://api.exp.scala.com"
 var tokenSDK: String = ""
 var socketManager = SocketManager()
 var runtime = Runtime()
+
 
 
 public enum SOCKET_CHANNELS: String {
@@ -28,14 +28,133 @@ public enum SOCKET_CHANNELS: String {
 }
 
 
+enum Router: URLRequestConvertible {
+    case findDevices([String: AnyObject])
+    case getDevice(String)
+    case getExperience(String)
+    case findExperiences([String: AnyObject])
+    case getLocation(String)
+    case findLocations([String: AnyObject])
+    case getContentNode(String)
+    case findContentNodes([String: AnyObject])
+    case findData([String: AnyObject])
+    case getData(String,String)
+    case getThing(String)
+    case findThings([String: AnyObject])
+    case getFeed(String)
+    case getFeedData(String)
+    case findFeeds([String: AnyObject])
+    case login([String: AnyObject])
+    var method: Alamofire.Method {
+        switch self {
+        case .findDevices:
+            return .GET
+        case .getDevice:
+            return .GET
+        case .getExperience:
+            return .GET
+        case .findExperiences:
+            return .GET
+        case .getLocation:
+            return .GET
+        case .findLocations:
+            return .GET
+        case .getContentNode:
+            return .GET
+        case .findContentNodes:
+            return .GET
+        case .findData:
+            return .GET
+        case .getData:
+            return .GET
+        case .getThing:
+            return .GET
+        case .findThings:
+            return .GET
+        case .getFeed:
+            return .GET
+        case .getFeedData:
+            return .GET
+        case .findFeeds:
+            return .GET
+        case .login:
+            return .POST
+        }
+        
+    }
+    
+    var path: String {
+        switch self {
+            case .getDevice(let uuid):
+                return "/api/devices/\(uuid)"
+            case .findDevices:
+                return "/api/devices"
+            case .getExperience(let uuid):
+                return "/api/experiences/\(uuid)"
+            case .findExperiences:
+                return "/api/experiences"
+            case .getLocation(let uuid):
+                return "/api/locations/\(uuid)"
+            case .findLocations:
+                return "/api/locations"
+            case .getContentNode(let uuid):
+                return "/api/content/\(uuid)/children"
+            case .findContentNodes:
+                return "/api/content"
+            case .findData:
+                return "/api/data"
+            case .getData(let group, let key):
+                return "/api/data/\(group)/\(key)"
+            case .getThing(let uuid):
+                return "/api/things/\(uuid)"
+            case .findThings:
+                return "/api/things"
+            case .getFeed(let uuid):
+                return "/api/connectors/feeds/\(uuid)"
+            case .getFeedData(let uuid):
+                return "/api/connectors/feeds/\(uuid)/data"
+            case .findFeeds:
+                return "/api/connectors/feeds"
+            case .login:
+                return "/api/auth/login"
+        }
+        
+    }
+    
+    var URLRequest: NSMutableURLRequest {
+        let URL = NSURL(string: hostUrl)!
+        let mutableURLRequest = NSMutableURLRequest(URL: URL.URLByAppendingPathComponent(path))
+        mutableURLRequest.HTTPMethod = method.rawValue
+        mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        mutableURLRequest.setValue("Bearer \(tokenSDK)", forHTTPHeaderField: "Authorization")
+        switch self {
+            case .findDevices(let parameters):
+                return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+            case .findExperiences(let parameters):
+                return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+            case .findLocations(let parameters):
+                return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+            case .findData(let parameters):
+                return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+            case .findContentNodes(let parameters):
+                return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+            case .findFeeds(let parameters):
+                return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+            case .login(let parameters):
+                return Alamofire.ParameterEncoding.JSON.encode(mutableURLRequest, parameters: parameters).0
+            default:
+                return mutableURLRequest
+        }
+    }
+}
 
 /**
-    Initialize the SDK and connect to EXP.
-    @param host,uuid,secret.
-    @return Promise<Bool>.
+Initialize the SDK and connect to EXP.
+@param host,uuid,secret.
+@return Promise<Bool>.
 */
 public func start(host: String, uuid: String, secret: String)  -> Promise<Bool> {
-        return runtime.start(host, uuid: uuid, secret: secret)
+    return runtime.start(host, uuid: uuid, secret: secret)
 }
 
 /**
@@ -43,33 +162,37 @@ Initialize the SDK and connect to EXP.
 @param host,user,password,organization.
 @return Promise<Bool>.
 */
-
 public func start(host:String , user: String , password:String, organization:String) -> Promise<Bool> {
     return runtime.start(host, user: user, password: password, organization: organization)
 }
 
 /**
-    Get list of devices
-    @param limit,skip,sort.
-    @return Promise<Array<Device>>.
+Initialize the SDK and connect to EXP.
+@param options.
+@return Promise<Bool>.
 */
-public func getDevices(limit:Int, skip:Int, sort:String) -> Promise<Array<Device>>{
-        return Promise { fulfill, reject in
-                let request = Alamofire.request(.GET, hostUrl + "/api/devices?" + "limit=" + String(limit) + "&skip=" + String(skip) + "&sort=" + sort )
-                   request.responseCollection { (request, response, devices: [Device]?, error) in
-                    
-                    var statusCode = response?.statusCode
-                        if(error != nil) {
-                            return reject(error!)
-                        }
-                        if(statusCode < 200 || statusCode > 299) {
-                            return reject(NSError(domain: hostUrl + "/api/devices", code: statusCode!, userInfo: [:]))
-                        }
-                        fulfill(devices!)
-                }
-    }
+public func start(options:[String:String]) -> Promise<Bool> {
+    return runtime.start(options)
 }
 
+/**
+    Get list of devices
+    @param dictionary of search params
+    @return Promise<SearchResults<Device>>.
+*/
+public func findDevices(params:[String:AnyObject]) -> Promise<SearchResults<Device>>{
+    return Promise { fulfill, reject in
+     Alamofire.request(Router.findDevices(params))
+            .responseCollection { (response: Response<SearchResults<Device>, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
 
 /**
     Get Device by UUID
@@ -78,16 +201,14 @@ public func getDevices(limit:Int, skip:Int, sort:String) -> Promise<Array<Device
 */
 public func getDevice(uuid:String) -> Promise<Device>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/devices/" + uuid )
-        request.responseObject { (request, response, device: Device?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/devices", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(device!)
+      Alamofire.request( Router.getDevice(uuid) )
+            .responseObject { (response: Response<Device, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                   return reject(error)
+                }
         }
     }
 }
@@ -99,41 +220,36 @@ public func getDevice(uuid:String) -> Promise<Device>{
 */
 public func getExperience(uuid:String) -> Promise<Experience>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/experiences/" + uuid )
-        request.responseObject { (request, response, experience: Experience?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
+       Alamofire.request(Router.getExperience(uuid) )
+        .responseObject { (response: Response<Experience, NSError>) in
+            switch response.result{
+            case .Success(let data):
+                fulfill(data)
+            case .Failure(let error):
+                return reject(error)
             }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/experiences", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(experience!)
         }
     }
 }
 
 /**
     Get list of Experiences
-    @param limit,skip,sort.
-    @return Promise<Array<Experience>>.
+    @param dictionary of search params
+    @return Promise<SearchResults<Experience>>.
 */
-public func getExperiences(limit:Int, skip:Int, sort:String) -> Promise<Array<Experience>>{
+public func findExperiences(params:[String:AnyObject]) -> Promise<SearchResults<Experience>>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/experiences?" + "limit=" + String(limit) + "&skip=" + String(skip) + "&sort=" + sort )
-        request.responseCollection { (request, response, experiences: [Experience]?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/experiences", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(experiences!)
+        Alamofire.request(Router.findExperiences(params))
+            .responseCollection { (response: Response<SearchResults<Experience>, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                    return reject(error)
+                }
         }
     }
 }
-
 
 /**
     Get Location By UUID
@@ -142,101 +258,150 @@ public func getExperiences(limit:Int, skip:Int, sort:String) -> Promise<Array<Ex
 */
 public func getLocation(uuid:String) -> Promise<Location>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/locations/" + uuid )
-        request.responseObject { (request, response, location: Location?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/locations", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(location!)
+        Alamofire.request(Router.getLocation(uuid) )
+            .responseObject { (response: Response<Location, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                    return reject(error)
+                }
         }
     }
 }
 
 /**
     Get list of Location
-    @param limit,skip,sort.
-    @return Promise<Array<Experience>>.
+    @param dictionary of search params
+    @return Promise<SearchResults<Location>>.
 */
-public func getLocations(limit:Int, skip:Int, sort:String) -> Promise<Array<Location>>{
+public func findLocations(params:[String:AnyObject]) -> Promise<SearchResults<Location>>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/locations?" + "limit=" + String(limit) + "&skip=" + String(skip) + "&sort=" + sort )
-        request.responseCollection { (request, response, locations: [Location]?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/locations", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(locations!)
-        }
-    }
-}
-
-/**
-    Get list of Zones
-    @param limit,skip,sort.
-    @return Promise<Array<Zone>>.
-*/
-public func getZones(limit:Int, skip:Int, sort:String) -> Promise<Array<Zone>>{
-    return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/zones?" + "limit=" + String(limit) + "&skip=" + String(skip) + "&sort=" + sort )
-        request.responseCollection { (request, response, zones: [Zone]?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/zones", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(zones!)
-        }
-    }
-}
-
-/**
-    Get Zone By UUID
-    @param uuid.
-    @return Promise<Zone>.
-*/
-public func getZone(uuid:String) -> Promise<Zone>{
-    return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/zones/" + uuid )
-        request.responseObject { (request, response, zone: Zone?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/zones", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(zone!)
+        Alamofire.request(Router.findLocations(params))
+            .responseCollection { (response: Response<SearchResults<Location>, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                    return reject(error)
+                }
         }
     }
 }
 
 
 /**
-Get Zone By UUID
+Get Content Node By UUID
 @param uuid.
-@return Promise<Zone>.
+@return Promise<ContentNode>.
 */
 public func getContentNode(uuid:String) -> Promise<ContentNode>{
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.GET, hostUrl + "/api/content/" + uuid + "/children")
-        request.responseObject { (request, response, content: ContentNode?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/api/content", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(content!)
+        Alamofire.request(Router.getContentNode(uuid) )
+            .responseObject { (response: Response<ContentNode, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+/**
+ Get list of content node
+ @param dictionary of search params
+ @return Promise<SearchResults<ContentNode>>.
+ */
+public func findContentNodes(params:[String:AnyObject]) -> Promise<SearchResults<ContentNode>>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.findContentNodes(params))
+            .responseCollection { (response: Response<SearchResults<ContentNode>, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+
+/**
+Find Data with params
+@param [String:AnyObject].
+@return Promise<SearchResults<Data>>.
+*/
+public func findData(params:[String:AnyObject]) -> Promise<SearchResults<Data>>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.findData(params))
+            .responseCollection { (response: Response<SearchResults<Data>, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+
+/**
+Get Data by Group and Key
+@param uuid.
+@return Promise<Data>.
+*/
+public func getData(group: String,  key: String) -> Promise<Data>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.getData(group, key))
+            .responseObject { (response: Response<Data, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+/**
+ Get Feed By UUID
+ @param uuid.
+ @return Promise<Feed>.
+ */
+public func getFeed(uuid:String) -> Promise<Feed>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.getFeed(uuid) )
+            .responseObject { (response: Response<Feed, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+/**
+ Get list of Feeds
+ @param dictionary of search params
+ @return Promise<SearchResults<Feed>>.
+ */
+public func findFeeds(params:[String:AnyObject]) -> Promise<SearchResults<Feed>>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.findFeeds(params))
+            .responseCollection { (response: Response<SearchResults<Feed>, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                    return reject(error)
+                }
         }
     }
 }
@@ -248,21 +413,59 @@ Login EXP system
 @return Promise<Token>.
 */
 func login(user:String,passwd:String,organization:String) ->Promise<Token>{
-    
     return Promise { fulfill, reject in
-        let request = Alamofire.request(.POST, hostUrl + "/api/auth/login",parameters:["username":user,"password":passwd,"org":organization],encoding: .JSON)
-        request.responseObject { (request, response, token: Token?, error) in
-            var statusCode = response?.statusCode
-            if(error != nil) {
-                return reject(error!)
-            }
-            if(statusCode < 200 || statusCode > 299) {
-                return reject(NSError(domain: hostUrl + "/auth/login", code: statusCode!, userInfo: [:]))
-            }
-            fulfill(token!)
+        let req = Alamofire.request(Router.login(["username":user,"password":passwd,"org":organization]))
+            .responseObject { (response: Response<Token, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                    return reject(error)
+                }
+        }
+        debugPrint(req)
+    }
+}
+
+/**
+Get Thing by UUID
+@param uuid.
+@return Promise<Thing>.
+*/
+public func getThing(uuid:String) -> Promise<Thing>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.getThing(uuid))
+            .responseObject { (response: Response<Thing, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                    return reject(error)
+                }
         }
     }
 }
+
+/**
+Get list of things
+@param dictionary of search params
+@return Promise<Array<Thing>>.
+*/
+public func findThings(params:[String:AnyObject]) -> Promise<SearchResults<Thing>>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.findThings(params))
+            .responseCollection { (response: Response<SearchResults<Thing>, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+
 
 /**
 Get Current Device

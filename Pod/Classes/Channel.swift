@@ -20,5 +20,6 @@ public protocol Channel {
      func broadcast(var messageDic:[String:AnyObject])
      func listen(messageDic:[String: AnyObject], callback:CallBackType)
      func respond(messageDic:[String: AnyObject], callback:CallBackType)
+     func fling(uuid:String)
 
 }
