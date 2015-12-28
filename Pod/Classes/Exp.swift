@@ -416,7 +416,7 @@ Login EXP system
 */
 func login(user:String,passwd:String,organization:String) ->Promise<Token>{
     return Promise { fulfill, reject in
-        let req = Alamofire.request(Router.login(["username":user,"password":passwd,"org":organization]))
+        Alamofire.request(Router.login(["username":user,"password":passwd,"org":organization]))
             .responseObject { (response: Response<Token, NSError>) in
                 switch response.result{
                 case .Success(let data):
@@ -425,9 +425,29 @@ func login(user:String,passwd:String,organization:String) ->Promise<Token>{
                     return reject(error)
                 }
         }
-        debugPrint(req)
+        
     }
 }
+
+/**
+ Login EXP system
+ @param user,password,organization.
+ @return Promise<Token>.
+ */
+func login(options:[String:String]) ->Promise<Token>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.login(options))
+            .responseObject { (response: Response<Token, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
 
 /**
 Get Thing by UUID
