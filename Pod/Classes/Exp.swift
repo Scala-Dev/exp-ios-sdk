@@ -506,5 +506,14 @@ public func getChannel(typeChannel:SOCKET_CHANNELS) -> Any{
     return socketManager.getChannel(typeChannel)
 }
 
+/**
+ Get Channel By String
+ @param String nameChannel.
+ @return CommonChannel
+ */
+public func getChannel(nameChannel:String) -> CommonChannel{
+    return socketManager.getChannel(nameChannel)
+}
+
 
 
