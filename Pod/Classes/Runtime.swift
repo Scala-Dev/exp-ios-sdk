@@ -16,6 +16,7 @@ public class Runtime{
     
     var optionsRuntime = [String: String]()
     var timeout:NSTimeInterval = 5 // seconds
+    
     /**
     Initialize the SDK and connect to EXP.
     @param host,uuid,secret.

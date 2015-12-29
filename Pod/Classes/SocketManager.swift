@@ -221,4 +221,12 @@ public  class SocketManager {
          self.channelCache = [:]
     }
     
+    /**
+        Refresh Socket Connection
+    */
+    public func refreshConnection(){
+        self.socket.close()
+        self.socket.connect()
+    }
+    
 }
