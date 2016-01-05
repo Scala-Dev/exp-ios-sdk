@@ -13,7 +13,7 @@ import PromiseKit
 import JWT
 
 
-var hostUrl: String = "https://api.exp.scala.com"
+var hostUrl: String = ""
 var tokenSDK: String = ""
 var socketManager = SocketManager()
 var runtime = Runtime()

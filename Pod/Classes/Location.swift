@@ -44,4 +44,8 @@ public final class Location: Model,ResponseObject,ResponseCollection {
     public func getZones() -> [Zone]{
         return self.zones
     }
+    
+    public func getLayoutUrl() -> String {
+        return hostUrl + "/api/locations/" + self.uuid + "/layout"
+    }
 }
