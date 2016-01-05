@@ -46,10 +46,6 @@ public final class Location: Model,ResponseObject,ResponseCollection {
     }
     
     public func getLayoutUrl() -> String {
-        if self.get("hasLayout") as! Bool{
-            return hostUrl + "/api/locations/" + self.uuid + "/layout"
-        }else{
-            return ""
-        }
+        return hostUrl + "/api/locations/" + self.uuid + "/layout"
     }
 }
