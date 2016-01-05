@@ -45,6 +45,7 @@ enum Router: URLRequestConvertible {
     case getFeedData(String)
     case findFeeds([String: AnyObject])
     case login([String: AnyObject])
+    case refreshToken()
     var method: Alamofire.Method {
         switch self {
         case .findDevices:
@@ -78,6 +79,8 @@ enum Router: URLRequestConvertible {
         case .findFeeds:
             return .GET
         case .login:
+            return .POST
+        case .refreshToken:
             return .POST
         }
         
@@ -117,6 +120,8 @@ enum Router: URLRequestConvertible {
                 return "/api/connectors/feeds"
             case .login:
                 return "/api/auth/login"
+            case .refreshToken:
+                return "/api/auth/token"
         }
         
     }
@@ -135,6 +140,8 @@ enum Router: URLRequestConvertible {
             case .findLocations(let parameters):
                 return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
             case .findData(let parameters):
+                return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+            case .findThings(let parameters):
                 return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
             case .findContentNodes(let parameters):
                 return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
@@ -407,25 +414,33 @@ public func findFeeds(params:[String:AnyObject]) -> Promise<SearchResults<Feed>>
 }
 
 
+
+
 /**
-Login EXP system
-@param user,password,organization.
-@return Promise<Token>.
-*/
-func login(user:String,passwd:String,organization:String) ->Promise<Token>{
+ Login EXP system
+ @param options.
+ @return Promise<Auth>.
+ */
+func login(options:[String:String]) ->Promise<Auth>{
     return Promise { fulfill, reject in
-        let req = Alamofire.request(Router.login(["username":user,"password":passwd,"org":organization]))
-            .responseObject { (response: Response<Token, NSError>) in
+        Alamofire.request(Router.login(options))
+            .responseObject { (response: Response<Auth, NSError>) in
                 switch response.result{
                 case .Success(let data):
                     fulfill(data)
+                    setTokenSDK(data)
+                    refreshAuthToken(data)
                 case .Failure(let error):
+                    // try again in 5 seconds
+                    after(NSTimeInterval(runtime.timeout)).then{ result -> Void in
+                        runtime.start(runtime.optionsRuntime)
+                    }
                     return reject(error)
                 }
         }
-        debugPrint(req)
     }
 }
+
 
 /**
 Get Thing by UUID
@@ -455,6 +470,26 @@ public func findThings(params:[String:AnyObject]) -> Promise<SearchResults<Thing
     return Promise { fulfill, reject in
         Alamofire.request(Router.findThings(params))
             .responseCollection { (response: Response<SearchResults<Thing>, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+
+/**
+ Refresh Token
+ @param options.
+ @return Promise<Auth>.
+ */
+public func refreshToken() -> Promise<Auth>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.refreshToken())
+            .responseObject { (response: Response<Auth, NSError>) in
                 switch response.result{
                 case .Success(let data):
                     fulfill(data)
@@ -515,5 +550,43 @@ public func getChannel(nameChannel:String) -> CommonChannel{
     return socketManager.getChannel(nameChannel)
 }
 
+/**
+ Stop Connection EXP
+*/
+public func stop(){
+    runtime.stop()
+}
+
+
+/**
+ Refresh Auth Token Recursive with Timeout
+*/
+private func refreshAuthToken(result:Auth){
+    after(getTimeout(result)).then{ result -> Void in
+        refreshToken().then{ result -> Void in
+            setTokenSDK(result)
+            socketManager.refreshConnection()
+            refreshAuthToken(result)
+        }
+    }
+
+}
+
+/**
+ Get Time Out
+ */
+private func getTimeout(data:Auth) -> NSTimeInterval{
+    let expiration = data.get("expiration") as! Double
+    let startDate = NSDate(timeIntervalSince1970: expiration/1000)
+    let timeout = startDate.timeIntervalSinceDate(NSDate())
+    return NSTimeInterval(Int64(timeout))
+}
+
+/**
+ Set Token SDK
+ */
+private func setTokenSDK(data:Auth){
+    tokenSDK = data.get("token") as! String
+}
 
 

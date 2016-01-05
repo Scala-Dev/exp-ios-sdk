@@ -14,6 +14,9 @@ import JWT
 
 public class Runtime{
     
+    var optionsRuntime = [String: String]()
+    var timeout:NSTimeInterval = 5 // seconds
+    
     /**
     Initialize the SDK and connect to EXP.
     @param host,uuid,secret.
@@ -31,23 +34,25 @@ public class Runtime{
     public func start(host:String , user: String , password:String, organization:String) -> Promise<Bool> {
         return start(["host": host, "username": user, "password": password, "organization": organization])
     }
+
     
     
     /**
-    Initialize the SDK and connect to EXP.
-    @param options
-    @return Promise<Bool>.
-    */
+     Initialize the SDK and connect to EXP.
+     @param options
+     @return Promise<Bool>.
+     */
     public func start(options:[String:String]) -> Promise<Bool> {
-        
+        optionsRuntime = options
         return Promise { fulfill, reject in
+            
             if let host = options["host"] {
                 hostUrl=host
             }
             
             if let user = options["username"], password = options["password"], organization = options["organization"] {
-                login(user, passwd: password, organization: organization).then {(token: Token) -> Void  in
-                    tokenSDK = token.token
+                login(options).then {(auth: Auth) -> Void  in
+                    tokenSDK = auth.get("token") as! String
                     socketManager.start_socket().then { (result: Bool) -> Void  in
                         if result{
                             fulfill(true)
@@ -57,37 +62,47 @@ public class Runtime{
             }
             
             if let uuid = options["uuid"], secret = options["secret"] {
-                tokenSDK = JWT.encode(["uuid": uuid], algorithm: .HS256(secret))
-                socketManager.start_socket().then { (result: Bool) -> Void  in
-                    if result{
-                        fulfill(true)
+                let tokenSign = JWT.encode(["uuid": uuid], algorithm: .HS256(secret))
+                login(["token":tokenSign]).then {(auth: Auth) -> Void  in
+                    tokenSDK = auth.get("token") as! String
+                    socketManager.start_socket().then { (result: Bool) -> Void  in
+                        if result{
+                            fulfill(true)
+                        }
                     }
                 }
-
             }
             
             if let deviceUuid = options["deviceUuid"], secret = options["secret"] {
-                tokenSDK = JWT.encode(["uuid": deviceUuid], algorithm: .HS256(secret))
-                socketManager.start_socket().then { (result: Bool) -> Void  in
-                    if result{
-                        fulfill(true)
+                let tokenSign = JWT.encode(["uuid": deviceUuid], algorithm: .HS256(secret))
+                login(["token":tokenSign]).then {(auth: Auth) -> Void  in
+                    tokenSDK = auth.get("token") as! String
+                    socketManager.start_socket().then { (result: Bool) -> Void  in
+                        if result{
+                            fulfill(true)
+                        }
                     }
                 }
                 
             }
             
             if let networkUuid = options["networkUuid"], apiKey = options["apiKey"] {
-                tokenSDK = JWT.encode(["networkUuid": networkUuid], algorithm: .HS256(apiKey))
-                socketManager.start_socket().then { (result: Bool) -> Void  in
-                    if result{
-                        fulfill(true)
+                let tokenSign = JWT.encode(["networkUuid": networkUuid], algorithm: .HS256(apiKey))
+                login(["token":tokenSign]).then {(auth: Auth) -> Void  in
+                    tokenSDK = auth.get("token") as! String
+                    socketManager.start_socket().then { (result: Bool) -> Void  in
+                        if result{
+                            fulfill(true)
+                        }
                     }
                 }
+
                 
             }
             
         }
     }
+
     
     /**
     Stop socket connection.
