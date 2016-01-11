@@ -20,6 +20,14 @@ This project now supports Swift 2, if you still require Swift 1.2 you can use th
 You can download Xcode 6.4 and install it outside of Applications, if you have already upgraded to Xcode 7.x
 http://developer.apple.com/devcenter/download.action?path=/Developer_Tools/Xcode_6.4/Xcode_6.4.dmg
 
+for IOS 9.0 add Transport Security into info.plist
+```xml
+<key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
+```
 ## Installation
 
 ExpSwift is available through [CocoaPods](http://cocoapods.org). To install
