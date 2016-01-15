@@ -43,6 +43,7 @@ public class Runtime{
      @return Promise<Bool>.
      */
     public func start(options:[String:String]) -> Promise<Bool> {
+        expLogging("EXP start with options \(options)")
         optionsRuntime = options
         return Promise { fulfill, reject in
             
