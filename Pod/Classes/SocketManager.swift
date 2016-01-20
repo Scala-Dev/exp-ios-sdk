@@ -13,11 +13,7 @@ import PromiseKit
 
 public  class SocketManager {
     
-    public var socket = SocketIOClient(socketURL: hostUrl, options: ["log": false,
-        "reconnects": true,
-        "reconnectAttempts": 5,
-        "reconnectWait": 5,
-        "connectParams": ["token":tokenSDK]])
+    public var socket:SocketIOClient?
     
     var organizationChannel: OrganizationChannel?
     var locationChannel:LocationChannel?
@@ -37,15 +33,21 @@ public  class SocketManager {
         @return Promise<Bool>.
     */
     public func start_socket() -> Promise<Bool> {
-        
+        self.socket = SocketIOClient(socketURL: hostUrl, options: ["log": false,
+        "reconnects": true,
+        "reconnectAttempts": 5,
+        "reconnectWait": 5,
+        "connectParams": ["token":tokenSDK]])
+        expLogging("Starting EXP Socket Channels...")
         //init channels
-        organizationChannel = OrganizationChannel(socket: self.socket)
-        systemChannel = SystemChannel(socket: self.socket)
-        locationChannel = LocationChannel(socket: self.socket)
-        experienceChannel = ExperienceChannel(socket: self.socket)
+        organizationChannel = OrganizationChannel(socket: self.socket!)
+        systemChannel = SystemChannel(socket: self.socket!)
+        locationChannel = LocationChannel(socket: self.socket!)
+        experienceChannel = ExperienceChannel(socket: self.socket!)
         
         return Promise { fulfill, reject in
-            self.socket.on("connect") {data, ack in
+            self.socket!.on("connect") {data, ack in
+                expLogging("EXP socket connected")
                 fulfill(true)
                 if((self.connection.indexForKey(Config.ONLINE)) != nil){
                     let callBack = self.connection[Config.ONLINE]!
@@ -53,14 +55,15 @@ public  class SocketManager {
                 }
                 
             }
-            self.socket.on("disconnect") {data, ack in
+            self.socket!.on("disconnect") {data, ack in
+                expLogging("EXP socket disconnected")
                 if((self.connection.indexForKey(Config.OFFLINE)) != nil){
                     let callBack = self.connection[Config.OFFLINE]!
                     callBack(Config.OFFLINE)
                 }
 
             }
-            self.socket.on(Config.SOCKET_MESSAGE) {data, ack in
+            self.socket!.on(Config.SOCKET_MESSAGE) {data, ack in
                 let response = data[0] as! NSDictionary
                 let type = response.objectForKey("type") as! String
                 let channel: AnyObject? = response.objectForKey("channel")
@@ -140,7 +143,7 @@ public  class SocketManager {
 
                 }
             }
-            self.socket.connect()
+            self.socket!.connect()
         }
         
     }
@@ -203,7 +206,7 @@ public  class SocketManager {
         if(channelCache.indexForKey(channel) != nil){
             commonCh = channelCache[channel]!
         }else{
-            commonCh = CommonChannel(socket:self.socket,nameChannel: channel)
+            commonCh = CommonChannel(socket:self.socket!,nameChannel: channel)
             channelCache.updateValue(commonCh, forKey: channel)
         }
         return commonCh
@@ -214,7 +217,7 @@ public  class SocketManager {
     Disconnect from exp and remove token
     */
     public func disconnect(){
-         self.socket.close()
+         self.socket!.close()
          self.channelCache = [:]
     }
     
@@ -222,8 +225,9 @@ public  class SocketManager {
         Refresh Socket Connection
     */
     public func refreshConnection(){
-        self.socket.close()
-        self.socket.connect()
+        self.socket!.close()
+        self.socket!.connect()
+        expLogging("EXP refresh socket connection")
     }
     
 }
