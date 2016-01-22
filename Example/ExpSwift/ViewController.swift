@@ -16,9 +16,11 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         //        let host = "http://api.develop.exp.scala.com:9000"
         //        let host = "http://develop.exp.scala.com:9000"
-        let host = "https://api-develop.exp.scala.com"
+//        let host = "http://localhost:9000"
+
+        let host = "https://api.goexp.io"
         
-        ExpSwift.start(host,uuid: "5251de59-6123-4789-b73f-d4120174c7ac",secret: "442beccac548a7c97021b005d45e681eeb9cb82fddb38539e7149f196eda18d6e38508e8ff77a4e082c14b34c0c234c2").then{ result -> Void in
+        ExpSwift.start(host,user: "cesar.oyarzun@scala.com",password: "Com5715031@",organization: "").then{ result -> Void in
             
             //SENT REQUEST
             let systemChannel = ExpSwift.getChannel(SOCKET_CHANNELS.SYSTEM) as! SystemChannel
@@ -42,31 +44,33 @@ class ViewController: UIViewController {
                 debugPrint(resultListen)
             })
             
-           
-         }.then {result -> Void in
-            ExpSwift.findDevices(["limit":10, "skip":0, "sort":"name"]).then { (devices: SearchResults<Device>) -> Void in
+            ExpSwift.findLocations(["limit":10, "skip":0, "sort":"name"]).then { (devices: SearchResults<Location>) -> Void in
                 for device in devices.getResults() {
                     debugPrint(device.get("name"))
                 }
-                debugPrint(devices)
-            }.error { error in
-                debugPrint(error)
+//                debugPrint(devices)
+                }.error { error in
+//                    debugPrint(error)
             }
 
-            ExpSwift.getDevice("5251de59-6123-4789-b73f-d4120174c7ac").then { (device: Device) -> Void in
-                debugPrint(device)
-            }.error { error in
-                debugPrint(error)
-            }
             
-            ExpSwift.findContentNodes(["limit":10, "skip":0, "sort":"name", "name": "10-26-2015"]).then { (devices: SearchResults<ContentNode>) -> Void in
-                for device in devices.getResults() {
-                    debugPrint(device.get("name"))
-                }
-                debugPrint(devices)
-                }.error { error in
-                    debugPrint(error)
-            }
+           
+         }.then {result -> Void in
+            //
+//            ExpSwift.getDevice("5251de59-6123-4789-b73f-d4120174c7ac").then { (device: Device) -> Void in
+//                debugPrint(device)
+//            }.error { error in
+//                debugPrint(error)
+//            }
+//            
+//            ExpSwift.findContentNodes(["limit":10, "skip":0, "sort":"name", "name": "10-26-2015"]).then { (devices: SearchResults<ContentNode>) -> Void in
+//                for device in devices.getResults() {
+//                    debugPrint(device.get("name"))
+//                }
+//                debugPrint(devices)
+//                }.error { error in
+//                    debugPrint(error)
+//            }
             
             
 //            ExpSwift.getContentNode("root").then { (content: ContentNode) -> Void  in
@@ -117,75 +121,75 @@ class ViewController: UIViewController {
         
   
         
-        //GET DEVICES
-        ExpSwift.findDevices(["limit":10, "skip":0, "sort":"name"]).then { (devices: SearchResults<Device>) -> Void in
-            for device in devices.getResults() {
-                debugPrint(device.get("name"))
-            }
-        }.error { error in
-            debugPrint(error)
-        }
-        
-//        //GET DEVICE
-        ExpSwift.getDevice("8930ff64-1063-4a03-b1bc-33e1ba463d7a").then { (device: Device) -> Void in
-            debugPrint(device.get("name"))
-        }.error { error in
-            debugPrint(error)
-        }
-        
-//        //GET EXPERIENCE
-        ExpSwift.getExperience("58dc59e4-a44c-4b6e-902b-e6744c09d933").then { (experience: Experience) -> Void in
-            debugPrint(experience.get("name"))
-        }.error { error in
-            debugPrint(error)
-        }
-//
-//        //GET EXPERIENCES
-        ExpSwift.findExperiences(["limit":10, "skip":0, "sort":"name"]).then { (experiences: SearchResults<Experience>) -> Void in
-            for experience in experiences.getResults() {
-                debugPrint(experience.get("name"))
-            }
-        }.error { error in
-            debugPrint(error)
-        }
-//
-//        //GET LOCATION
-        ExpSwift.getLocation("3e2e25df-8324-4912-91c3-810751f527a4").then { (location: Location) -> Void  in
-            debugPrint(location.get("name"))
-        }.error { error in
-            debugPrint(error)
-        }
-//
-//        //GET LOCATIONS
-        ExpSwift.findLocations(["limit":10, "skip":0, "sort":"name"]).then { (locations: SearchResults<Location>) -> Void in
-            for location in locations.getResults() {
-                debugPrint(location.get("name"))
-            }
-        }.error { error in
-            debugPrint(error)
-        }
-        
-        ExpSwift.findFeeds(["limit":2, "skip":0, "sort":"name"]).then { (feeds: SearchResults<Feed>) -> Void in
-            for feed in feeds.getResults() {
-                debugPrint(feed.get("name"))
-                
-                feed.getData().then { (data) -> Void in
-                    print(data)
-                }
-            }
-            }.error { error in
-                debugPrint(error)
-        }
-        
-        //CALLBACK CONNECTION ONLINE
-        ExpSwift.connection("online", callback: { obj -> Void in
-            debugPrint(obj)
-        })
-        
-        //CALLBACK CONNECTION OFFLINE
-        ExpSwift.connection("offline", callback: { obj -> Void in
-            debugPrint(obj)
-        })
+//        //GET DEVICES
+//        ExpSwift.findDevices(["limit":10, "skip":0, "sort":"name"]).then { (devices: SearchResults<Device>) -> Void in
+//            for device in devices.getResults() {
+//                debugPrint(device.get("name"))
+//            }
+//        }.error { error in
+//            debugPrint(error)
+//        }
+//        
+////        //GET DEVICE
+//        ExpSwift.getDevice("8930ff64-1063-4a03-b1bc-33e1ba463d7a").then { (device: Device) -> Void in
+//            debugPrint(device.get("name"))
+//        }.error { error in
+//            debugPrint(error)
+//        }
+//        
+////        //GET EXPERIENCE
+//        ExpSwift.getExperience("58dc59e4-a44c-4b6e-902b-e6744c09d933").then { (experience: Experience) -> Void in
+//            debugPrint(experience.get("name"))
+//        }.error { error in
+//            debugPrint(error)
+//        }
+////
+////        //GET EXPERIENCES
+//        ExpSwift.findExperiences(["limit":10, "skip":0, "sort":"name"]).then { (experiences: SearchResults<Experience>) -> Void in
+//            for experience in experiences.getResults() {
+//                debugPrint(experience.get("name"))
+//            }
+//        }.error { error in
+//            debugPrint(error)
+//        }
+////
+////        //GET LOCATION
+//        ExpSwift.getLocation("3e2e25df-8324-4912-91c3-810751f527a4").then { (location: Location) -> Void  in
+//            debugPrint(location.get("name"))
+//        }.error { error in
+//            debugPrint(error)
+//        }
+////
+////        //GET LOCATIONS
+//        ExpSwift.findLocations(["limit":10, "skip":0, "sort":"name"]).then { (locations: SearchResults<Location>) -> Void in
+//            for location in locations.getResults() {
+//                debugPrint(location.get("name"))
+//            }
+//        }.error { error in
+//            debugPrint(error)
+//        }
+//        
+//        ExpSwift.findFeeds(["limit":2, "skip":0, "sort":"name"]).then { (feeds: SearchResults<Feed>) -> Void in
+//            for feed in feeds.getResults() {
+//                debugPrint(feed.get("name"))
+//                
+//                feed.getData().then { (data) -> Void in
+//                    print(data)
+//                }
+//            }
+//            }.error { error in
+//                debugPrint(error)
+//        }
+//        
+//        //CALLBACK CONNECTION ONLINE
+//        ExpSwift.connection("online", callback: { obj -> Void in
+//            debugPrint(obj)
+//        })
+//        
+//        //CALLBACK CONNECTION OFFLINE
+//        ExpSwift.connection("offline", callback: { obj -> Void in
+//            debugPrint(obj)
+//        })
         
     }
     

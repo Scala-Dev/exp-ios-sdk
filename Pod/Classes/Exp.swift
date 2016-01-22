@@ -15,6 +15,7 @@ import JWT
 
 var hostUrl: String = ""
 var tokenSDK: String = ""
+var hostSocket: String = ""
 var socketManager = SocketManager()
 var runtime = Runtime()
 
