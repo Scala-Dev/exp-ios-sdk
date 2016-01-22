@@ -33,12 +33,14 @@ public  class SocketManager {
         @return Promise<Bool>.
     */
     public func start_socket() -> Promise<Bool> {
-        self.socket = SocketIOClient(socketURL: hostUrl, options: ["log": false,
+        self.socket = SocketIOClient(socketURL: hostSocket, options: ["log": true,
         "reconnects": true,
         "reconnectAttempts": 5,
         "reconnectWait": 5,
         "connectParams": ["token":tokenSDK]])
+        expLogging("Starting EXP Socket Connection Host= \(hostSocket) Token= \(tokenSDK)")
         expLogging("Starting EXP Socket Channels...")
+
         //init channels
         organizationChannel = OrganizationChannel(socket: self.socket!)
         systemChannel = SystemChannel(socket: self.socket!)

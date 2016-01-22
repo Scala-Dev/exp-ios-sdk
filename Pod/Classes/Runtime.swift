@@ -16,6 +16,7 @@ public class Runtime{
     
     var optionsRuntime = [String: String]()
     var timeout:NSTimeInterval = 5 // seconds
+    var enableSocket:Bool = true // enable socket connection
     
     /**
     Initialize the SDK and connect to EXP.
@@ -44,19 +45,24 @@ public class Runtime{
      */
     public func start(options:[String:String]) -> Promise<Bool> {
         expLogging("EXP start with options \(options)")
-        optionsRuntime = options
         return Promise { fulfill, reject in
             
             if let host = options["host"] {
                 hostUrl=host
             }
             
+            if let enableEvents = options["enableEvents"]{
+                self.enableSocket = NSString(string: enableEvents).boolValue
+            }
+            
             if let user = options["username"], password = options["password"], organization = options["organization"] {
                 login(options).then {(auth: Auth) -> Void  in
-                    tokenSDK = auth.get("token") as! String
-                    socketManager.start_socket().then { (result: Bool) -> Void  in
-                        if result{
-                            fulfill(true)
+                    self.initNetwork(auth)
+                    if self.enableSocket {
+                        socketManager.start_socket().then { (result: Bool) -> Void  in
+                            if result{
+                                fulfill(true)
+                            }
                         }
                     }
                 }
@@ -65,10 +71,12 @@ public class Runtime{
             if let uuid = options["uuid"], secret = options["secret"] {
                 let tokenSign = JWT.encode(["uuid": uuid], algorithm: .HS256(secret))
                 login(["token":tokenSign]).then {(auth: Auth) -> Void  in
-                    tokenSDK = auth.get("token") as! String
-                    socketManager.start_socket().then { (result: Bool) -> Void  in
-                        if result{
-                            fulfill(true)
+                    self.initNetwork(auth)
+                    if self.enableSocket {
+                        socketManager.start_socket().then { (result: Bool) -> Void  in
+                            if result{
+                                fulfill(true)
+                            }
                         }
                     }
                 }
@@ -77,10 +85,12 @@ public class Runtime{
             if let deviceUuid = options["deviceUuid"], secret = options["secret"] {
                 let tokenSign = JWT.encode(["uuid": deviceUuid], algorithm: .HS256(secret))
                 login(["token":tokenSign]).then {(auth: Auth) -> Void  in
-                    tokenSDK = auth.get("token") as! String
-                    socketManager.start_socket().then { (result: Bool) -> Void  in
-                        if result{
-                            fulfill(true)
+                    self.initNetwork(auth)
+                    if self.enableSocket {
+                        socketManager.start_socket().then { (result: Bool) -> Void  in
+                            if result{
+                                fulfill(true)
+                            }
                         }
                     }
                 }
@@ -90,20 +100,29 @@ public class Runtime{
             if let networkUuid = options["networkUuid"], apiKey = options["apiKey"] {
                 let tokenSign = JWT.encode(["networkUuid": networkUuid], algorithm: .HS256(apiKey))
                 login(["token":tokenSign]).then {(auth: Auth) -> Void  in
-                    tokenSDK = auth.get("token") as! String
-                    socketManager.start_socket().then { (result: Bool) -> Void  in
-                        if result{
-                            fulfill(true)
+                    self.initNetwork(auth)
+                    if self.enableSocket {
+                        socketManager.start_socket().then { (result: Bool) -> Void  in
+                            if result{
+                                fulfill(true)
+                            }
                         }
                     }
                 }
-
-                
             }
             
         }
     }
-
+    
+    /**
+     Init network parameters for socket connection and Api calls
+     @param auth
+     */
+    private func initNetwork(auth: Auth)->Void{
+        tokenSDK = auth.get("token") as! String
+        let networks = auth.get("networks") as! NSArray
+        hostSocket = networks.firstObject!["host"] as! String
+    }
     
     /**
     Stop socket connection.
