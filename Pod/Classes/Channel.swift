@@ -84,7 +84,7 @@ public class Channel: ChannelProtocol {
      Generate Channel ID from org,name
      */
     public func generateId()->String{
-        if(channelId!.isEmpty){
+        if((channelId ?? "").isEmpty){
             let org = auth?.get("identity")!["organization"] as! String
             let paramsArray = [org,self.channelName,self.system,self.consumerApp]
             do {
