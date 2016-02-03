@@ -13,10 +13,9 @@ import Socket_IO_Client_Swift
 public protocol ChannelProtocol {
 
      typealias CallBackType
-    
+     func onBroadcast(dic:[String:AnyObject])
      func broadcast(name:String,var payload:[String:AnyObject],timeout:String)
      func listen(name:String, callback:CallBackType)->Promise<Any>
-     func respond(messageDic:[String: AnyObject], callback:CallBackType)
      func fling(uuid:String)
 
 }

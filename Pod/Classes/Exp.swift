@@ -566,11 +566,11 @@ public func broadCast(timeout:String,params:[String:AnyObject]) -> Promise<Messa
 
 
 /**
- Send Broadcast message
- @param timeout,params.
+ Respond to broadcast message
+ @param params.
  @return Promise<Message>.
  */
-public func respondBroaCast(params:[String:AnyObject]) -> Promise<Message>{
+public func respond(params:[String:AnyObject]) -> Promise<Message>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.respond(params))
             .responseObject { (response: Response<Message, NSError>) in
@@ -585,25 +585,6 @@ public func respondBroaCast(params:[String:AnyObject]) -> Promise<Message>{
 }
 
 
-
-///**
-//Get Current Device
-//@return Promise<Any>
-//*/
-//
-//public func getCurrentDevice() ->Promise<Any>{
-//    return socketManager.getCurrentDevice()
-//}
-//
-///**
-//Get Current Experience
-//@return Promise<Any>
-//*/
-//
-//public func getCurrentExperience() ->Promise<Any>{
-//    return socketManager.getCurrentExperience()
-//}
-
 /**
 Connection Socket
 @param name for connection(offline,line),callback
@@ -616,22 +597,13 @@ public func connection(name:String,callback:String->Void){
 }
 
 
-///**
-//    Get Channel By Enum
-//    @param enum SCALA_SOCKET_CHANNELS.
-//    @return AnyObject (OrganizationChannel,LocationChannel,SystemChannel,ExperienceChannel).
-//*/
-//public func getChannel(typeChannel:SOCKET_CHANNELS) -> Any{
-//    return socketManager.getChannel(typeChannel)
-//}
-
 /**
  Get Channel By String
  @param String nameChannel.
  @return CommonChannel
  */
-public func getChannel(nameChannel:String) -> Channel{
-    return socketManager.getChannel(nameChannel)
+public func getChannel(nameChannel:String,system:Int,consumerApp:Int) -> Channel{
+    return socketManager.getChannel(nameChannel,system: system,consumerApp: consumerApp)
 }
 
 /**

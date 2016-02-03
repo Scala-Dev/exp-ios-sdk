@@ -18,10 +18,14 @@ public class Channel: ChannelProtocol {
     var responders = [String: CallBackType]()
     var socketManager:SocketManager
     var channelName:String
+    var system:Int
+    var consumerApp:Int
     
-    public required init(socket socketC:SocketManager,nameChannel:String) {
+    public required init(socket socketC:SocketManager,nameChannel:String,system:Int,consumerApp:Int) {
         self.socketManager=socketC
         self.channelName=nameChannel
+        self.system = system
+        self.consumerApp = consumerApp
     }
 
     
@@ -30,7 +34,7 @@ public class Channel: ChannelProtocol {
      @param  Dictionarty.
      @return Promise<Any>
      */
-    public func broadcast(name:String,var payload:[String:AnyObject],timeout:String) -> Void{
+    public func broadcast(name:String,let payload:[String:AnyObject],timeout:String) -> Void{
         let msg:Dictionary<String,AnyObject> = ["name":name,"channel":generateId(),"payload":payload]
         expLogging(" BROADCAST \(msg) ")
         broadCast(timeout,params: msg)
@@ -47,15 +51,6 @@ public class Channel: ChannelProtocol {
     }
     
     /**
-     Respon for particular socket name on type request
-     @param  Dictionarty.
-     @return Promise<Any>
-     */
-    public func respond(messageDic:[String: AnyObject], callback:CallBackType){
-        let name:String = messageDic["name"] as! String
-        responders.updateValue(callback, forKey: name)
-    }
-    /**
      Fling content
      @param  uuid String.
      @return
@@ -64,15 +59,18 @@ public class Channel: ChannelProtocol {
         let payload:Dictionary<String,String> = ["uuid":uuid]
         let msg:Dictionary<String,AnyObject> = ["type":"broadcast","channel":self.channelName,"name": "fling","payload":payload]
 //        self.socketLocation.emit(Config.SOCKET_MESSAGE,msg)
+//        broadcast(<#T##name: String##String#>, payload: <#T##[String : AnyObject]#>, timeout: <#T##String#>)
     }
     
     /**
      Handle On Broadcast callback
     */
-    public func onBroadcast(dic:NSDictionary){
-        let name = dic.valueForKey("name") as! String
-        let callBack = self.listeners[name]!
-        callBack(dic.valueForKey("payload")  as! [String : AnyObject])
+    public func onBroadcast(dic: [String : AnyObject]) {
+        let name = dic["name"] as! String
+        if let callBack = self.listeners[name] {
+            callBack(dic)
+        }
+        
     }
     
     /**
@@ -88,7 +86,8 @@ public class Channel: ChannelProtocol {
      */
     public func generateId()->String{
         let org = auth?.get("identity")!["organization"] as! String
-        let paramsArray = [org,self.channelName,0,1]
+//        let paramsArray = [org,self.channelName,0,1]
+        let paramsArray = [org,self.channelName,self.system,self.consumerApp]
         var base64Encoded = ""
         do {
             let jsonData = try NSJSONSerialization.dataWithJSONObject(paramsArray, options: [])

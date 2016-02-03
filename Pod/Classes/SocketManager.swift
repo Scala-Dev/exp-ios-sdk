@@ -43,6 +43,8 @@ public  class SocketManager {
             self.socket!.on("connect") {data, ack in
                 expLogging("EXP socket connected")
                 fulfill(true)
+                //do subscribe to the channels
+                self.subscribeChannels()
                 if((self.connection.indexForKey(Config.ONLINE)) != nil){
                     let callBack = self.connection[Config.ONLINE]!
                     callBack(Config.ONLINE)
@@ -55,8 +57,6 @@ public  class SocketManager {
                     let callBack = self.connection[Config.OFFLINE]!
                     callBack(Config.OFFLINE)
                 }
-                //do subscribe to the channels
-                self.subscribeChannels()
             }
             self.socket!.on("broadcast"){data, ack in
                 expLogging("EXP BROADCAST data \(data)")
@@ -64,7 +64,7 @@ public  class SocketManager {
                 let channelID = dic.valueForKey("channel") as! String
                 if((self.channels.indexForKey(channelID)) != nil){
                     let channel=self.channels[channelID]! as Channel
-                    channel.onBroadcast(dic)
+                    channel.onBroadcast(dic as! [String : AnyObject])
                 }
             }
             self.socket!.on("channels"){data, ack in
@@ -121,12 +121,12 @@ public  class SocketManager {
         @param channel String
         @return CommonChannel
      */
-    public func getChannel(nameChannel:String) -> Channel{
+    public func getChannel(nameChannel:String,system:Int,consumerApp:Int) -> Channel{
         let channel:Channel
         if(channelCache.indexForKey(nameChannel) != nil){
             channel = channelCache[nameChannel]!
         }else{
-            channel = channelFactory.produceChannel(nameChannel, socket: socketManager)
+            channel = channelFactory.produceChannel(nameChannel, socket: socketManager,system: system,consumerApp: consumerApp)
             channels.updateValue(channel, forKey: channel.generateId())
             channelCache.updateValue(channel, forKey: nameChannel)
         }

@@ -45,6 +45,7 @@ public class Runtime{
      */
     public func start(options:[String:String]) -> Promise<Bool> {
         expLogging("EXP start with options \(options)")
+        optionsRuntime = options
         return Promise { fulfill, reject in
             
             if let host = options["host"] {

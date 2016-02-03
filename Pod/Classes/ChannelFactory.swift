@@ -12,7 +12,7 @@ import Socket_IO_Client_Swift
 public class ChannelFactory{
 
     
-    public func produceChannel(channelName:String,socket: SocketManager)->Channel{
-        return Channel(socket: socket, nameChannel: channelName)
+    public func produceChannel(channelName:String,socket: SocketManager,system:Int,consumerApp:Int)->Channel{
+        return Channel(socket: socket, nameChannel: channelName,system: system,consumerApp: consumerApp)
     }
 }
