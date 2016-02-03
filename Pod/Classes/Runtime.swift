@@ -120,8 +120,8 @@ public class Runtime{
      */
     private func initNetwork(auth: Auth)->Void{
         tokenSDK = auth.get("token") as! String
-        let networks = auth.get("networks") as! NSArray
-        hostSocket = networks.firstObject!["host"] as! String
+        let networks = auth.get("network") as! NSDictionary
+        hostSocket = networks["host"] as! String
     }
     
     /**

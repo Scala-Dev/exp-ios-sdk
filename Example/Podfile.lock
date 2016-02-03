@@ -1,8 +1,8 @@
 PODS:
-  - Alamofire (3.1.2)
+  - Alamofire (3.1.5)
   - CryptoSwift (0.0.14)
   - ExpSwift (0.0.1):
-    - Alamofire (= 3.1.2)
+    - Alamofire (= 3.1.5)
     - JSONWebToken (= 1.4.1)
     - PromiseKit (= 3.0.0)
     - Socket.IO-Client-Swift (= 4.1.2)
@@ -37,9 +37,9 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  Alamofire: 7c16ca65f3c7e681fd925fd7f2dec7747ff96855
+  Alamofire: 5f730ba29fd113b7ddd71c1e65d0c630acf5d7b0
   CryptoSwift: 5a6b725e2ad65a789f5f435dd434d38eb2c40b46
-  ExpSwift: bc7c9a58d18f1312dedc11f9bb1b5d20e6f89323
+  ExpSwift: aeab10edabc7a5458f40d59f6a14406d9c480ff0
   JSONWebToken: cf8b58850dc4cf38ce777a08753a2ea1620d960e
   OMGHTTPURLRQ: 8376dc887d76a5a7e2a67881dc788f917a2f437c
   PromiseKit: 665540a1eb43156446872dcf49ed7dee6ebbe13b

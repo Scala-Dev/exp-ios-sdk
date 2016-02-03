@@ -24,11 +24,12 @@ extension Request {
             
             switch result {
             case .Success(let value):
-                let dic = value as! NSDictionary
-                if let _ = dic.objectForKey("code") as? String{
-                    let failureReason = dic.objectForKey("message") as! String
-                    let error = Error.errorWithCode(.JSONSerializationFailed, failureReason: failureReason)
-                    return .Failure(error)
+                if let dic = value as? NSDictionary{
+                    if let _ = dic.objectForKey("code") as? String{
+                        let failureReason = dic.objectForKey("message") as! String
+                        let error = Error.errorWithCode(.JSONSerializationFailed, failureReason: failureReason)
+                        return .Failure(error)
+                    }
                 }
                 if let response = response,
                     responseObject = T(response: response, representation: value)
