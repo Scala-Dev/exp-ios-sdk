@@ -10,7 +10,7 @@ import Foundation
 import PromiseKit
 import Socket_IO_Client_Swift
 
-public protocol ChannelDelegate {
+public protocol ChannelProtocol {
 
      typealias CallBackType
     

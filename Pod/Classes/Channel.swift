@@ -11,15 +11,13 @@ import Socket_IO_Client_Swift
 import PromiseKit
 
 
-public class Channel: ChannelDelegate {
+public class Channel: ChannelProtocol {
     
     public typealias CallBackType = [String: AnyObject] -> Void
     var listeners = [String: CallBackType]()
     var responders = [String: CallBackType]()
     var socketManager:SocketManager
     var channelName:String
-
-
     
     public required init(socket socketC:SocketManager,nameChannel:String) {
         self.socketManager=socketC
@@ -68,6 +66,9 @@ public class Channel: ChannelDelegate {
 //        self.socketLocation.emit(Config.SOCKET_MESSAGE,msg)
     }
     
+    /**
+     Handle On Broadcast callback
+    */
     public func onBroadcast(dic:NSDictionary){
         let name = dic.valueForKey("name") as! String
         let callBack = self.listeners[name]!
