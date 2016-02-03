@@ -16,6 +16,6 @@ public protocol ChannelProtocol {
      func onBroadcast(dic:[String:AnyObject])
      func broadcast(name:String,var payload:[String:AnyObject],timeout:String)
      func listen(name:String, callback:CallBackType)->Promise<Any>
-     func fling(uuid:String)
+     func fling(dic:[String:AnyObject])
 
 }

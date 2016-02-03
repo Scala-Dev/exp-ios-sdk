@@ -38,4 +38,8 @@ public class Model {
         return nil
     }
     
+    
+    public func fling(channel:Channel,payload:[String:AnyObject]){
+        channel.fling(payload)
+    }
 }

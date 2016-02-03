@@ -20,6 +20,7 @@ public class Channel: ChannelProtocol {
     var channelName:String
     var system:Int
     var consumerApp:Int
+    var channelId:String?
     
     public required init(socket socketC:SocketManager,nameChannel:String,system:Int,consumerApp:Int) {
         self.socketManager=socketC
@@ -55,11 +56,10 @@ public class Channel: ChannelProtocol {
      @param  uuid String.
      @return
      */
-    public func fling(uuid:String) -> Void{
-        let payload:Dictionary<String,String> = ["uuid":uuid]
-        let msg:Dictionary<String,AnyObject> = ["type":"broadcast","channel":self.channelName,"name": "fling","payload":payload]
-//        self.socketLocation.emit(Config.SOCKET_MESSAGE,msg)
-//        broadcast(<#T##name: String##String#>, payload: <#T##[String : AnyObject]#>, timeout: <#T##String#>)
+    public func fling(payload:[String:AnyObject]) -> Void{
+        let msg:Dictionary<String,AnyObject> = ["name":"fling","channel":self.channelId!,"payload":payload]
+        expLogging("FLING \(msg) ")
+        broadCast("2000",params: msg)
     }
     
     /**
@@ -70,7 +70,6 @@ public class Channel: ChannelProtocol {
         if let callBack = self.listeners[name] {
             callBack(dic)
         }
-        
     }
     
     /**
@@ -85,21 +84,20 @@ public class Channel: ChannelProtocol {
      Generate Channel ID from org,name
      */
     public func generateId()->String{
-        let org = auth?.get("identity")!["organization"] as! String
-//        let paramsArray = [org,self.channelName,0,1]
-        let paramsArray = [org,self.channelName,self.system,self.consumerApp]
-        var base64Encoded = ""
-        do {
-            let jsonData = try NSJSONSerialization.dataWithJSONObject(paramsArray, options: [])
-            let string = NSString(data: jsonData, encoding: NSUTF8StringEncoding)
-            let utf8str = string!.dataUsingEncoding(NSUTF8StringEncoding)
-            base64Encoded = (utf8str?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue: 0)))!
-        }catch let error as NSError{
-            expLogging(error.description)
+        if(channelId!.isEmpty){
+            let org = auth?.get("identity")!["organization"] as! String
+            let paramsArray = [org,self.channelName,self.system,self.consumerApp]
+            do {
+                let jsonData = try NSJSONSerialization.dataWithJSONObject(paramsArray, options: [])
+                let string = NSString(data: jsonData, encoding: NSUTF8StringEncoding)
+                let utf8str = string!.dataUsingEncoding(NSUTF8StringEncoding)
+                channelId = (utf8str?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue: 0)))!
+            }catch let error as NSError{
+                expLogging(error.description)
+            }
+            expLogging("GENERATE ID = \(channelId)")
         }
-        expLogging("GENERATE ID NAME = \(channelName)")
-        expLogging("GENERATE ID = \(base64Encoded)")
-        return  base64Encoded
+        return  channelId!
     }
     
 
