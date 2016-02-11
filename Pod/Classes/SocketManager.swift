@@ -14,18 +14,16 @@ import PromiseKit
 public  class SocketManager {
     
     public var socket:SocketIOClient?
-    
-    var organizationChannel: OrganizationChannel?
-    var locationChannel:LocationChannel?
-    var systemChannel:SystemChannel?
-    var experienceChannel:ExperienceChannel?
-    var request = [String: Any]()
+    var channelFactory:ChannelFactory = ChannelFactory()
     public typealias CallBackTypeConnection = String -> Void
     public typealias CallBackType = [String: AnyObject] -> Void
-    var listeners = [String: CallBackType]()
     var responders = [String: CallBackType]()
     var connection = [String: CallBackTypeConnection]()
-    var channelCache = [String: CommonChannel]()
+    var subscription = [String]()
+    var subscriptionPromise = [String:Any]()
+    var channelCache = [String:Channel]()
+    var channels = [String:Channel]()
+
    
     
     /**
@@ -39,18 +37,14 @@ public  class SocketManager {
         "reconnectWait": 5,
         "connectParams": ["token":tokenSDK]])
         expLogging("Starting EXP Socket Connection Host= \(hostSocket) Token= \(tokenSDK)")
-        expLogging("Starting EXP Socket Channels...")
-
-        //init channels
-        organizationChannel = OrganizationChannel(socket: self.socket!)
-        systemChannel = SystemChannel(socket: self.socket!)
-        locationChannel = LocationChannel(socket: self.socket!)
-        experienceChannel = ExperienceChannel(socket: self.socket!)
+     
         
         return Promise { fulfill, reject in
             self.socket!.on("connect") {data, ack in
                 expLogging("EXP socket connected")
                 fulfill(true)
+                //do subscribe to the channels
+                self.subscribeChannels()
                 if((self.connection.indexForKey(Config.ONLINE)) != nil){
                     let callBack = self.connection[Config.ONLINE]!
                     callBack(Config.ONLINE)
@@ -63,111 +57,55 @@ public  class SocketManager {
                     let callBack = self.connection[Config.OFFLINE]!
                     callBack(Config.OFFLINE)
                 }
-
             }
-            self.socket!.on(Config.SOCKET_MESSAGE) {data, ack in
-                let response = data[0] as! NSDictionary
-                let type = response.objectForKey("type") as! String
-                let channel: AnyObject? = response.objectForKey("channel")
-                if ( Config.RESPONSE == type ){
-                    //if channel is null call all the channels
-                    if(channel == nil){
-                        self.systemChannel?.onResponse(response)
-                        self.locationChannel?.onResponse(response)
-                        self.experienceChannel?.onResponse(response)
-                        self.organizationChannel?.onResponse(response)
-                    }else{
-                        if let channelEnum:SOCKET_CHANNELS = SOCKET_CHANNELS(rawValue: channel as! String)!{
-                            switch channelEnum{
-                            case .SYSTEM :
-                                self.systemChannel?.onResponse(response)
-                            case .LOCATION:
-                                self.locationChannel?.onResponse(response)
-                            case .EXPERIENCE:
-                                self.experienceChannel?.onResponse(response)
-                            case .ORGANIZATION:
-                                self.organizationChannel?.onResponse(response)
-                            }
-                        }else if(self.channelCache.indexForKey(channel as! String) != nil){
-                            let commChannel:CommonChannel = self.channelCache[channel as! String]!
-                            commChannel.onResponse(response)
-                        }
+            self.socket!.on("broadcast"){data, ack in
+                expLogging("EXP BROADCAST data \(data)")
+                let dic = data[0] as! NSDictionary
+                let channelID = dic.valueForKey("channel") as! String
+                if((self.channels.indexForKey(channelID)) != nil){
+                    let channel=self.channels[channelID]! as Channel
+                    channel.onBroadcast(dic as! [String : AnyObject])
+                }
+            }
+            self.socket!.on("channels"){data, ack in
+                expLogging("EXP channels data \(data)")
+            }
+            self.socket!.on("subscribed"){data, ack in
+                expLogging("EXP subscribed data \(data)")
+                let response = data[0] as! NSArray
+                for (_, element) in response.enumerate() {
+                    let id:String = element as! String
+                    if((self.subscriptionPromise.indexForKey(id)) != nil){
+                        var dictionary:Dictionary<String,Any> = self.subscriptionPromise[id] as! Dictionary
+                        let fun = dictionary["fulfill"] as! Any -> Void
+                        fun(id) //resolve  promise
+                        self.subscriptionPromise.removeValueForKey(id)
                     }
-                    
-                }else if( Config.REQUEST == type ){
-                    //if channel is null call all the channels
-                    if(channel == nil){
-                        self.systemChannel?.onRequest(response)
-                        self.locationChannel?.onRequest(response)
-                        self.experienceChannel?.onRequest(response)
-                        self.organizationChannel?.onRequest(response)
-                    }else{
-                        if let channelEnum:SOCKET_CHANNELS = SOCKET_CHANNELS(rawValue: channel as! String)!{
-                            switch channelEnum{
-                                case .SYSTEM :
-                                    self.systemChannel?.onRequest(response)
-                                case .LOCATION:
-                                    self.locationChannel?.onRequest(response)
-                                case .EXPERIENCE:
-                                    self.experienceChannel?.onRequest(response)
-                                case .ORGANIZATION:
-                                    self.organizationChannel?.onRequest(response)
-                            }
-                        }else if(self.channelCache.indexForKey(channel as! String) != nil){
-                                let commChannel:CommonChannel = self.channelCache[channel as! String]!
-                                commChannel.onRequest(response)
-                        }
-                    }
-                }else if( Config.BROADCAST == type ){
-                    //if channel is null call all the channels
-                    if(channel == nil){
-                        self.systemChannel?.onBroadcast(response)
-                        self.locationChannel?.onBroadcast(response)
-                        self.experienceChannel?.onBroadcast(response)
-                        self.organizationChannel?.onBroadcast(response)
-                    }else{
-                        if let channelEnum:SOCKET_CHANNELS = SOCKET_CHANNELS(rawValue: channel as! String)!{
-                            switch channelEnum{
-                                case .SYSTEM :
-                                    self.systemChannel?.onBroadcast(response)
-                                case .LOCATION:
-                                    self.locationChannel?.onBroadcast(response)
-                                case .EXPERIENCE:
-                                    self.experienceChannel?.onBroadcast(response)
-                                case .ORGANIZATION:
-                                    self.organizationChannel?.onBroadcast(response)
-                            }
-                        }else if(self.channelCache.indexForKey(channel as! String) != nil){
-                                let commChannel:CommonChannel = self.channelCache[channel as! String]!
-                                commChannel.onBroadcast(response)
-                        }
-                    }
-
                 }
             }
             self.socket!.connect()
         }
-        
     }
     
-    /**
-        Get Current Experience (Socket Method)
-        @return Promise<Any>.
-    */
-    public func getCurrentExperience() ->Promise<Any>{
-        let msg:Dictionary<String,String> = ["type": "request", "name": "getCurrentExperience"]
-        return systemChannel!.request(msg)
-    }
     
     /**
-        Get Current Device (Socket Method)
-        @return Promise<Any>.
-    */
-    public func getCurrentDevice() ->Promise<Any>{
-        let msg:Dictionary<String,String> = ["type": "request", "name": "getCurrentDevice"]
-        return systemChannel!.request(msg)
+     Subscribe channels to socket connection
+     */
+    public func subscribe(idChannel:String)->Promise<Any>{
+        if(subscription.indexOf(idChannel) == nil){
+            subscription.append(idChannel)
+            self.socket!.emit("subscribe", subscription)
+        }
+        let subscribePromise = Promise<Any> { fulfill, reject in
+            var promiseDic = Dictionary<String,Any>()
+            promiseDic  = [ "fulfill": fulfill,"reject":reject]
+            if(subscriptionPromise.indexForKey(idChannel) == nil){
+               subscriptionPromise.updateValue(promiseDic, forKey: idChannel)
+            }
+        }
+        return subscribePromise
     }
-
+    
     /**
     Listen for particular socket name on type response broadcast
     @param  Dictionarty.
@@ -177,41 +115,22 @@ public  class SocketManager {
         connection.updateValue(callback, forKey: name)
     }
     
-
-    
-    /**
-        Get Socket Channel By Enum
-        @param enum SOCKET_CHANNELS. default is SYSTEM CHANNEL
-        @return AnyObject (OrganizationChannel,LocationChannel,SystemChannel,ExperienceChannel).
-    */
-    public func getChannel(typeChannel:SOCKET_CHANNELS) -> Any{
-        switch typeChannel{
-            case .SYSTEM:
-                return systemChannel!
-            case .LOCATION:
-                return locationChannel!
-            case .ORGANIZATION:
-                return organizationChannel!
-            case .EXPERIENCE:
-                return experienceChannel!
-        }
-    
-    }
     
     /**
         Get Dynamic Channel by String 
         @param channel String
         @return CommonChannel
      */
-    public func getChannel(channel:String) -> CommonChannel{
-        let commonCh:CommonChannel
-        if(channelCache.indexForKey(channel) != nil){
-            commonCh = channelCache[channel]!
+    public func getChannel(nameChannel:String,system:Int,consumerApp:Int) -> Channel{
+        let channel:Channel
+        if(channelCache.indexForKey(nameChannel) != nil){
+            channel = channelCache[nameChannel]!
         }else{
-            commonCh = CommonChannel(socket:self.socket!,nameChannel: channel)
-            channelCache.updateValue(commonCh, forKey: channel)
+            channel = channelFactory.produceChannel(nameChannel, socket: socketManager,system: system,consumerApp: consumerApp)
+            channels.updateValue(channel, forKey: channel.generateId())
+            channelCache.updateValue(channel, forKey: nameChannel)
         }
-        return commonCh
+        return channel
     }
     
     
@@ -219,8 +138,11 @@ public  class SocketManager {
     Disconnect from exp and remove token
     */
     public func disconnect(){
-         self.socket!.close()
-         self.channelCache = [:]
+        self.socket!.close()
+        self.subscriptionPromise = [:]
+        self.subscription = []
+        self.channels = [:]
+        self.channelCache = [:]
     }
     
     /**
@@ -229,7 +151,18 @@ public  class SocketManager {
     public func refreshConnection(){
         self.socket!.close()
         self.socket!.connect()
+        subscribeChannels()
         expLogging("EXP refresh socket connection")
     }
     
+    /**
+     Subscribe the channels when there is a disconnect
+     */
+    public func subscribeChannels(){
+        self.subscription = []
+        self.subscriptionPromise = [:]
+        for (channelId, _) in channels {
+            subscribe(channelId)
+        }
+    }
 }
