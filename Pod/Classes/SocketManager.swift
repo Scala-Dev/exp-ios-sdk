@@ -121,7 +121,7 @@ public  class SocketManager {
         @param channel String
         @return CommonChannel
      */
-    public func getChannel(nameChannel:String,system:Int,consumerApp:Int) -> Channel{
+    public func getChannel(nameChannel:String,system:Bool,consumerApp:Bool) -> Channel{
         let channel:Channel
         if(channelCache.indexForKey(nameChannel) != nil){
             channel = channelCache[nameChannel]!

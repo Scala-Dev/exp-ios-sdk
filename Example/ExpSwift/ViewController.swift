@@ -22,79 +22,39 @@ class ViewController: UIViewController {
         
         ExpSwift.start(host,user: "cesar.oyarzun@scala.com",password: "5715031Com",organization: "").then{ result -> Void in
             
-//            //SENT REQUEST
-//            let systemChannel = ExpSwift.getChannel(SOCKET_CHANNELS.SYSTEM) as! SystemChannel
-//            let msg:Dictionary<String,String> = ["type": "request", "name": "getCurrentExperience"]
-//            systemChannel.request(msg).then { obj -> Void in
-//                debugPrint("request response")
-//                debugPrint(obj)
-//            }.error { error in
-//                debugPrint(error)
-//            }
-//            
-//            let orgchannel = ExpSwift.getChannel(SOCKET_CHANNELS.ORGANIZATION) as! OrganizationChannel
-//            //SEND BROADCAS MESSAGE
-//            let payload:Dictionary<String,String> = ["opening":"knock knock?"]
-//            let msg2:Dictionary<String,AnyObject> = ["name": "testing","payload":payload]
-//            orgchannel.broadcast(msg2)
-//            
-//            //LISTEN FOR BROADCAST MESSAGE
-//            let msg1:Dictionary<String,AnyObject> = ["name": "testing"]
-//            orgchannel.listen(msg1,  callback: { (resultListen) -> Void in
-//                debugPrint(resultListen)
-//            })
-            
-            
-//            let values = ["channel":"WwogICJzY2FsYSIsCiAgInRlc3QxIiwKICAwLAogIDEKXQ=="]
-//            
-//            let body = try! NSJSONSerialization.dataWithJSONObject(values, options: [])
-//            debugPrint("BODY ================== \(body)")
-            
-            let channel1 = ExpSwift.getChannel("channel1")
-            let channel2 = ExpSwift.getChannel("channel2")
+            let channel1 = ExpSwift.getChannel("channel1",system: false,consumerApp: true)
             let payload1:Dictionary<String,String> = ["boog":"pro"]
-            let payload2:Dictionary<String,String> = ["cesar":"hello"]
-
             channel1.listen("hi", callback: { (resultListen) -> Void in
                 debugPrint(resultListen)
+                ExpSwift.respond(resultListen)
             }).then { result -> Void in
                 channel1.broadcast("hi", payload: payload1, timeout: "2000")
             }
             
-            
-            channel2.listen("hello", callback: { (resultListen) -> Void in
-                debugPrint(resultListen)
-            }).then { result -> Void in
-                channel2.broadcast("hello", payload: payload2, timeout: "2000")
-            }
-
-            
-            
-            
-                             
-
-            
-            
-           
-//            ExpSwift.findLocations(["limit":10, "skip":0, "sort":"name"]).then { (devices: SearchResults<Location>) -> Void in
-//                for device in devices.getResults() {
-//                    debugPrint(device.get("name"))
-//                }
-////                debugPrint(devices)
-//                }.error { error in
-////                    debugPrint(error)
+//            let channel2 = ExpSwift.getChannel("channel2",system: 0,consumerApp: 1)
+//            let payload2:Dictionary<String,String> = ["cesar":"hello"]
+//            channel2.listen("hello", callback: { (resultListen) -> Void in
+//                debugPrint(resultListen)
+//            }).then { result -> Void in
+//                channel2.broadcast("hello", payload: payload2, timeout: "2000")
 //            }
+//            
+            ExpSwift.findLocations(["limit":10, "skip":0, "sort":"name"]).then { (locations: SearchResults<Location>) -> Void in
+                for location in locations.getResults()
+                {
+                    debugPrint(location.get("name"))
+                    location.fling(channel1,payload: payload1)
+                }
+//                debugPrint(devices)
+                }.error { error in
+//                    debugPrint(error)
+            }
+            
 
             
            
          }.then {result -> Void in
-            //
-//            ExpSwift.getDevice("5251de59-6123-4789-b73f-d4120174c7ac").then { (device: Device) -> Void in
-//                debugPrint(device)
-//            }.error { error in
-//                debugPrint(error)
-//            }
-//            
+           //
 //            ExpSwift.findContentNodes(["limit":10, "skip":0, "sort":"name", "name": "10-26-2015"]).then { (devices: SearchResults<ContentNode>) -> Void in
 //                for device in devices.getResults() {
 //                    debugPrint(device.get("name"))

@@ -18,11 +18,11 @@ public class Channel: ChannelProtocol {
     var responders = [String: CallBackType]()
     var socketManager:SocketManager
     var channelName:String
-    var system:Int
-    var consumerApp:Int
+    var system:Bool
+    var consumerApp:Bool
     var channelId:String?
     
-    public required init(socket socketC:SocketManager,nameChannel:String,system:Int,consumerApp:Int) {
+    public required init(socket socketC:SocketManager,nameChannel:String,system:Bool,consumerApp:Bool) {
         self.socketManager=socketC
         self.channelName=nameChannel
         self.system = system
@@ -86,7 +86,9 @@ public class Channel: ChannelProtocol {
     public func generateId()->String{
         if((channelId ?? "").isEmpty){
             let org = auth?.get("identity")!["organization"] as! String
-            let paramsArray = [org,self.channelName,self.system,self.consumerApp]
+            let systemInt:Int = self.system ? 1:0
+            let consumerAppInt:Int = self.consumerApp ? 1:0
+            let paramsArray = [org,self.channelName,systemInt,consumerAppInt]
             do {
                 let jsonData = try NSJSONSerialization.dataWithJSONObject(paramsArray, options: [])
                 let string = NSString(data: jsonData, encoding: NSUTF8StringEncoding)
