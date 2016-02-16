@@ -602,7 +602,7 @@ public func connection(name:String,callback:String->Void){
  @param String nameChannel.
  @return CommonChannel
  */
-public func getChannel(nameChannel:String,system:Int,consumerApp:Int) -> Channel{
+public func getChannel(nameChannel:String,system:Bool,consumerApp:Bool) -> Channel{
     return socketManager.getChannel(nameChannel,system: system,consumerApp: consumerApp)
 }
 
