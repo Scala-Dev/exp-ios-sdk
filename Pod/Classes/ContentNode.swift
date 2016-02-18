@@ -88,13 +88,15 @@ public final class ContentNode: Model,ResponseObject,ResponseCollection {
 
     public func getUrl () -> String? {
         
+        let rt = auth?.get("restrictedToken") as! String
+        
         switch(self.subtype) {
         case .FILE:
             let escapeUrl = self.document["path"]!.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
-            return hostUrl + "/api/delivery" + escapeUrl
+            return "\(hostUrl)/api/delivery\(escapeUrl)?_rt=\(rt)"
         case .APP:
             let escapeUrl = self.document["path"]!.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
-            return hostUrl + "/api/delivery" + escapeUrl + "/index.html"
+            return "\(hostUrl)/api/delivery\(escapeUrl)/index.html?_rt=\(rt)"
         case .URL:
             return self.document["url"] as? String
         default:
@@ -110,7 +112,9 @@ public final class ContentNode: Model,ResponseObject,ResponseCollection {
 
         if(CONTENT_TYPES.FILE == self.subtype && hasVariant(name)){
             if let url = getUrl() {
-                return url + "?variant=" + name.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+                let rt = auth?.get("restrictedToken") as! String
+                let variant = name.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+                return "\(url)?variant=\(variant)&_rt=\(rt)"
             }
         }
         
