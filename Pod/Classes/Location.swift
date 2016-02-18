@@ -46,6 +46,7 @@ public final class Location: Model,ResponseObject,ResponseCollection {
     }
     
     public func getLayoutUrl() -> String {
-        return hostUrl + "/api/locations/" + self.uuid + "/layout"
+        let rt = auth?.get("restrictedToken")
+        return "\(hostUrl)/api/locations/\(self.uuid)/layout?_rt=\(rt)"
     }
 }
