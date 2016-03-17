@@ -70,7 +70,7 @@ public class Runtime{
             }
             
             if let uuid = options["uuid"], secret = options["secret"] {
-                let tokenSign = JWT.encode(["uuid": uuid], algorithm: .HS256(secret))
+                let tokenSign = JWT.encode(["uuid": uuid, "type": "device"], algorithm: .HS256(secret))
                 login(["token":tokenSign]).then {(auth: Auth) -> Void  in
                     self.initNetwork(auth)
                     if self.enableSocket {
@@ -83,8 +83,8 @@ public class Runtime{
                 }
             }
             
-            if let deviceUuid = options["deviceUuid"], secret = options["secret"] {
-                let tokenSign = JWT.encode(["uuid": deviceUuid], algorithm: .HS256(secret))
+            if let uuid = options["deviceUuid"], secret = options["secret"] {
+                let tokenSign = JWT.encode(["uuid": uuid, "type": "device"], algorithm: .HS256(secret))
                 login(["token":tokenSign]).then {(auth: Auth) -> Void  in
                     self.initNetwork(auth)
                     if self.enableSocket {
@@ -98,8 +98,36 @@ public class Runtime{
                 
             }
             
-            if let networkUuid = options["networkUuid"], apiKey = options["apiKey"] {
-                let tokenSign = JWT.encode(["networkUuid": networkUuid], algorithm: .HS256(apiKey))
+            if let uuid = options["uuid"], apiKey = options["apiKey"] {
+                let tokenSign = JWT.encode(["uuid": uuid, "type": "consumerApp"], algorithm: .HS256(apiKey))
+                login(["token":tokenSign]).then {(auth: Auth) -> Void  in
+                    self.initNetwork(auth)
+                    if self.enableSocket {
+                        socketManager.start_socket().then { (result: Bool) -> Void  in
+                            if result{
+                                fulfill(true)
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if let uuid = options["consumerAppUuid"], apiKey = options["apiKey"] {
+                let tokenSign = JWT.encode(["uuid": uuid, "type": "consumerApp"], algorithm: .HS256(apiKey))
+                login(["token":tokenSign]).then {(auth: Auth) -> Void  in
+                    self.initNetwork(auth)
+                    if self.enableSocket {
+                        socketManager.start_socket().then { (result: Bool) -> Void  in
+                            if result{
+                                fulfill(true)
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if let uuid = options["networkUuid"], apiKey = options["apiKey"] {
+                let tokenSign = JWT.encode(["uuid": uuid, "type": "consumerApp"], algorithm: .HS256(apiKey))
                 login(["token":tokenSign]).then {(auth: Auth) -> Void  in
                     self.initNetwork(auth)
                     if self.enableSocket {
