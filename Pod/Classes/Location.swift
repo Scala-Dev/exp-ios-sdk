@@ -44,4 +44,9 @@ public final class Location: Model,ResponseObject,ResponseCollection {
     public func getZones() -> [Zone]{
         return self.zones
     }
+    
+    public func getLayoutUrl() -> String {
+        let rt = auth?.get("restrictedToken")
+        return "\(hostUrl)/api/locations/\(self.uuid)/layout?_rt=\(rt)"
+    }
 }

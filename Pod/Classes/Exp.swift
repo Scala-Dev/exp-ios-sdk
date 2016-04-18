@@ -13,8 +13,10 @@ import PromiseKit
 import JWT
 
 
-var hostUrl: String = "https://api.exp.scala.com"
+var hostUrl: String = ""
 var tokenSDK: String = ""
+var hostSocket: String = ""
+var auth:Auth?
 var socketManager = SocketManager()
 var runtime = Runtime()
 
@@ -45,6 +47,9 @@ enum Router: URLRequestConvertible {
     case getFeedData(String)
     case findFeeds([String: AnyObject])
     case login([String: AnyObject])
+    case refreshToken()
+    case broadcast([String: AnyObject],String)
+    case respond([String: AnyObject])
     var method: Alamofire.Method {
         switch self {
         case .findDevices:
@@ -79,6 +84,13 @@ enum Router: URLRequestConvertible {
             return .GET
         case .login:
             return .POST
+        case .refreshToken:
+            return .POST
+        case .broadcast:
+            return .POST
+        case .respond:
+            return .POST
+        
         }
         
     }
@@ -117,36 +129,73 @@ enum Router: URLRequestConvertible {
                 return "/api/connectors/feeds"
             case .login:
                 return "/api/auth/login"
+            case .refreshToken:
+                return "/api/auth/token"
+            case .broadcast:
+                return "/api/networks/current/broadcasts"
+            case .respond:
+                return "/api/networks/current/responses"
+
         }
         
     }
     
     var URLRequest: NSMutableURLRequest {
         let URL = NSURL(string: hostUrl)!
-        let mutableURLRequest = NSMutableURLRequest(URL: URL.URLByAppendingPathComponent(path))
+        var mutableURLRequest = NSMutableURLRequest(URL: URL.URLByAppendingPathComponent(path))
+        expLogging(mutableURLRequest.URLString)
         mutableURLRequest.HTTPMethod = method.rawValue
         mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         mutableURLRequest.setValue("Bearer \(tokenSDK)", forHTTPHeaderField: "Authorization")
         switch self {
             case .findDevices(let parameters):
-                return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+                let reqFindDevices = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+                expLogging("EXP Http Request findDevices: \(reqFindDevices)")
+                return reqFindDevices
             case .findExperiences(let parameters):
-                return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+                let reqFindExperiences = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+                expLogging("EXP Http Request findExperiences: \(reqFindExperiences)")
+                return reqFindExperiences
             case .findLocations(let parameters):
-                return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+                let reqFindLocations = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+                expLogging("EXP Http Request findLocations: \(reqFindLocations)")
+                return reqFindLocations
             case .findData(let parameters):
-                return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+                let reqFindData = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+                expLogging("EXP Http Request findData: \(reqFindData)")
+                return reqFindData
+            case .findThings(let parameters):
+                let reqFindThings = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+                expLogging("EXP Htpp Request findThings: \(reqFindThings)")
+                return reqFindThings
             case .findContentNodes(let parameters):
-                return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+                let reqFindContentNodes = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+                expLogging("EXP Http Request findContentNodes: \(reqFindContentNodes)")
+                return reqFindContentNodes
             case .findFeeds(let parameters):
-                return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+                let reqFindFeeds = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+                expLogging("EXP Http Request findFeeds: \(reqFindFeeds)")
+                return reqFindFeeds
             case .login(let parameters):
-                return Alamofire.ParameterEncoding.JSON.encode(mutableURLRequest, parameters: parameters).0
+                let reqLogin = Alamofire.ParameterEncoding.JSON.encode(mutableURLRequest, parameters: parameters).0
+                expLogging("EXP Http Request login: \(reqLogin)")
+                return reqLogin
+            case .broadcast(let parameters,let timeout):
+                expLogging("EXP Http Request broadcast parameters: \(parameters)")
+                let reqBroadcast = Alamofire.ParameterEncoding.JSON.encode(mutableURLRequest, parameters: parameters).0
+                reqBroadcast.URL = NSURL(string: reqBroadcast.URLString+"?timeout=\(timeout)")
+                return reqBroadcast
+            case .respond(let parameters):
+                let reqRespond = Alamofire.ParameterEncoding.JSON.encode(mutableURLRequest, parameters: parameters).0
+                expLogging("EXP Http Request Respond: \(reqRespond)")
+                return reqRespond
             default:
+                expLogging("EXP Http Request : \(mutableURLRequest)")
                 return mutableURLRequest
         }
     }
 }
+
 
 /**
 Initialize the SDK and connect to EXP.
@@ -182,7 +231,7 @@ public func start(options:[String:String]) -> Promise<Bool> {
 */
 public func findDevices(params:[String:AnyObject]) -> Promise<SearchResults<Device>>{
     return Promise { fulfill, reject in
-     Alamofire.request(Router.findDevices(params))
+        Alamofire.request(Router.findDevices(params))
             .responseCollection { (response: Response<SearchResults<Device>, NSError>) in
                 switch response.result{
                 case .Success(let data):
@@ -201,13 +250,13 @@ public func findDevices(params:[String:AnyObject]) -> Promise<SearchResults<Devi
 */
 public func getDevice(uuid:String) -> Promise<Device>{
     return Promise { fulfill, reject in
-      Alamofire.request( Router.getDevice(uuid) )
+        Alamofire.request( Router.getDevice(uuid) )
             .responseObject { (response: Response<Device, NSError>) in
                 switch response.result{
                 case .Success(let data):
                     fulfill(data)
                 case .Failure(let error):
-                   return reject(error)
+                    return reject(error)
                 }
         }
     }
@@ -407,25 +456,35 @@ public func findFeeds(params:[String:AnyObject]) -> Promise<SearchResults<Feed>>
 }
 
 
+
+
 /**
-Login EXP system
-@param user,password,organization.
-@return Promise<Token>.
-*/
-func login(user:String,passwd:String,organization:String) ->Promise<Token>{
+ Login EXP system
+ @param options.
+ @return Promise<Auth>.
+ */
+func login(options:[String:String]) ->Promise<Auth>{
     return Promise { fulfill, reject in
-        let req = Alamofire.request(Router.login(["username":user,"password":passwd,"org":organization]))
-            .responseObject { (response: Response<Token, NSError>) in
+        Alamofire.request(Router.login(options))
+            .responseObject { (response: Response<Auth, NSError>) in
                 switch response.result{
                 case .Success(let data):
                     fulfill(data)
+                    expLogging("EXP login response : \(data.document)")
+                    auth = data
+                    setTokenSDK(data)
+                    refreshAuthToken(data)
                 case .Failure(let error):
+                    // try again in 5 seconds
+                    after(NSTimeInterval(runtime.timeout)).then{ result -> Void in
+                        runtime.start(runtime.optionsRuntime)
+                    }
                     return reject(error)
                 }
         }
-        debugPrint(req)
     }
 }
+
 
 /**
 Get Thing by UUID
@@ -466,24 +525,65 @@ public func findThings(params:[String:AnyObject]) -> Promise<SearchResults<Thing
 }
 
 
-
 /**
-Get Current Device
-@return Promise<Any>
-*/
-
-public func getCurrentDevice() ->Promise<Any>{
-    return socketManager.getCurrentDevice()
+ Refresh Token
+ @param options.
+ @return Promise<Auth>.
+ */
+public func refreshToken() -> Promise<Auth>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.refreshToken())
+            .responseObject { (response: Response<Auth, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                    return reject(error)
+                }
+        }
+    }
 }
 
-/**
-Get Current Experience
-@return Promise<Any>
-*/
 
-public func getCurrentExperience() ->Promise<Any>{
-    return socketManager.getCurrentExperience()
+/**
+ Send Broadcast message
+ @param timeout,params.
+ @return Promise<Message>.
+ */
+public func broadCast(timeout:String,params:[String:AnyObject]) -> Promise<Message>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.broadcast(params,timeout))
+            .responseObject { (response: Response<Message, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                    return reject(error)
+                }
+        }
+    }
 }
+
+
+/**
+ Respond to broadcast message
+ @param params.
+ @return Promise<Message>.
+ */
+public func respond(params:[String:AnyObject]) -> Promise<Message>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.respond(params))
+            .responseObject { (response: Response<Message, NSError>) in
+                switch response.result{
+                case .Success(let data):
+                    fulfill(data)
+                case .Failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
 
 /**
 Connection Socket
@@ -498,13 +598,52 @@ public func connection(name:String,callback:String->Void){
 
 
 /**
-    Get Channel By Enum
-    @param enum SCALA_SOCKET_CHANNELS.
-    @return AnyObject (OrganizationChannel,LocationChannel,SystemChannel,ExperienceChannel).
-*/
-public func getChannel(typeChannel:SOCKET_CHANNELS) -> Any{
-    return socketManager.getChannel(typeChannel)
+ Get Channel By String
+ @param String nameChannel.
+ @return CommonChannel
+ */
+public func getChannel(nameChannel:String,system:Bool,consumerApp:Bool) -> Channel{
+    return socketManager.getChannel(nameChannel,system: system,consumerApp: consumerApp)
 }
 
+/**
+ Stop Connection EXP
+*/
+public func stop(){
+    runtime.stop()
+}
+
+
+/**
+ Refresh Auth Token Recursive with Timeout
+*/
+private func refreshAuthToken(result:Auth){
+    after(getTimeout(result)).then{ result -> Void in
+        refreshToken().then{ result -> Void in
+            setTokenSDK(result)
+            expLogging("EXP refreshAuthToken: \(result.document)")
+            socketManager.refreshConnection()
+            refreshAuthToken(result)
+        }
+    }
+
+}
+
+/**
+ Get Time Out
+ */
+private func getTimeout(data:Auth) -> NSTimeInterval{
+    let expiration = data.get("expiration") as! Double
+    let startDate = NSDate(timeIntervalSince1970: expiration/1000)
+    let timeout = startDate.timeIntervalSinceDate(NSDate())
+    return NSTimeInterval(Int64(timeout))
+}
+
+/**
+ Set Token SDK
+ */
+private func setTokenSDK(data:Auth){
+    tokenSDK = data.get("token") as! String
+}
 
 

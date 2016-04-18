@@ -125,11 +125,20 @@ There are four channels available:
 - "experience": Messages to/from devices in the current experience.
 - "location": Messages to/from devices in the current location.
 
+There is also the option for Dynamic Channels just by getting the channel with a name.
+
+
+
 ### How to get channels
 ```swift
 var orgchannel = ExpSwift.getChannel(SOCKET_CHANNELS.ORGANIZATION) as! OrganizationChannel 
 var systemChannel = ExpSwift.getChannel(SOCKET_CHANNELS.SYSTEM) as! SystemChannel
 
+```
+###Dynamic Channels
+You can get your own channel by name with 
+```swift
+var myChannel:CommonChannel = ExpSwift.getChannel("myChannel")
 ```
 
 ###  [Channel].fling(uuid)
@@ -385,6 +394,13 @@ println(error)
 }
 
 ```
+# LOGGING
+
+If you want to see the ExpSwift logs you need to Click on the POD project name at the top of the File Navigator at the left of the Xcode project window. Choose the Build Settings tab and scroll down to the "Swift Compiler - Custom Flags" section near the bottom. Click the Down Arrow next to Other Flags to expand the section.
+Click on the Debug line to select it. Place your mouse cursor over the right side of the line and double-click. A list view will appear. Click the + button at the lower left of the list view to add a value. A text field will become active.
+In the text field, enter the text **-D DEBUG** and press Return to commit the line.
+
+![alt tag](https://github.com/ScalaInc/exp-ios-sdk/blob/feature/logging/debuggFlag.png)
 
 
 # Abstract API Objects
@@ -437,6 +453,9 @@ The location's UUID.
 
 ##### location.getZones()
 Return array of Zones Object [Zone].
+
+##### location.getLayoutUrl()
+Return Layout URL if the location has one.
 
 
 ### Zone Object
