@@ -646,4 +646,10 @@ private func setTokenSDK(data:Auth){
     tokenSDK = data.get("token") as! String
 }
 
+/**
+ If Socket is connected
+ */
+public func isConnected()->Bool{
+    return runtime.isConnected()
+}
 
