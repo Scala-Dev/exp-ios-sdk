@@ -467,3 +467,11 @@ In the text field, enter the text **-D DEBUG** and press Return to commit the li
 
 ![alt tag](https://github.com/ScalaInc/exp-ios-sdk/blob/feature/logging/debuggFlag.png)
 
+## Author
+
+Cesar Oyarzun, cesar.oyarzun@scala.com
+
+## License
+
+ExpSwift is available under the MIT license. See the LICENSE file for more info.
+
