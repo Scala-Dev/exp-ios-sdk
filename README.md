@@ -65,7 +65,7 @@ Starts and returns an sdk instance. Can be called multiple times to start multip
 - `organization` The organization of the user. Required user credential.
 - `uuid` The uuid of the device or consumer app.
 - `secret` The device secret.
-- `api_key` The consumer app api key. Required consumer app credential.
+- `apiKey` The consumer app api key. Required consumer app credential.
 - `host` The api host to authenticate with. Defaults to `https://api.goexp.io`.
 - `enableNetwork` Whether or not to establish a socket connection with the EXP network. If `false` you will not be able to listen for broadcasts. Defaults to `true`.
 
