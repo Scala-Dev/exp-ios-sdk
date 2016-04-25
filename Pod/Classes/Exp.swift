@@ -37,8 +37,8 @@ enum Router: URLRequestConvertible {
     case findExperiences([String: AnyObject])
     case getLocation(String)
     case findLocations([String: AnyObject])
-    case getContentNode(String)
-    case findContentNodes([String: AnyObject])
+    case getContent(String)
+    case findContent([String: AnyObject])
     case findData([String: AnyObject])
     case getData(String,String)
     case getThing(String)
@@ -64,9 +64,9 @@ enum Router: URLRequestConvertible {
             return .GET
         case .findLocations:
             return .GET
-        case .getContentNode:
+        case .getContent:
             return .GET
-        case .findContentNodes:
+        case .findContent:
             return .GET
         case .findData:
             return .GET
@@ -109,9 +109,9 @@ enum Router: URLRequestConvertible {
                 return "/api/locations/\(uuid)"
             case .findLocations:
                 return "/api/locations"
-            case .getContentNode(let uuid):
+            case .getContent(let uuid):
                 return "/api/content/\(uuid)/children"
-            case .findContentNodes:
+            case .findContent:
                 return "/api/content"
             case .findData:
                 return "/api/data"
@@ -168,7 +168,7 @@ enum Router: URLRequestConvertible {
                 let reqFindThings = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
                 expLogging("EXP Htpp Request findThings: \(reqFindThings)")
                 return reqFindThings
-            case .findContentNodes(let parameters):
+            case .findContent(let parameters):
                 let reqFindContentNodes = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
                 expLogging("EXP Http Request findContentNodes: \(reqFindContentNodes)")
                 return reqFindContentNodes
@@ -344,10 +344,10 @@ Get Content Node By UUID
 @param uuid.
 @return Promise<ContentNode>.
 */
-public func getContentNode(uuid:String) -> Promise<ContentNode>{
+public func getContentNode(uuid:String) -> Promise<Content>{
     return Promise { fulfill, reject in
-        Alamofire.request(Router.getContentNode(uuid) )
-            .responseObject { (response: Response<ContentNode, NSError>) in
+        Alamofire.request(Router.getContent(uuid) )
+            .responseObject { (response: Response<Content, NSError>) in
                 switch response.result{
                 case .Success(let data):
                     fulfill(data)
@@ -363,10 +363,10 @@ public func getContentNode(uuid:String) -> Promise<ContentNode>{
  @param dictionary of search params
  @return Promise<SearchResults<ContentNode>>.
  */
-public func findContentNodes(params:[String:AnyObject]) -> Promise<SearchResults<ContentNode>>{
+public func findContent(params:[String:AnyObject]) -> Promise<SearchResults<Content>>{
     return Promise { fulfill, reject in
-        Alamofire.request(Router.findContentNodes(params))
-            .responseCollection { (response: Response<SearchResults<ContentNode>, NSError>) in
+        Alamofire.request(Router.findContent(params))
+            .responseCollection { (response: Response<SearchResults<Content>, NSError>) in
                 switch response.result{
                 case .Success(let data):
                     fulfill(data)

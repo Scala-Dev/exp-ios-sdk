@@ -39,17 +39,17 @@ the development branch, add the following line to your Podfile:
 ```ruby
 use_frameworks!
 
-pod "ExpSwift", :git => 'https://github.com/ScalaInc/exp-ios-sdk.git', :branch => 'develop'
+pod "ExpSwift"
 ```
 
 Or to use a specific release:
 
-
 ```ruby
 use_frameworks!
 
-pod "ExpSwift", :git => 'https://github.com/ScalaInc/exp-ios-sdk.git', :tag => 'v0.0.1'
+pod "ExpSwift", , :git => 'https://github.com/ScalaInc/exp-ios-sdk.git', :tag => 'v0.0.1'
 ```
+
 
 
 # Runtime
@@ -162,9 +162,21 @@ The callback is called with the broadcast payload as the first argument and a `r
 ```swift
     channel.listen("myEvent",  callback: { (resultListen) -> Void in
         debugPrint(resultListen)
+        //respond to listen method
+        ExpSwift.respond(["text":"hi to you too"])
     })
 ```
 
+**`ExpSwift.respond(payload)`**
+
+Respond to a broadcast message whith `payload`.
+
+```swift
+    var payload:Dictionary<String,AnyObject> = ["opening":"knock knock?"]
+    ExpSwift.respond(payload).then { result -> Void in
+        debugPrint(result)
+    }
+```
 
 **`channel.fling(payload)`** 
 
@@ -183,7 +195,7 @@ Devices inherit all [common resource methods and attributes](#resources).
 
 **`ExpSwift.getDevice(uuid:String)`**
 
-Get a single device by UUID. Resolves to a [Device Object](#device-object).
+Get a single device by UUID. Resolves to a [Device](#devices).
 
 ```swift
 ExpSwift.getDevice("8930ff64-1063-4a03-b1bc-33e1ba463d7a").then { (device: Device) -> Void  in
@@ -195,7 +207,7 @@ ExpSwift.getDevice("8930ff64-1063-4a03-b1bc-33e1ba463d7a").then { (device: Devic
 
 **`ExpSwift.findDevices(params:[String:AnyObject])`**
 
-Query for multiple devices. Resolves to an array of [Device Objects](#device-object).
+Query for multiple devices. Resolves to an array of [Devices](#devices).
 
 ```swift
 ExpSwift.findDevices(["limit":10, "skip":0, "sort":"name"]).then { (devices: SearchResults<Device>) -> Void  in
@@ -211,7 +223,7 @@ ExpSwift.findDevices(["limit":10, "skip":0, "sort":"name"]).then { (devices: Sea
 
 **`ExpSwift.getThing(uuid:String)`**
 
-Get a single thing by UUID. Resolves to a [Thing Object](#thing-object).
+Get a single thing by UUID. Resolves to a [Thing](#things).
 
 ```swift
 ExpSwift.getThing("8930ff64-1063-4a03-b1bc-33e1ba463d7a").then { (thing: Thing) -> Void  in
@@ -223,7 +235,7 @@ ExpSwift.getThing("8930ff64-1063-4a03-b1bc-33e1ba463d7a").then { (thing: Thing) 
 
 **`ExpSwift.findThings(params:[String:AnyObject])`**
 
-Query for multiple things. Resolves to an array of [Thing Objects](#thing-object).
+Query for multiple things. Resolves to an array of [Things](#things).
 
 ```swift
 ExpSwift.findThings(["limit":10, "skip":0, "sort":"name"]).then { (things: SearchResults<Thing>) -> Void  in
@@ -240,7 +252,7 @@ ExpSwift.findThings(["limit":10, "skip":0, "sort":"name"]).then { (things: Searc
 
 **`ExpSwift.getExperience(uuid:String)`**
 
-Get a single experience by UUID. Resolves to a [Experience Object](#experience-object).
+Get a single experience by UUID. Resolves to a [Experience](#experiences).
 
 ```swift
 ExpSwift.getExperience("58dc59e4-a44c-4b6e-902b-e6744c09d933").then { (experience: Experience) -> Void  in
@@ -252,7 +264,7 @@ ExpSwift.getExperience("58dc59e4-a44c-4b6e-902b-e6744c09d933").then { (experienc
 
 **`ExpSwift.findExperiences(params:[String:AnyObject])`**
 
-Query for multiple experiences. Resolves to an array of [Experience Objects](#experience-object).
+Query for multiple experiences. Resolves to an array of [Experiences](#experiences).
 
 ```swift
 ExpSwift.findExperiences(["limit":10, "skip":0, "sort":"name"]).then { (experiences: SearchResults<Experience>) -> Void  in
@@ -268,7 +280,7 @@ ExpSwift.findExperiences(["limit":10, "skip":0, "sort":"name"]).then { (experien
 
 **`ExpSwift.getLocation(uuid:String)`**
 
-Get a single location by UUID. Resolves to a [Location Object](#location-object).
+Get a single location by UUID. Resolves to a [Location](#locations).
 
 ```swift
 ExpSwift.getLocation("3e2e25df-8324-4912-91c3-810751f527a4").then { (location: Location) -> Void  in
@@ -280,7 +292,7 @@ ExpSwift.getLocation("3e2e25df-8324-4912-91c3-810751f527a4").then { (location: L
 
 **`ExpSwift.findLocations(params:[String:AnyObject])`**
 
-Query for multiple locations. Resolves to an array of [Location Objects](#location-object).
+Query for multiple locations. Resolves to an array of [Locations](#locations).
 
 ```swift
 ExpSwift.findLocations(["limit":10, "skip":0, "sort":"name"]).then { (locations: SearchResults<Location>) -> Void  in
@@ -302,8 +314,6 @@ Returns a url pointing to the location's layout image.
 
 ## Zones
 
-Zones inherit the [common resource methods and attributes](#resources) `save()`, `refresh()`, and `getChannel()`.
-
 **`zone.key`**
 
 The zone's key.
@@ -316,7 +326,7 @@ The zone's name.
 
 **`ExpSwift.getFeed(uuid:String)`**
 
-Get a single feed by UUID. Resolves to a [Feed Object](#feed-object).
+Get a single feed by UUID. Resolves to a [Feed](#feeds).
 
 ```swift
 ExpSwift.getFeed("3e2e25df-8324-4912-91c3-810751f527a4").then { (feed: Feed) -> Void  in
@@ -328,7 +338,7 @@ ExpSwift.getFeed("3e2e25df-8324-4912-91c3-810751f527a4").then { (feed: Feed) -> 
 
 **`ExpSwift.findFeeds(params:[String:AnyObject])`**
 
-Query for multiple feeds. Resolves to an array of [Feed Objects](#feed-object).
+Query for multiple feeds. Resolves to an array of [Feeds](#feeds).
 
 ```swift
 ExpSwift.findFeeds(["limit":10, "skip":0, "sort":"name"]).then { (locations: SearchResults<Feed>) -> Void  in
@@ -361,7 +371,7 @@ Get the feed's data. Resolves to the output of the feed query.
 
 **`ExpSwift.getData(group:String, key:String)`**
 
-Get a single data item by group and key. Resolves to a [Data Object](#data-object).
+Get a single data item by group and key. Resolves to a [Data](#data).
 
 ```swift
 ExpSwift.getData("cats", "fluffbottom").then { (data: Data) -> Void  in
@@ -373,7 +383,7 @@ ExpSwift.getData("cats", "fluffbottom").then { (data: Data) -> Void  in
 
 **`ExpSwift.findData(params:[String:AnyObject])`**
 
-Query for multiple data items. Resolves to an SearchResults object containing [Data Objects](#data-object).
+Query for multiple data items. Resolves to an SearchResults object containing [Data](#data).
 
 ```swift
 ExpSwift.findData(["limit":10, "skip":0, "sort":"key", "group":"cats"]).then { (data: SearchResults<Data>) -> Void  in
@@ -387,33 +397,33 @@ ExpSwift.findData(["limit":10, "skip":0, "sort":"key", "group":"cats"]).then { (
 
 ## Content
 
-**`ExpSwift.getContentNode(uuid)`**
+**`ExpSwift.getContent(uuid)`**
 
-Get a content node by UUID. Resolves to a [ContentNode Object](#content-object). Note: The UUID value of 'root' will return the contents of the root folder of the current organization.
+Get a content node by UUID. Resolves to a [Content](#content). Note: The UUID value of 'root' will return the contents of the root folder of the current organization.
 
 ```swift
-ExpSwift.getContentNode("root").then { (content: ContentNode) -> Void  in
+ExpSwift.getContent("root").then { (content: Content) -> Void  in
       debugPrint(content.get("name"))
     }.error { error in
         debugPrint(error)
     }
 ```
 
-**`ExpSwift.findContentNodes(params:[String:AnyObject])`**
+**`ExpSwift.findContent(params:[String:AnyObject])`**
 
-Query for multiple content nodes. Resolves to a SearchResults object containing [ContentNode Objects](#content-object).
+Query for multiple content . Resolves to a SearchResults object containing [Content](#content).
 
 ```swift
-ExpSwift.findContentNodes(["limit":10, "skip":0, "sort":"name", "name":"images"]).then { (data: SearchResults<ContentNode>) -> Void  in
-    for contentNode in data.getResults() {
-        debugPrint(contentNode.get("name"))
+ExpSwift.findContent(["limit":10, "skip":0, "sort":"name", "name":"images"]).then { (data: SearchResults<Content>) -> Void  in
+    for content in data.getResults() {
+        debugPrint(content.get("name"))
     }
 }.error { error in
     debugPrint(error)
 }
 ```
 
-## ContentNode Object
+## Content Object
 
 **`content.uuid`**
 
@@ -421,10 +431,10 @@ The content's UUID.
 
 **`content.getChildren()`**
 
-Get the immediate children of this content node. Resolves to an array of [ContentNode Objects](#content-object).
+Get the immediate children of this content node. Resolves to an array of [Content](#content).
 
 ```swift
- content.getChildren().then { (children: [ContentNode]) -> Void in
+ content.getChildren().then { (children: [Content]) -> Void in
     for child in children{
         debugPrint(child.get("name"))
     }
