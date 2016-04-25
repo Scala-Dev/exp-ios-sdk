@@ -50,8 +50,6 @@ use_frameworks!
 pod "ExpSwift", , :git => 'https://github.com/ScalaInc/exp-ios-sdk.git', :tag => 'v1.0.0'
 ```
 
-
-
 # Runtime
 
 ## Starting the SDK
@@ -157,7 +155,7 @@ Sends a broadcast with given `name` and `payload` on the channel. Waits for resp
 
 Registers a [listener](#listeners) callback for events on the channel with the given `name`. Resolves to a [listener](#listeners) when the callback is registered and the network connection has subscribed to the channel.
 
-The callback is called with the broadcast payload as the first argument and a `respond` method as the second argument. Call the `respond` method to send a response back to the broadcaster.
+The callback is called with the broadcast payload as the first argument. Call the `respond` method to send a response back to the broadcaster.
 
 ```swift
     channel.listen("myEvent",  callback: { (resultListen) -> Void in
@@ -169,7 +167,7 @@ The callback is called with the broadcast payload as the first argument and a `r
 
 **`ExpSwift.respond(payload)`**
 
-Respond to a broadcast message whith `payload`.
+Call the `respond` method to send a response back to the broadcaster whith a `payload`.
 
 ```swift
     var payload:Dictionary<String,AnyObject> = ["opening":"knock knock?"]
