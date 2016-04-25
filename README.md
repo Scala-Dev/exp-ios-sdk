@@ -237,17 +237,6 @@ ExpSwift.findThings(["limit":10, "skip":0, "sort":"name"]).then { (things: Searc
 
 ## Experiences
 
-**`ExpSwift.getCurrentExperience()`**
-
-Get the current experience. Resolves to an [Experience Object](#experience-object).
-
-```swift
-ExpSwift.getCurrentExperience().then { experience -> Void  in
-    debugPrint(experience.get("name"))
-    }.error { error in
-        debugPrint(error)
-}
-```
 
 **`ExpSwift.getExperience(uuid:String)`**
 
@@ -274,6 +263,7 @@ ExpSwift.findExperiences(["limit":10, "skip":0, "sort":"name"]).then { (experien
         debugPrint(error)
 }
 ```
+
 ## Locations
 
 **`ExpSwift.getLocation(uuid:String)`**
@@ -301,6 +291,7 @@ ExpSwift.findLocations(["limit":10, "skip":0, "sort":"name"]).then { (locations:
         debugPrint(error)
 }
 ```
+
 **`location.getZones()`**
 
 Resolves to an array of [zones](#zones) that are part of this location.
@@ -308,8 +299,6 @@ Resolves to an array of [zones](#zones) that are part of this location.
 **`location.getLayoutUrl()`**
 
 Returns a url pointing to the location's layout image.
-
-
 
 ## Zones
 
@@ -350,6 +339,7 @@ ExpSwift.findFeeds(["limit":10, "skip":0, "sort":"name"]).then { (locations: Sea
     debugPrint(error)
 }
 ```
+
 ## Feed Object
 
 **`feed.uuid`**
