@@ -47,7 +47,7 @@ Or to use a specific release:
 ```ruby
 use_frameworks!
 
-pod "ExpSwift", , :git => 'https://github.com/ScalaInc/exp-ios-sdk.git', :tag => 'v0.0.1'
+pod "ExpSwift", , :git => 'https://github.com/ScalaInc/exp-ios-sdk.git', :tag => 'v1.0.0'
 ```
 
 
