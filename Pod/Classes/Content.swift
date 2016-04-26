@@ -1,5 +1,5 @@
 //
-//  ContentNode.swift
+//  Content.swift
 //  Pods
 //
 //  Created by Cesar on 9/23/15.
@@ -10,10 +10,9 @@ import Foundation
 import PromiseKit
 import Alamofire
 
+public final class Content: Model,ResponseObject,ResponseCollection {
 
-public final class ContentNode: Model,ResponseObject,ResponseCollection {
-
-    var children: [ContentNode] = []
+    var children: [Content] = []
     public let uuid: String
     public let subtype: CONTENT_TYPES
 
@@ -35,7 +34,7 @@ public final class ContentNode: Model,ResponseObject,ResponseCollection {
         }
         
         if let childrenPath = representation.valueForKeyPath("children") as? [[String: AnyObject]] {
-            self.children = ContentNode.collection(response:response, representation: childrenPath)
+            self.children = Content.collection(response:response, representation: childrenPath)
         }
         
         super.init(response: response, representation: representation)
@@ -44,11 +43,11 @@ public final class ContentNode: Model,ResponseObject,ResponseCollection {
         document["children"] = nil
     }
     
-     public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [ContentNode] {
-        var contents: [ContentNode] = []
+     public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Content] {
+        var contents: [Content] = []
             if let representation = representation as? [[String: AnyObject]] {
                 for contentRepresentation in representation {
-                    if let content = ContentNode(response: response, representation: contentRepresentation) {
+                    if let content = Content(response: response, representation: contentRepresentation) {
                         contents.append(content)
                     }
                 }
@@ -60,15 +59,15 @@ public final class ContentNode: Model,ResponseObject,ResponseCollection {
     Get Children from Node
     @return Promise<[Content]>.
     */
-    public func getChildren() ->Promise<[ContentNode]>{
+    public func getChildren() ->Promise<[Content]>{
         if (!children.isEmpty) {
-            return Promise<[ContentNode]> { fulfill, reject in
+            return Promise<[Content]> { fulfill, reject in
                 fulfill(children)
             }
         } else {
             return Promise { fulfill, reject in
                 Alamofire.request(Router.getContent(uuid) )
-                    .responseObject { (response: Response<ContentNode, NSError>) in
+                    .responseObject { (response: Response<Content, NSError>) in
                         switch response.result{
                         case .Success(let data):
                             self.children = data.children

@@ -165,4 +165,12 @@ public  class SocketManager {
             subscribe(channelId)
         }
     }
+    
+    public func isConnected()->Bool{
+        if(self.socket?.status.description == "Connected"){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

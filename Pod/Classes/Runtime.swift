@@ -173,6 +173,14 @@ public class Runtime{
             callback(resultListen)
         })
     }
+    
+    /**
+     Socket Manager is Connected
+     */
+    public func isConnected()->Bool{
+        return socketManager.isConnected()
+    }
+    
 
     
 }

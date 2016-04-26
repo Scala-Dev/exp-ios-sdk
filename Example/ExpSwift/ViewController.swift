@@ -16,20 +16,25 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         //        let host = "http://api.develop.exp.scala.com:9000"
         //        let host = "http://develop.exp.scala.com:9000"
-        let host = "http://localhost:9000"
-
-//        let host = "https://api.goexp.io"
+//        let host = "http://localhost:9000"
+        let host = "https://api-staging.goexp.io"
+       // let host = "https://api.goexp.io"
         
-        ExpSwift.start(host,user: "cesar.oyarzun@scala.com",password: "5715031Com",organization: "").then{ result -> Void in
-            
+        ExpSwift.start(host,user: "cesar.oyarzun@scala.com",password: "5715031Com@",organization: "").then{ result -> Void in
+            debugPrint("test")
             let channel1 = ExpSwift.getChannel("channel1",system: false,consumerApp: true)
-            let payload1:Dictionary<String,String> = ["boog":"pro"]
+            let flingMsg:Dictionary<String,AnyObject> = ["uuid":"myUuid"]
+            channel1.fling(flingMsg)
+            let payload1:Dictionary<String,AnyObject> = ["boog":"pro"]
             channel1.listen("hi", callback: { (resultListen) -> Void in
                 debugPrint(resultListen)
-                ExpSwift.respond(resultListen)
+                ExpSwift.respond(["text":"hi to you too"])
             }).then { result -> Void in
-                channel1.broadcast("hi", payload: payload1, timeout: "2000")
+                ExpSwift.getContentNode("")
+
             }
+            
+            
             
 //            let channel2 = ExpSwift.getChannel("channel2",system: 0,consumerApp: 1)
 //            let payload2:Dictionary<String,String> = ["cesar":"hello"]
@@ -43,7 +48,9 @@ class ViewController: UIViewController {
                 for location in locations.getResults()
                 {
                     debugPrint(location.get("name"))
-                    location.fling(channel1,payload: payload1)
+//                    location.fling(channel1,payload: payload1)
+                    let zones = location.getZones()
+                    debugPrint(zones)
                 }
 //                debugPrint(devices)
                 }.error { error in
