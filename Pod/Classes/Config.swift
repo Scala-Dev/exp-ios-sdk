@@ -22,5 +22,7 @@ public struct Config{
     static let LOCATION = "location"
     static let ONLINE = "online"
     static let OFFLINE = "offline"
+    static let UPDATE = "update"
+    static let ERROR = "error"
 }
 
