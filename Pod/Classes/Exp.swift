@@ -16,10 +16,11 @@ import JWT
 var hostUrl: String = ""
 var tokenSDK: String = ""
 var hostSocket: String = ""
-var auth:Auth?
+public var auth:Auth?
 var socketManager = SocketManager()
 var runtime = Runtime()
-
+public typealias CallBackTypeConnection = String -> Void
+var authConnection = [String: CallBackTypeConnection]()
 
 
 public enum SOCKET_CHANNELS: String {
@@ -28,6 +29,7 @@ public enum SOCKET_CHANNELS: String {
     case LOCATION = "location"
     case EXPERIENCE = "experience"
 }
+
 
 
 enum Router: URLRequestConvertible {
@@ -528,11 +530,11 @@ func login(options:[String:String]) ->Promise<Auth>{
                     auth = data
                     setTokenSDK(data)
                     refreshAuthToken(data)
+                    let callBack = authConnection[Config.UPDATE]!
+                    callBack(Config.UPDATE)
                 case .Failure(let error):
-                    // try again in 5 seconds
-                    after(NSTimeInterval(runtime.timeout)).then{ result -> Void in
-                        runtime.start(runtime.optionsRuntime)
-                    }
+                    let callBack = authConnection[Config.ERROR]!
+                    callBack(Config.ERROR)
                     return reject(error)
                 }
         }
@@ -591,7 +593,15 @@ public func refreshToken() -> Promise<Auth>{
                 switch response.result{
                 case .Success(let data):
                     fulfill(data)
+                    let callBack = authConnection[Config.UPDATE]!
+                    callBack(Config.UPDATE)
                 case .Failure(let error):
+                    // try again in 5 seconds
+                    after(NSTimeInterval(runtime.timeout)).then{ result -> Void in
+                        runtime.start(runtime.optionsRuntime)
+                    }
+                    let callBack = authConnection[Config.ERROR]!
+                    callBack(Config.ERROR)
                     return reject(error)
                 }
         }
@@ -705,5 +715,16 @@ private func setTokenSDK(data:Auth){
  */
 public func isConnected()->Bool{
     return runtime.isConnected()
+}
+
+
+
+/**
+ Auth connection callback
+ @param name for connection(update,line),callback
+ @return void
+ */
+public func on(name:String,callback:String->Void){
+    authConnection.updateValue(callback, forKey: name)
 }
 
