@@ -104,6 +104,35 @@ Stops all running instance of the sdk, cancels all listeners and network connect
  ExpSwift.stop()
 ```
 
+## Authentication
+
+
+**`ExpSwift.auth`**
+
+Returns the current authentication payload. Will be null if not yet authenticated.
+
+```swift
+#GET USERNAME
+let document = ExpSwift.auth?.getDocument()
+debugPrint(document!["identity"]);
+debugPrint(document!["identity"]!["username"]);
+```
+
+**`ExpSwift.on("update",callback)`** 
+
+Callback is called when authentication payload is updated.
+
+
+**`ExpSwift.on("error",callback)`**
+
+Register a callback for when the sdk instance encounters a critical error and cannot continue. The callback is called with the error as the first argument. This is generally due to authentication failure.
+
+```swift
+ExpSwift.on("error", callback: { obj -> Void in
+    debugPrint("Error on EXP SDK")
+})
+```
+
 # Network
 
 
