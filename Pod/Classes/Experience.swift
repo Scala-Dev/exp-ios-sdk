@@ -7,7 +7,8 @@
 //
 
 import Foundation
-
+import PromiseKit
+import Alamofire
 
 
 public final class Experience: Model,ResponseObject,ResponseCollection {
@@ -36,6 +37,20 @@ public final class Experience: Model,ResponseObject,ResponseCollection {
             }
         }
         return experiences
+    }
+    
+    public func getDevices() -> Promise<SearchResults<Device>>{
+        return Promise { fulfill, reject in
+            Alamofire.request(Router.findDevices(["location.uuid":self.uuid]))
+                .responseCollection { (response: Response<SearchResults<Device>, NSError>) in
+                    switch response.result{
+                    case .Success(let data):
+                        fulfill(data)
+                    case .Failure(let error):
+                        return reject(error)
+                    }
+            }
+        }
     }
     
 }

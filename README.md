@@ -303,6 +303,10 @@ ExpSwift.findExperiences(["limit":10, "skip":0, "sort":"name"]).then { (experien
 }
 ```
 
+**`experience.getDevices()`**
+
+Resolves to an array of [devices](#devices) that are part of this experience.
+
 ## Locations
 
 **`ExpSwift.getLocation(uuid:String)`**
