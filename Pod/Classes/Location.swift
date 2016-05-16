@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import PromiseKit
+import Alamofire
 
 
 public final class Location: Model,ResponseObject,ResponseCollection {
@@ -48,5 +50,33 @@ public final class Location: Model,ResponseObject,ResponseCollection {
     public func getLayoutUrl() -> String {
         let rt = auth?.get("restrictedToken")
         return "\(hostUrl)/api/locations/\(self.uuid)/layout?_rt=\(rt)"
+    }
+
+    public func getDevices() -> Promise<SearchResults<Device>>{
+        return Promise { fulfill, reject in
+            Alamofire.request(Router.findDevices(["location.uuid":self.uuid]))
+                .responseCollection { (response: Response<SearchResults<Device>, NSError>) in
+                    switch response.result{
+                    case .Success(let data):
+                        fulfill(data)
+                    case .Failure(let error):
+                        return reject(error)
+                    }
+            }
+        }
+    }
+    
+    public func getThings() -> Promise<SearchResults<Thing>>{
+        return Promise { fulfill, reject in
+            Alamofire.request(Router.findThings(["location.uuid":self.uuid]))
+                .responseCollection { (response: Response<SearchResults<Thing>, NSError>) in
+                    switch response.result{
+                    case .Success(let data):
+                        fulfill(data)
+                    case .Failure(let error):
+                        return reject(error)
+                    }
+            }
+        }
     }
 }

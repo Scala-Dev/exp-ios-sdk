@@ -339,6 +339,15 @@ Resolves to an array of [zones](#zones) that are part of this location.
 
 Returns a url pointing to the location's layout image.
 
+**`location.getDevices()`**
+
+Resolves to an array of [devices](#devices) that are part of this location.
+
+**`location.getThings()`**
+
+Resolves to an array of [things](#things) that are part of this location.
+
+
 ## Zones
 
 **`zone.key`**
