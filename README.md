@@ -287,6 +287,19 @@ ExpSwift.findThings(["limit":10, "skip":0, "sort":"name"]).then { (things: Searc
 }
 ```
 
+**`thing.getLocation()`**
+
+Resolves to the device's [location](#locations) or `null`.
+
+**`thing.getZones()`**
+
+Resolves to an array of the device's [zones](#zones).
+
+**`thing.getExperience()`**
+
+Resolves to the device's [experience](#experiences) or `null`
+
+
 ## Experiences
 
 
