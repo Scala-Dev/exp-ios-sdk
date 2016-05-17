@@ -11,18 +11,14 @@ import Foundation
 
 public final class Zone: Model,ResponseObject,ResponseCollection {
 
-    public let name: String
+    public var name: String?
     public let key: String
     
     required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
-        if let representation = representation as? [String: AnyObject] {
-            self.name = representation["name"] as! String
-            self.key = representation["key"] as! String
-        } else {
-            self.name = ""
-            self.key = ""
+        self.key = representation.valueForKeyPath("key") as! String
+        if let name = representation.valueForKeyPath("name")  as? String {
+             self.name = representation.valueForKeyPath("name") as! String
         }
-        
         super.init(response: response, representation: representation)
     }
 

@@ -16,6 +16,7 @@ public final class Location: Model,ResponseObject,ResponseCollection {
     public let uuid: String
     public var zones: [Zone] = []
     
+    
     required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
         if let representation = representation as? [String: AnyObject] {
             self.uuid = representation["uuid"] as! String
@@ -24,7 +25,10 @@ public final class Location: Model,ResponseObject,ResponseCollection {
         }
         
         if let zonesLocation = representation.valueForKeyPath("zones") as? [[String: AnyObject]] {
-            self.zones = Zone.collection(response:response, representation: zonesLocation)
+            if(!zonesLocation.isEmpty){
+                self.zones = Zone.collection(response:response, representation: zonesLocation)
+            }
+            
         }
 
         super.init(response: response, representation: representation)

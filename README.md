@@ -246,6 +246,19 @@ ExpSwift.findDevices(["limit":10, "skip":0, "sort":"name"]).then { (devices: Sea
 }
 ```
 
+**`device.getLocation()`**
+
+Resolves to the device's [location](#locations) or `null`.
+
+**`device.getZones()`**
+
+Resolves to an array of the device's [zones](#zones).
+
+**`device.getExperience()`**
+
+Resolves to the device's [experience](#experiences) or `null`
+
+
 ## Things
 
 **`ExpSwift.getThing(uuid:String)`**
