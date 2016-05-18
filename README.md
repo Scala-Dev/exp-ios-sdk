@@ -208,11 +208,20 @@ Call the `respond` method to send a response back to the broadcaster whith a `pa
 **`channel.fling(payload)`** 
 
 Fling an app launch payload on the channel.
+
 ```swift
      let payload:Dictionary<String,AnyObject> = ["uuid":"myUuid"]
      channel1.fling(payload)
 ```
 
+**`channel.identify()`**
+
+Requests that [devices](#devices) listening for this event on this channel visually identify themselves. Implementation is device specific; this is simply a convience method.
+
+```swift
+let channel = ExpSwift.getChannel("device uui",system: false,consumerApp: false)
+channel1.identify()
+```
 
 # API
 
