@@ -102,5 +102,14 @@ public class Channel: ChannelProtocol {
         return  channelId!
     }
     
+    /**
+     Identify
+     @return
+     */
+    public func identify() -> Void{
+        let msg:Dictionary<String,AnyObject> = ["name":"identify","channel":self.channelId!]
+        expLogging("IDENTIFY \(msg) ")
+        broadCast("2000",params: msg)
+    }
 
 }

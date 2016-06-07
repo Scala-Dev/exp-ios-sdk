@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import PromiseKit
+import Alamofire
 
 
 public final class Location: Model,ResponseObject,ResponseCollection {
@@ -14,18 +16,21 @@ public final class Location: Model,ResponseObject,ResponseCollection {
     public let uuid: String
     public var zones: [Zone] = []
     
+    
     required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
         if let representation = representation as? [String: AnyObject] {
             self.uuid = representation["uuid"] as! String
         } else {
             self.uuid = ""
         }
+        super.init(response: response, representation: representation)
         
         if let zonesLocation = representation.valueForKeyPath("zones") as? [[String: AnyObject]] {
-            self.zones = Zone.collection(response:response, representation: zonesLocation)
+            if(!zonesLocation.isEmpty){
+                self.zones = Zone.collection(response:response, representation: zonesLocation,location: self)
+            }
         }
 
-        super.init(response: response, representation: representation)
     }
     
      public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Location] {
@@ -48,5 +53,33 @@ public final class Location: Model,ResponseObject,ResponseCollection {
     public func getLayoutUrl() -> String {
         let rt = auth?.get("restrictedToken")
         return "\(hostUrl)/api/locations/\(self.uuid)/layout?_rt=\(rt)"
+    }
+
+    public func getDevices() -> Promise<SearchResults<Device>>{
+        return Promise { fulfill, reject in
+            Alamofire.request(Router.findDevices(["location.uuid":self.uuid]))
+                .responseCollection { (response: Response<SearchResults<Device>, NSError>) in
+                    switch response.result{
+                    case .Success(let data):
+                        fulfill(data)
+                    case .Failure(let error):
+                        return reject(error)
+                    }
+            }
+        }
+    }
+    
+    public func getThings() -> Promise<SearchResults<Thing>>{
+        return Promise { fulfill, reject in
+            Alamofire.request(Router.findThings(["location.uuid":self.uuid]))
+                .responseCollection { (response: Response<SearchResults<Thing>, NSError>) in
+                    switch response.result{
+                    case .Success(let data):
+                        fulfill(data)
+                    case .Failure(let error):
+                        return reject(error)
+                    }
+            }
+        }
     }
 }

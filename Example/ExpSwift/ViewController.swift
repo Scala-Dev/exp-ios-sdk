@@ -30,7 +30,7 @@ class ViewController: UIViewController {
                 debugPrint(resultListen)
                 ExpSwift.respond(["text":"hi to you too"])
             }).then { result -> Void in
-                ExpSwift.getContentNode("")
+//                ExpSwift.getContentNode("")
 
             }
             
@@ -45,17 +45,40 @@ class ViewController: UIViewController {
 //            }
 //            
             ExpSwift.findLocations(["limit":10, "skip":0, "sort":"name"]).then { (locations: SearchResults<Location>) -> Void in
-                for location in locations.getResults()
+                for location:Location in locations.getResults()
                 {
                     debugPrint(location.get("name"))
+                    let devicesList = location.getDevices()
 //                    location.fling(channel1,payload: payload1)
                     let zones = location.getZones()
                     debugPrint(zones)
+                    
                 }
 //                debugPrint(devices)
                 }.error { error in
 //                    debugPrint(error)
             }
+            
+            ExpSwift.findDevices(["limit":10, "skip":0, "sort":"name"]).then { (devices: SearchResults<Device>) -> Void in
+                for device:Device in devices.getResults(){
+                    debugPrint(device.get("name"))
+                    debugPrint(device.getZones())
+                    debugPrint(device.getLocation())
+                    debugPrint(device.getExperience())
+//                    debugPrint(device.uuid)
+//                    debugPrint(device)
+                    
+                }
+            }
+            
+            //GET DEVICE
+                    ExpSwift.getDevice("8930ff64-1063-4a03-b1bc-33e1ba463d7a").then { (device: Device) -> Void in
+                        debugPrint(device.get("name"))
+                        debugPrint(device.getExperience())
+                    }.error { error in
+                        debugPrint(error)
+                    }
+
             
 
             

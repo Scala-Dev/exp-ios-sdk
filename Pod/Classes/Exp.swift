@@ -530,8 +530,10 @@ func login(options:[String:String]) ->Promise<Auth>{
                     auth = data
                     setTokenSDK(data)
                     refreshAuthToken(data)
-                    let callBack = authConnection[Config.UPDATE]!
-                    callBack(Config.UPDATE)
+                    
+                    if let callBack = authConnection[Config.UPDATE]{
+                        callBack(Config.UPDATE)
+                    }
                 case .Failure(let error):
                     let callBack = authConnection[Config.ERROR]!
                     callBack(Config.ERROR)
