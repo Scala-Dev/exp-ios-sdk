@@ -53,4 +53,21 @@ public final class Experience: Model,ResponseObject,ResponseCollection {
         }
     }
     
+    /**
+     Get Current Experience
+     @return Promise<Experience>.
+     */
+    public func getCurrentExperience() -> Promise<Experience>{
+        return Device.getCurrentDevice().then{ (device:Device) -> Promise<Experience> in
+            return Promise<Experience> { fulfill, reject in
+                if let experience:Experience = device.getExperience(){
+                    fulfill(experience)
+                }else{
+                    debugPrint("Experience - getCurrenExperience NULL")
+                }
+            }
+        }
+    }
+
+    
 }
