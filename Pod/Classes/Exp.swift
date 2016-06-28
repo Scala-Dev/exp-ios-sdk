@@ -530,13 +530,13 @@ func login(options:[String:String]) ->Promise<Auth>{
                     auth = data
                     setTokenSDK(data)
                     refreshAuthToken(data)
-                    
                     if let callBack = authConnection[Config.UPDATE]{
                         callBack(Config.UPDATE)
                     }
                 case .Failure(let error):
-                    let callBack = authConnection[Config.ERROR]!
-                    callBack(Config.ERROR)
+                    if let callBack = authConnection[Config.ERROR]{
+                        callBack(Config.ERROR)
+                    }
                     return reject(error)
                 }
         }
@@ -595,15 +595,17 @@ public func refreshToken() -> Promise<Auth>{
                 switch response.result{
                 case .Success(let data):
                     fulfill(data)
-                    let callBack = authConnection[Config.UPDATE]!
-                    callBack(Config.UPDATE)
+                    if let callBack = authConnection[Config.UPDATE]{
+                        callBack(Config.UPDATE)
+                    }
                 case .Failure(let error):
                     // try again in 5 seconds
                     after(NSTimeInterval(runtime.timeout)).then{ result -> Void in
                         runtime.start(runtime.optionsRuntime)
                     }
-                    let callBack = authConnection[Config.ERROR]!
-                    callBack(Config.ERROR)
+                    if let callBack = authConnection[Config.ERROR]{
+                        callBack(Config.ERROR)
+                    }
                     return reject(error)
                 }
         }
