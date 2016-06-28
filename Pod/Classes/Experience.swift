@@ -63,7 +63,7 @@ public final class Experience: Model,ResponseObject,ResponseCollection {
                 if let experience:Experience = device.getExperience(){
                     fulfill(experience)
                 }else{
-                    debugPrint("Experience - getCurrenExperience NULL")
+                    debugPrint("Experience - getCurrentExperience NULL")
                 }
             }
         }
