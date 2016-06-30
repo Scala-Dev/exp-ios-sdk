@@ -133,7 +133,7 @@ ExpSwift.on("error", callback: { obj -> Void in
 })
 ```
 
-# Network
+# Real Time Communication
 
 
 ## Status
@@ -212,6 +212,15 @@ Fling an app launch payload on the channel.
 ```swift
      let payload:Dictionary<String,AnyObject> = ["uuid":"myUuid"]
      channel1.fling(payload)
+```
+
+**`channel.identify()`**
+
+Requests that [devices](#devices) listening for this event on this channel visually identify themselves. Implementation is device specific; this is simply a convience method.
+
+```swift
+let channel = ExpSwift.getChannel("device uui",system: false,consumerApp: false)
+channel1.identify()
 ```
 
 **`channel.identify()`**
@@ -349,6 +358,7 @@ Resolves to an array of [devices](#devices) that are part of this experience.
 **`experience.getCurrentExperience()`**
 
 Resolves to the current Experience(#experiences) or `null`
+
 
 ## Locations
 
