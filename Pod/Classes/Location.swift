@@ -93,6 +93,7 @@ public final class Location: Model,ResponseObject,ResponseCollection {
                 if let location:Location = device.getLocation(){
                      fulfill(location)
                 }else{
+                    reject(NSError(domain: "error", code: 100, userInfo: ["message":"getCurrentLocation is null"]))
                     debugPrint("Location - getCurrentLocation NULL")
                 }
              }

@@ -77,6 +77,7 @@ public final class Zone: Model,ResponseObject,ResponseCollectionLocation {
                 if let zones:[Zone] = device.getZones(){
                     fulfill(zones)
                 }else{
+                    reject(NSError(domain: "error", code: 100, userInfo: ["message":"getCurrentZones is null"]))
                     debugPrint("Zone - getCurrentZones NULL")
                 }
             }

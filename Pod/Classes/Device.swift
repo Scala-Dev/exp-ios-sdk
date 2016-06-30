@@ -79,7 +79,7 @@ public final class Device: Model,ResponseObject,ResponseCollection {
                 }
             }
             }else{
-                prom = Promise{fulfill,reject in}
+                prom = Promise(error: NSError(domain: "error", code: 100, userInfo: ["message":"Identity uuid is null"]))
             }
         }
        return prom!

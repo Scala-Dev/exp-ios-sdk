@@ -63,6 +63,7 @@ public final class Experience: Model,ResponseObject,ResponseCollection {
                 if let experience:Experience = device.getExperience(){
                     fulfill(experience)
                 }else{
+                    reject(NSError(domain: "error", code: 100, userInfo: ["message":"getCurrentExperience is null"]))
                     debugPrint("Experience - getCurrentExperience NULL")
                 }
             }
