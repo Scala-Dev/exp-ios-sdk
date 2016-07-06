@@ -133,7 +133,7 @@ ExpSwift.on("error", callback: { obj -> Void in
 })
 ```
 
-# Network
+# Real Time Communication
 
 
 ## Status
@@ -223,6 +223,15 @@ let channel = ExpSwift.getChannel("device uui",system: false,consumerApp: false)
 channel1.identify()
 ```
 
+**`channel.identify()`**
+
+Requests that [devices](#devices) listening for this event on this channel visually identify themselves. Implementation is device specific; this is simply a convience method.
+
+```swift
+let channel = ExpSwift.getChannel("device uui",system: false,consumerApp: false)
+channel1.identify()
+```
+
 # API
 
 ## Devices
@@ -266,6 +275,10 @@ Resolves to an array of the device's [zones](#zones).
 **`device.getExperience()`**
 
 Resolves to the device's [experience](#experiences) or `null`
+
+**`Device.getCurrentDevice()`**
+
+Resolves to the current Device(#devices) or `null`
 
 
 ## Things
@@ -342,6 +355,11 @@ ExpSwift.findExperiences(["limit":10, "skip":0, "sort":"name"]).then { (experien
 
 Resolves to an array of [devices](#devices) that are part of this experience.
 
+**`experience.getCurrentExperience()`**
+
+Resolves to the current Experience(#experiences) or `null`
+
+
 ## Locations
 
 **`ExpSwift.getLocation(uuid:String)`**
@@ -382,6 +400,10 @@ Returns a url pointing to the location's layout image.
 
 Resolves to an array of [devices](#devices) that are part of this location.
 
+**`location.getCurrentLocation()`**
+
+Resolves to the current Location(#locations) or `null`
+
 ```swift
 location.getDevices().then { (devices: SearchResults<Device>) -> Void  in
     for device in devices.getResults() {
@@ -414,6 +436,10 @@ The zone's key.
 **`zone.name`**
 
 The zone's name.
+
+**`zone.getCurrentZones()`**
+
+Resolves to the current zones or an empty array.
 
 **`zone.getDevices()`**
 

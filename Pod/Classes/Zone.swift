@@ -35,6 +35,7 @@ public final class Zone: Model,ResponseObject,ResponseCollectionLocation {
                 }
             }
         }
+        
         return zones
     }
     
@@ -65,5 +66,22 @@ public final class Zone: Model,ResponseObject,ResponseCollectionLocation {
                     }
             }
         }
-    }    
+    }
+    /**
+     Get Current Zones
+     @return Promise<[Zone]>.
+     */
+    public func getCurrentZones() -> Promise<[Zone?]>{
+        return Device.getCurrentDevice().then{ (device:Device?) -> Promise<[Zone?]> in
+            return Promise<[Zone?]> { fulfill, reject in
+                if let zones:[Zone] = device?.getZones(){
+                    fulfill(zones)
+                }else{
+                    fulfill([])
+                    expLogging("Zone - getCurrentZones NULL")
+                }
+            }
+        }
+    }
+
 }

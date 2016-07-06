@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import PromiseKit
+import Alamofire
 
 
 public final class Device: Model,ResponseObject,ResponseCollection {
@@ -56,4 +58,31 @@ public final class Device: Model,ResponseObject,ResponseCollection {
     public func getExperience() -> Experience?{
         return self.experience
     }
+    
+    /**
+     Get Current Device
+     @return Promise<Device>.
+     */
+    public static func getCurrentDevice() -> Promise<Device?>{
+        if let identity:[String:AnyObject] = auth?.get("identity") as! [String:AnyObject] {
+            if let uuididentity = identity["uuid"]{
+             return Promise { fulfill, reject in
+                Alamofire.request( Router.getDevice(uuididentity as! String) )
+                    .responseObject { (response: Response<Device, NSError>) in
+                        switch response.result{
+                        case .Success(let data):
+                            fulfill(data)
+                        case .Failure(let error):
+                            return reject(error)
+                        }
+                }
+            }
+        }
+    }
+    return Promise<Device?> { fulfill, reject in
+            fulfill(nil)
+        }
+    }
+
+    
 }
