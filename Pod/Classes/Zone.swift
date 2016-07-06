@@ -71,14 +71,14 @@ public final class Zone: Model,ResponseObject,ResponseCollectionLocation {
      Get Current Zones
      @return Promise<[Zone]>.
      */
-    public func getCurrentZones() -> Promise<[Zone]>{
-        return Device.getCurrentDevice().then{ (device:Device) -> Promise<[Zone]> in
-            return Promise<[Zone]> { fulfill, reject in
-                if let zones:[Zone] = device.getZones(){
+    public func getCurrentZones() -> Promise<[Zone?]>{
+        return Device.getCurrentDevice().then{ (device:Device?) -> Promise<[Zone?]> in
+            return Promise<[Zone?]> { fulfill, reject in
+                if let zones:[Zone] = device?.getZones(){
                     fulfill(zones)
                 }else{
-                    reject(NSError(domain: "error", code: 100, userInfo: ["message":"getCurrentZones is null"]))
-                    debugPrint("Zone - getCurrentZones NULL")
+                    fulfill([])
+                    expLogging("Zone - getCurrentZones NULL")
                 }
             }
         }

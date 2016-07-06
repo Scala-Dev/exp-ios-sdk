@@ -87,14 +87,14 @@ public final class Location: Model,ResponseObject,ResponseCollection {
      Get Current Location
      @return Promise<Location>.
      */
-    public func getCurrentLocation() -> Promise<Location>{
-       return Device.getCurrentDevice().then{ (device:Device) -> Promise<Location> in
-            return Promise<Location> { fulfill, reject in
-                if let location:Location = device.getLocation(){
+    public func getCurrentLocation() -> Promise<Location?>{
+       return Device.getCurrentDevice().then{ (device:Device?) -> Promise<Location?> in
+            return Promise<Location?> { fulfill, reject in
+                if let location:Location = device?.getLocation(){
                      fulfill(location)
                 }else{
-                    reject(NSError(domain: "error", code: 100, userInfo: ["message":"getCurrentLocation is null"]))
-                    debugPrint("Location - getCurrentLocation NULL")
+                    fulfill(nil)
+                    expLogging("Location - getCurrentLocation NULL")
                 }
              }
         }

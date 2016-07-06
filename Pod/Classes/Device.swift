@@ -63,11 +63,10 @@ public final class Device: Model,ResponseObject,ResponseCollection {
      Get Current Device
      @return Promise<Device>.
      */
-    public static func getCurrentDevice() -> Promise<Device>{
-        var prom:Promise<Device>?
+    public static func getCurrentDevice() -> Promise<Device?>{
         if let identity:[String:AnyObject] = auth?.get("identity") as! [String:AnyObject] {
             if let uuididentity = identity["uuid"]{
-             prom = Promise { fulfill, reject in
+             return Promise { fulfill, reject in
                 Alamofire.request( Router.getDevice(uuididentity as! String) )
                     .responseObject { (response: Response<Device, NSError>) in
                         switch response.result{
@@ -78,11 +77,11 @@ public final class Device: Model,ResponseObject,ResponseCollection {
                         }
                 }
             }
-            }else{
-                prom = Promise(error: NSError(domain: "error", code: 100, userInfo: ["message":"Identity uuid is null"]))
-            }
         }
-       return prom!
+    }
+    return Promise<Device?> { fulfill, reject in
+            fulfill(nil)
+        }
     }
 
     
