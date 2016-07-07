@@ -133,7 +133,7 @@ ExpSwift.on("error", callback: { obj -> Void in
 })
 ```
 
-# Network
+# Real Time Communication
 
 
 ## Status
@@ -208,11 +208,29 @@ Call the `respond` method to send a response back to the broadcaster whith a `pa
 **`channel.fling(payload)`** 
 
 Fling an app launch payload on the channel.
+
 ```swift
      let payload:Dictionary<String,AnyObject> = ["uuid":"myUuid"]
      channel1.fling(payload)
 ```
 
+**`channel.identify()`**
+
+Requests that [devices](#devices) listening for this event on this channel visually identify themselves. Implementation is device specific; this is simply a convience method.
+
+```swift
+let channel = ExpSwift.getChannel("device uui",system: false,consumerApp: false)
+channel1.identify()
+```
+
+**`channel.identify()`**
+
+Requests that [devices](#devices) listening for this event on this channel visually identify themselves. Implementation is device specific; this is simply a convience method.
+
+```swift
+let channel = ExpSwift.getChannel("device uui",system: false,consumerApp: false)
+channel1.identify()
+```
 
 # API
 
@@ -246,6 +264,23 @@ ExpSwift.findDevices(["limit":10, "skip":0, "sort":"name"]).then { (devices: Sea
 }
 ```
 
+**`device.getLocation()`**
+
+Resolves to the device's [location](#locations) or `null`.
+
+**`device.getZones()`**
+
+Resolves to an array of the device's [zones](#zones).
+
+**`device.getExperience()`**
+
+Resolves to the device's [experience](#experiences) or `null`
+
+**`Device.getCurrentDevice()`**
+
+Resolves to the current Device(#devices) or `null`
+
+
 ## Things
 
 **`ExpSwift.getThing(uuid:String)`**
@@ -273,6 +308,19 @@ ExpSwift.findThings(["limit":10, "skip":0, "sort":"name"]).then { (things: Searc
     debugPrint(error)
 }
 ```
+
+**`thing.getLocation()`**
+
+Resolves to the device's [location](#locations) or `null`.
+
+**`thing.getZones()`**
+
+Resolves to an array of the device's [zones](#zones).
+
+**`thing.getExperience()`**
+
+Resolves to the device's [experience](#experiences) or `null`
+
 
 ## Experiences
 
@@ -302,6 +350,15 @@ ExpSwift.findExperiences(["limit":10, "skip":0, "sort":"name"]).then { (experien
         debugPrint(error)
 }
 ```
+
+**`experience.getDevices()`**
+
+Resolves to an array of [devices](#devices) that are part of this experience.
+
+**`experience.getCurrentExperience()`**
+
+Resolves to the current Experience(#experiences) or `null`
+
 
 ## Locations
 
@@ -339,6 +396,37 @@ Resolves to an array of [zones](#zones) that are part of this location.
 
 Returns a url pointing to the location's layout image.
 
+**`location.getDevices()`**
+
+Resolves to an array of [devices](#devices) that are part of this location.
+
+**`location.getCurrentLocation()`**
+
+Resolves to the current Location(#locations) or `null`
+
+```swift
+location.getDevices().then { (devices: SearchResults<Device>) -> Void  in
+    for device in devices.getResults() {
+        debugPrint(device.get("name"))
+    }
+    }.error { error in
+        debugPrint(error)
+}
+
+**`location.getThings()`**
+
+Resolves to an array of [things](#things) that are part of this location.
+
+```swift
+location.getThings().then { (things: SearchResults<Thing>) -> Void  in
+    for thing in things.getResults() {
+        debugPrint(thing.get("name"))
+    }
+    }.error { error in
+        debugPrint(error)
+}
+```
+
 ## Zones
 
 **`zone.key`**
@@ -348,6 +436,42 @@ The zone's key.
 **`zone.name`**
 
 The zone's name.
+
+**`zone.getCurrentZones()`**
+
+Resolves to the current zones or an empty array.
+
+**`zone.getDevices()`**
+
+Resolves to an array of [devices](#devices) that are members of this zone.
+
+```swift
+zone.getDevices().then { (devices: SearchResults<Device>) -> Void  in
+    for device in devices.getResults() {
+        debugPrint(device.get("name"))
+    }
+    }.error { error in
+        debugPrint(error)
+}
+```
+
+**`zone.getThings()`**
+
+Resolves to an array of [things](#things) that are members of this zone.
+
+```swift
+zone.getThings().then { (things: SearchResults<Thing>) -> Void  in
+    for thing in things.getResults() {
+        debugPrint(thing.get("name"))
+    }
+    }.error { error in
+        debugPrint(error)
+}
+```
+
+**`zone.getLocation()`**
+
+Resolves to the zone's [location](#locations)
 
 ## Feeds
 
