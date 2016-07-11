@@ -29,14 +29,18 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.source_files = 'Pod/Classes/**/*'
-  s.resource_bundles = {
-    'ExpSwift' => ['Pod/Assets/*.png']
-  }
+  #s.resource_bundles = {
+  #  'ExpSwift' => ['Pod/Assets/*.png']
+  #}
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
-   s.dependency 'PromiseKit','3.0.0'
+   s.dependency 'PromiseKit','3.2.1'
    s.dependency 'Alamofire','3.1.5'
    s.dependency 'Socket.IO-Client-Swift','4.1.2'
    s.dependency 'JSONWebToken','1.4.1'
 end
+
+
+
+
