@@ -49,6 +49,7 @@ enum Router: URLRequestConvertible {
     case findThings([String: AnyObject])
     case getFeed(String)
     case getFeedData(String)
+    case getDynamicFeedData(String,[String:AnyObject])
     case findFeeds([String: AnyObject])
     case login([String: AnyObject])
     case refreshToken()
@@ -87,6 +88,8 @@ enum Router: URLRequestConvertible {
         case .getFeed:
             return .GET
         case .getFeedData:
+            return .GET
+        case .getDynamicFeedData:
             return .GET
         case .findFeeds:
             return .GET
@@ -137,6 +140,8 @@ enum Router: URLRequestConvertible {
                 return "/api/connectors/feeds/\(uuid)"
             case .getFeedData(let uuid):
                 return "/api/connectors/feeds/\(uuid)/data"
+            case .getDynamicFeedData:
+                return "/api/connectors/feeds/"
             case .findFeeds:
                 return "/api/connectors/feeds"
             case .login:
@@ -205,6 +210,11 @@ enum Router: URLRequestConvertible {
                 let reqRespond = Alamofire.ParameterEncoding.JSON.encode(mutableURLRequest, parameters: parameters).0
                 expLogging("EXP Http Request Respond: \(reqRespond)")
                 return reqRespond
+            case .getDynamicFeedData(let uuid,let parameters):
+                mutableURLRequest.URL = NSURL(string: mutableURLRequest.URLString + "\(uuid)/data")
+                let reqDynamicFeed = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+                expLogging("EXP Http Request Dynamic Feed: \(reqDynamicFeed)")
+                return reqDynamicFeed
             default:
                 expLogging("EXP Http Request : \(mutableURLRequest)")
                 return mutableURLRequest

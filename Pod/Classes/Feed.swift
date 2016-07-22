@@ -54,9 +54,24 @@ public final class Feed: Model,ResponseObject,ResponseCollection {
                     }
                 }
 
-        }
-        
+        }  
     }
     
+
+      public func getData(query:[String:AnyObject]) ->Promise<AnyObject>{
+
+        return Promise { fulfill, reject in
+            Alamofire.request(Router.getDynamicFeedData(uuid,query))
+                .responseJSON {response in
+                    switch response.result {
+                    case .Success(let data):
+                        fulfill(data)
+                    case .Failure(let error):
+                        return reject(error)
+                    }
+                }
+
+        }  
+    }
 }
 
