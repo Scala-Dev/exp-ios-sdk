@@ -47,7 +47,7 @@ Or to use a specific release:
 ```ruby
 use_frameworks!
 
-pod "ExpSwift", , :git => 'https://github.com/ScalaInc/exp-ios-sdk.git', :tag => 'v1.0.0'
+pod "ExpSwift", , :git => 'https://github.com/ScalaInc/exp-ios-sdk.git', :tag => 'v1.0.3'
 ```
 
 # Runtime
@@ -512,6 +512,17 @@ The feed's UUID
 Get the feed's data. Resolves to the output of the feed query.
 ```swift
     feed.getData().then { (data: [AnyObject]) -> Void in
+        debugPrint(data)
+    }.error { error in
+    debugPrint(error)
+    }
+```
+
+**`feed.getData(query:[String:AnyObject])`**
+
+Get the feed's dynamic data. Resolves to the output of the feed query, with dynamic parameters.
+```swift
+    feed.getData(["name":"scala"]).then { (data: [AnyObject]) -> Void in
         debugPrint(data)
     }.error { error in
     debugPrint(error)

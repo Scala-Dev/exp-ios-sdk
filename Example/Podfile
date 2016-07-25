@@ -1,11 +1,11 @@
 source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 
-target 'ExpSwift_Example', :exclusive => true do
+target 'ExpSwift_Example' do
   pod "ExpSwift", :path => "../"
 end
 
-target 'ExpSwift_Tests', :exclusive => true do
+target 'ExpSwift_Tests' do
   pod "ExpSwift", :path => "../"
 
   
