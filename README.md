@@ -412,6 +412,7 @@ location.getDevices().then { (devices: SearchResults<Device>) -> Void  in
     }.error { error in
         debugPrint(error)
 }
+```
 
 **`location.getThings()`**
 
