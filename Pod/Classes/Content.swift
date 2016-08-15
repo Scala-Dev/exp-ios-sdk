@@ -114,7 +114,7 @@ public final class Content: Model,ResponseObject,ResponseCollection {
             if let url = getUrl() {
                 let rt = auth?.get("restrictedToken") as! String
                 let variant = name.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
-                return "\(url)?variant=\(variant)&_rt=\(rt)"
+                return "\(url)&variant=\(variant)"
             }
         }
         
