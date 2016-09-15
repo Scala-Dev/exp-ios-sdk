@@ -9,10 +9,22 @@
 import UIKit
 import ExpSwift
 
+
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let arr = List<String>()
+        arr!.append("first")
+        arr!.append("second")
+        arr!.append("third")
+        
+        for x in arr! {
+            print(x)
+        }
+
+        
         // Do any additional setup after loading the view, typically from a nib.
         //        let host = "http://api.develop.exp.scala.com:9000"
         //        let host = "http://develop.exp.scala.com:9000"
@@ -34,7 +46,11 @@ class ViewController: UIViewController {
 
             }
             
-            
+//            var l = List<Int>()
+//            l.add(1,2,3,4)
+//            for lista:Int in l{
+//                debugPrint(lista)
+//            }
             
 //            let channel2 = ExpSwift.getChannel("channel2",system: 0,consumerApp: 1)
 //            let payload2:Dictionary<String,String> = ["cesar":"hello"]
@@ -45,15 +61,19 @@ class ViewController: UIViewController {
 //            }
 //            
             ExpSwift.findLocations(["limit":10, "skip":0, "sort":"name"]).then { (locations: SearchResults<Location>) -> Void in
-                for location:Location in locations.getResults()
-                {
-                    debugPrint(location.get("name"))
-                    let devicesList = location.getDevices()
-//                    location.fling(channel1,payload: payload1)
-                    let zones = location.getZones()
-                    debugPrint(zones)
-                    
+                let arr = locations
+                for x in arr {
+                    print(x)
                 }
+//                for location:Location in locations
+//                {
+//                    debugPrint(location.get("name"))
+//                    let devicesList = location.getDevices()
+////                    location.fling(channel1,payload: payload1)
+//                    let zones = location.getZones()
+//                    debugPrint(zones)
+//                    
+//                }
 //                debugPrint(devices)
                 }.error { error in
 //                    debugPrint(error)

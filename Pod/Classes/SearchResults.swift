@@ -10,7 +10,7 @@ import Foundation
 
 public final class SearchResults<T> {
     
-    let results: [T]
+    var results: [T] = []
     let total: Int64
     
     required public init?(results: [T], total: Int64) {
@@ -26,4 +26,13 @@ public final class SearchResults<T> {
         return self.total
     }
     
+}
+
+extension SearchResults : SequenceType {
+    // IndexingGenerator conforms to the GeneratorType protocol.
+    public func generate() -> IndexingGenerator<Array<T>> {
+        // Because Array already conforms to SequenceType,
+        // you can just return the Generator created by your array.
+        return results.generate()
+    }
 }
