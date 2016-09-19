@@ -14,7 +14,7 @@ import PromiseKit
 public class Channel: ChannelProtocol {
     
     public typealias CallBackType = [String: AnyObject] -> Void
-    var listeners = [String: CallBackType]()
+    var listeners = [String: [CallBackType]]()
     var responders = [String: CallBackType]()
     var socketManager:SocketManager
     var channelName:String
@@ -47,7 +47,7 @@ public class Channel: ChannelProtocol {
      @return Promise<Any>
      */
     public func listen(name:String, callback:CallBackType)->Promise<Any>{
-        listeners.updateValue(callback, forKey: name)
+        listeners.updateValue(createSubList(name, callback: callback), forKey: name)
         return subscribe(generateId())
     }
     
@@ -67,8 +67,10 @@ public class Channel: ChannelProtocol {
     */
     public func onBroadcast(dic: [String : AnyObject]) {
         let name = dic["name"] as! String
-        if let callBack = self.listeners[name] {
-            callBack(dic)
+        if let subscriberList = self.listeners[name] {
+            for callBack in subscriberList {
+                callBack(dic)
+            }
         }
     }
     
@@ -110,6 +112,23 @@ public class Channel: ChannelProtocol {
         let msg:Dictionary<String,AnyObject> = ["name":"identify","channel":self.channelId!]
         expLogging("IDENTIFY \(msg) ")
         broadCast("2000",params: msg)
+    }
+    
+    /**
+     * Create Subscriber list
+     * @param name
+     * @param callback
+     * @return
+     */
+    private func createSubList(name:String, callback:CallBackType)->[CallBackType]{
+        var subscriberArray: [CallBackType] = []
+        if let listCallback = self.listeners[name] {
+            subscriberArray = listCallback
+        }else{
+            self.listeners[name] = subscriberArray
+        }
+        subscriberArray.append(callback)
+        return subscriberArray
     }
 
 }
