@@ -27,3 +27,8 @@ public final class SearchResults<T> {
     }
     
 }
+extension SearchResults : SequenceType {
+    public func generate() -> IndexingGenerator<Array<T>> {
+        return results.generate()
+    }
+}

@@ -82,6 +82,26 @@ public final class Content: Model,ResponseObject,ResponseCollection {
     }
     
     /**
+     Get Children from with params
+     @return Promise<[Content]>.
+     */
+    public func getChildren(var params:[String:AnyObject]) ->Promise<SearchResults<Content>>{
+        params.updateValue(uuid, forKey: "parent")
+            return Promise { fulfill, reject in
+                Alamofire.request(Router.findContent(params))
+                    .responseCollection { (response: Response<SearchResults<Content>, NSError>) in
+                        switch response.result{
+                        case .Success(let data):
+                            fulfill(data)
+                        case .Failure(let error):
+                            return reject(error)
+                        }
+                }
+        }
+    }
+
+    
+    /**
     Get Url
     @return String.
     */

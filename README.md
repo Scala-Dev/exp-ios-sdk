@@ -256,7 +256,7 @@ Query for multiple devices. Resolves to an array of [Devices](#devices).
 
 ```swift
 ExpSwift.findDevices(["limit":10, "skip":0, "sort":"name"]).then { (devices: SearchResults<Device>) -> Void  in
-            for device in devices.getResults() {
+            for device in devices {
                 debugPrint(device.get("name"))
             }
         }.error { error in
@@ -301,7 +301,7 @@ Query for multiple things. Resolves to an array of [Things](#things).
 
 ```swift
 ExpSwift.findThings(["limit":10, "skip":0, "sort":"name"]).then { (things: SearchResults<Thing>) -> Void  in
-    for thing in things.getResults() {
+    for thing in things {
         debugPrint(thing.get("name"))
     }
 }.error { error in
@@ -343,7 +343,7 @@ Query for multiple experiences. Resolves to an array of [Experiences](#experienc
 
 ```swift
 ExpSwift.findExperiences(["limit":10, "skip":0, "sort":"name"]).then { (experiences: SearchResults<Experience>) -> Void  in
-    for experience in experiences.getResults() {
+    for experience in experiences{
         debugPrint(experience.get("name"))
     }
 }.error { error in
@@ -380,7 +380,7 @@ Query for multiple locations. Resolves to an array of [Locations](#locations).
 
 ```swift
 ExpSwift.findLocations(["limit":10, "skip":0, "sort":"name"]).then { (locations: SearchResults<Location>) -> Void  in
-    for location in locations.getResults() {
+    for location in locations {
         debugPrint(location.get("name"))
     }
     }.error { error in
@@ -406,13 +406,12 @@ Resolves to the current Location(#locations) or `null`
 
 ```swift
 location.getDevices().then { (devices: SearchResults<Device>) -> Void  in
-    for device in devices.getResults() {
+    for device in devices {
         debugPrint(device.get("name"))
     }
     }.error { error in
         debugPrint(error)
 }
-```
 
 **`location.getThings()`**
 
@@ -420,7 +419,7 @@ Resolves to an array of [things](#things) that are part of this location.
 
 ```swift
 location.getThings().then { (things: SearchResults<Thing>) -> Void  in
-    for thing in things.getResults() {
+    for thing in things {
         debugPrint(thing.get("name"))
     }
     }.error { error in
@@ -448,7 +447,7 @@ Resolves to an array of [devices](#devices) that are members of this zone.
 
 ```swift
 zone.getDevices().then { (devices: SearchResults<Device>) -> Void  in
-    for device in devices.getResults() {
+    for device in devices {
         debugPrint(device.get("name"))
     }
     }.error { error in
@@ -462,7 +461,7 @@ Resolves to an array of [things](#things) that are members of this zone.
 
 ```swift
 zone.getThings().then { (things: SearchResults<Thing>) -> Void  in
-    for thing in things.getResults() {
+    for thing in things {
         debugPrint(thing.get("name"))
     }
     }.error { error in
@@ -494,7 +493,7 @@ Query for multiple feeds. Resolves to an array of [Feeds](#feeds).
 
 ```swift
 ExpSwift.findFeeds(["limit":10, "skip":0, "sort":"name"]).then { (locations: SearchResults<Feed>) -> Void  in
-    for feed in feeds.getResults() {
+    for feed in feeds {
         debugPrint(feed("name"))
     }
 }.error { error in
@@ -550,7 +549,7 @@ Query for multiple data items. Resolves to an SearchResults object containing [D
 
 ```swift
 ExpSwift.findData(["limit":10, "skip":0, "sort":"key", "group":"cats"]).then { (data: SearchResults<Data>) -> Void  in
-    for dataItem in data.getResults() {
+    for dataItem in data {
         debugPrint(dataItem.get("value"))
     }
 }.error { error in
@@ -578,7 +577,7 @@ Query for multiple content . Resolves to a SearchResults object containing [Cont
 
 ```swift
 ExpSwift.findContent(["limit":10, "skip":0, "sort":"name", "name":"images"]).then { (data: SearchResults<Content>) -> Void  in
-    for content in data.getResults() {
+    for content in data {
         debugPrint(content.get("name"))
     }
 }.error { error in
@@ -603,6 +602,20 @@ Get the immediate children of this content node. Resolves to an array of [Conten
     }
     }.error { error in
         debugPrint(error)
+    }
+```
+
+**`content.getChildren(options)`**
+
+Resolves to a SearchResults object containing children [Content](#content).
+
+```swift
+  content.getChildren(["id":"123"]]).then { (children: SearchResults<Content>) -> Void in
+    for child in children{
+        debugPrint(child.get("name"))
+    }
+    }.error { error in
+    debugPrint(error)
     }
 ```
 

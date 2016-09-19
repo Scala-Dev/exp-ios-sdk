@@ -45,13 +45,13 @@ class ViewController: UIViewController {
 //            }
 //            
             ExpSwift.findLocations(["limit":10, "skip":0, "sort":"name"]).then { (locations: SearchResults<Location>) -> Void in
-                for location:Location in locations.getResults()
+                for location:Location in locations
                 {
                     debugPrint(location.get("name"))
                     let devicesList = location.getDevices()
 //                    location.fling(channel1,payload: payload1)
-                    let zones = location.getZones()
-                    debugPrint(zones)
+//                    let zones = location.getZones()
+//                    debugPrint(zones)
                     
                 }
 //                debugPrint(devices)
@@ -59,25 +59,25 @@ class ViewController: UIViewController {
 //                    debugPrint(error)
             }
             
-            ExpSwift.findDevices(["limit":10, "skip":0, "sort":"name"]).then { (devices: SearchResults<Device>) -> Void in
-                for device:Device in devices.getResults(){
-                    debugPrint(device.get("name"))
-                    debugPrint(device.getZones())
-                    debugPrint(device.getLocation())
-                    debugPrint(device.getExperience())
-//                    debugPrint(device.uuid)
-//                    debugPrint(device)
-                    
-                }
-            }
+//            ExpSwift.findDevices(["limit":10, "skip":0, "sort":"name"]).then { (devices: SearchResults<Device>) -> Void in
+//                for device:Device in devices.getResults(){
+//                    debugPrint(device.get("name"))
+//                    debugPrint(device.getZones())
+//                    debugPrint(device.getLocation())
+//                    debugPrint(device.getExperience())
+////                    debugPrint(device.uuid)
+////                    debugPrint(device)
+//                    
+//                }
+//            }
             
             //GET DEVICE
-                    ExpSwift.getDevice("8930ff64-1063-4a03-b1bc-33e1ba463d7a").then { (device: Device) -> Void in
-                        debugPrint(device.get("name"))
-                        debugPrint(device.getExperience())
-                    }.error { error in
-                        debugPrint(error)
-                    }
+//                    ExpSwift.getDevice("8930ff64-1063-4a03-b1bc-33e1ba463d7a").then { (device: Device) -> Void in
+//                        debugPrint(device.get("name"))
+//                        debugPrint(device.getExperience())
+//                    }.error { error in
+//                        debugPrint(error)
+//                    }
 
             
 
@@ -95,11 +95,12 @@ class ViewController: UIViewController {
 //            }
             
             
-//            ExpSwift.getContentNode("root").then { (content: ContentNode) -> Void  in
-//                print(content.get("path"))
-//                content.getChildren().then { (children: [ContentNode]) -> Void in
-//                    for child in children{
-//                        print(child.get("path"))
+            ExpSwift.getContentNode("root").then { (content: ContentNode) -> Void  in
+                print(content.get("path"))
+                content.getChildren().then { (children: [ContentNode]) -> Void in
+                    for child in children{
+                        print(child.get("path"))
+                        
 //                        child.getChildren().then { (children: [ContentNode]) -> Void in
 //                            for child in children{
 //                                print(child.get("path"))
@@ -107,14 +108,14 @@ class ViewController: UIViewController {
 //                        }.error { error in
 //                            print(error)
 //                        }
-//                    }
-//                }.error { error in
-//                    print(error)
-//                }
-//                
-//            }.error { error in
-//                print(error)
-//            }
+                    }
+                }.error { error in
+                    print(error)
+                }
+                
+            }.error { error in
+                print(error)
+            }
         }
         
         
