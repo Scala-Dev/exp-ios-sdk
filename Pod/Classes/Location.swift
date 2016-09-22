@@ -89,14 +89,7 @@ public final class Location: Model,ResponseObject,ResponseCollection {
      */
     public func getCurrentLocation() -> Promise<Location?>{
        return Device.getCurrentDevice().then{ (device:Device?) -> Promise<Location?> in
-            return Promise<Location?> { fulfill, reject in
-                if let location:Location = device?.getLocation(){
-                     fulfill(location)
-                }else{
-                    fulfill(nil)
-                    expLogging("Location - getCurrentLocation NULL")
-                }
-             }
+         return (device?.getLocation())!
         }
     }
 

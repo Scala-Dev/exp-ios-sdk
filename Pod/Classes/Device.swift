@@ -25,9 +25,6 @@ public final class Device: Model,ResponseObject,ResponseCollection {
                 self.location = Location(response:response, representation: representation.valueForKeyPath("location")!)!
             }
         }
-        if let dic = representation.valueForKeyPath("experience")  as? NSDictionary {
-            self.experience = Experience(response:response, representation: representation.valueForKeyPath("experience")!)!
-        }
         super.init(response: response, representation: representation)
     }
     
@@ -43,8 +40,24 @@ public final class Device: Model,ResponseObject,ResponseCollection {
         return devices
     }
     
-    public func getLocation() -> Location?{
-        return self.location
+    public func getLocation() -> Promise<Location?>{
+        if let uuidLocation = self.document["location.uuid"]{
+            return Promise { fulfill, reject in
+                Alamofire.request( Router.getLocation(uuidLocation as! String) )
+                    .responseObject { (response: Response<Location, NSError>) in
+                        switch response.result{
+                        case .Success(let data):
+                            fulfill(data)
+                        case .Failure(let error):
+                            return reject(error)
+                        }
+                }
+            }
+        }
+        return Promise<Location?> { fulfill, reject in
+            fulfill(nil)
+        }
+
     }
     
     public func getZones() -> [Zone]{
@@ -55,8 +68,24 @@ public final class Device: Model,ResponseObject,ResponseCollection {
         return zones
     }
     
-    public func getExperience() -> Experience?{
-        return self.experience
+    
+    public func getExperience() -> Promise<Experience?>{
+        if let uuidExperience = self.document["experience.uuid"]{
+            return Promise { fulfill, reject in
+            Alamofire.request( Router.getExperience(uuidExperience as! String) )
+                .responseObject { (response: Response<Experience, NSError>) in
+                    switch response.result{
+                    case .Success(let data):
+                        fulfill(data)
+                    case .Failure(let error):
+                        return reject(error)
+                    }
+                }
+            }
+        }
+        return Promise<Experience?> { fulfill, reject in
+            fulfill(nil)
+        }
     }
     
     /**
