@@ -162,5 +162,13 @@ open  class SocketManager {
         }
     }
     
+    public func isConnected()->Bool{
+        if(self.socket?.status == SocketIOClientStatus.connected){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    
     
 }
