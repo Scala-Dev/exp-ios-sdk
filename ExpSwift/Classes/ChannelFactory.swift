@@ -7,12 +7,12 @@
 //
 
 import Foundation
-import Socket_IO_Client_Swift
+import SocketIO
 
-public class ChannelFactory{
+open class ChannelFactory{
 
     
-    public func produceChannel(channelName:String,socket: SocketManager,system:Bool,consumerApp:Bool)->Channel{
+    open func produceChannel(_ channelName:String,socket: SocketManager,system:Bool,consumerApp:Bool)->Channel{
         return Channel(socket: socket, nameChannel: channelName,system: system,consumerApp: consumerApp)
     }
 }

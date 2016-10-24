@@ -15,7 +15,7 @@ public final class Experience: Model,ResponseObject,ResponseCollection {
 
     public let uuid: String
     
-    required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
+    required public init?(response: HTTPURLResponse, representation: AnyObject) {
         if let representation = representation as? [String: AnyObject] {
             self.uuid = representation["uuid"] as! String
         } else {
@@ -26,12 +26,12 @@ public final class Experience: Model,ResponseObject,ResponseCollection {
     }
     
     
-     public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Experience] {
+     public static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Experience] {
         var experiences: [Experience] = []
         
         if let representation = representation as? [[String: AnyObject]] {
             for experienceRepresentation in representation {
-                if let experience = Experience(response: response, representation: experienceRepresentation) {
+                if let experience = Experience(response: response, representation: experienceRepresentation as AnyObject) {
                     experiences.append(experience)
                 }
             }
@@ -41,7 +41,7 @@ public final class Experience: Model,ResponseObject,ResponseCollection {
     
     public func getDevices() -> Promise<SearchResults<Device>>{
         return Promise { fulfill, reject in
-            Alamofire.request(Router.findDevices(["location.uuid":self.uuid]))
+            Alamofire.request(Router.findDevices(["location.uuid":self.uuid as AnyObject]))
                 .responseCollection { (response: Response<SearchResults<Device>, NSError>) in
                     switch response.result{
                     case .Success(let data):

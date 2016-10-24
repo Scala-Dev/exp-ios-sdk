@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Socket_IO_Client_Swift
+import SocketIO
 import Alamofire
 import PromiseKit
 import JWT
@@ -19,7 +19,7 @@ var hostSocket: String = ""
 public var auth:Auth?
 var socketManager = SocketManager()
 var runtime = Runtime()
-public typealias CallBackTypeConnection = String -> Void
+public typealias CallBackTypeConnection = (String) -> Void
 var authConnection = [String: CallBackTypeConnection]()
 
 
@@ -158,7 +158,7 @@ enum Router: URLRequestConvertible {
     }
     
     var URLRequest: NSMutableURLRequest {
-        let URL = NSURL(string: hostUrl)!
+        let URL = Foundation.URL(string: hostUrl)!
         var mutableURLRequest = NSMutableURLRequest(URL: URL.URLByAppendingPathComponent(path))
         expLogging(mutableURLRequest.URLString)
         mutableURLRequest.HTTPMethod = method.rawValue
@@ -204,14 +204,14 @@ enum Router: URLRequestConvertible {
             case .broadcast(let parameters,let timeout):
                 expLogging("EXP Http Request broadcast parameters: \(parameters)")
                 let reqBroadcast = Alamofire.ParameterEncoding.JSON.encode(mutableURLRequest, parameters: parameters).0
-                reqBroadcast.URL = NSURL(string: reqBroadcast.URLString+"?timeout=\(timeout)")
+                reqBroadcast.URL = Foundation.URL(string: reqBroadcast.URLString+"?timeout=\(timeout)")
                 return reqBroadcast
             case .respond(let parameters):
                 let reqRespond = Alamofire.ParameterEncoding.JSON.encode(mutableURLRequest, parameters: parameters).0
                 expLogging("EXP Http Request Respond: \(reqRespond)")
                 return reqRespond
             case .getDynamicFeedData(let uuid,let parameters):
-                mutableURLRequest.URL = NSURL(string: mutableURLRequest.URLString + "\(uuid)/data")
+                mutableURLRequest.URL = Foundation.URL(string: mutableURLRequest.URLString + "\(uuid)/data")
                 let reqDynamicFeed = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
                 expLogging("EXP Http Request Dynamic Feed: \(reqDynamicFeed)")
                 return reqDynamicFeed
@@ -228,7 +228,7 @@ Initialize the SDK and connect to EXP.
 @param host,uuid,secret.
 @return Promise<Bool>.
 */
-public func start(host: String, uuid: String, secret: String)  -> Promise<Bool> {
+public func start(_ host: String, uuid: String, secret: String)  -> Promise<Bool> {
     return runtime.start(host, uuid: uuid, secret: secret)
 }
 
@@ -237,7 +237,7 @@ Initialize the SDK and connect to EXP.
 @param host,user,password,organization.
 @return Promise<Bool>.
 */
-public func start(host:String , user: String , password:String, organization:String) -> Promise<Bool> {
+public func start(_ host:String , user: String , password:String, organization:String) -> Promise<Bool> {
     return runtime.start(host, user: user, password: password, organization: organization)
 }
 
@@ -246,7 +246,7 @@ Initialize the SDK and connect to EXP.
 @param options.
 @return Promise<Bool>.
 */
-public func start(options:[String:String]) -> Promise<Bool> {
+public func start(_ options:[String:String]) -> Promise<Bool> {
     return runtime.start(options)
 }
 
@@ -255,7 +255,7 @@ public func start(options:[String:String]) -> Promise<Bool> {
     @param dictionary of search params
     @return Promise<SearchResults<Device>>.
 */
-public func findDevices(params:[String:AnyObject]) -> Promise<SearchResults<Device>>{
+public func findDevices(_ params:[String:AnyObject]) -> Promise<SearchResults<Device>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findDevices(params))
             .responseCollection { (response: Response<SearchResults<Device>, NSError>) in
@@ -274,7 +274,7 @@ public func findDevices(params:[String:AnyObject]) -> Promise<SearchResults<Devi
     @param uuid.
     @return Promise<Device>.
 */
-public func getDevice(uuid:String) -> Promise<Device>{
+public func getDevice(_ uuid:String) -> Promise<Device>{
     return Promise { fulfill, reject in
         Alamofire.request( Router.getDevice(uuid) )
             .responseObject { (response: Response<Device, NSError>) in
@@ -293,7 +293,7 @@ public func getDevice(uuid:String) -> Promise<Device>{
     @param uuid.
     @return Promise<Experience>.
 */
-public func getExperience(uuid:String) -> Promise<Experience>{
+public func getExperience(_ uuid:String) -> Promise<Experience>{
     return Promise { fulfill, reject in
        Alamofire.request(Router.getExperience(uuid) )
         .responseObject { (response: Response<Experience, NSError>) in
@@ -312,7 +312,7 @@ public func getExperience(uuid:String) -> Promise<Experience>{
     @param dictionary of search params
     @return Promise<SearchResults<Experience>>.
 */
-public func findExperiences(params:[String:AnyObject]) -> Promise<SearchResults<Experience>>{
+public func findExperiences(_ params:[String:AnyObject]) -> Promise<SearchResults<Experience>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findExperiences(params))
             .responseCollection { (response: Response<SearchResults<Experience>, NSError>) in
@@ -331,7 +331,7 @@ public func findExperiences(params:[String:AnyObject]) -> Promise<SearchResults<
     @param uuid.
     @return Promise<Location>.
 */
-public func getLocation(uuid:String) -> Promise<Location>{
+public func getLocation(_ uuid:String) -> Promise<Location>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.getLocation(uuid) )
             .responseObject { (response: Response<Location, NSError>) in
@@ -350,7 +350,7 @@ public func getLocation(uuid:String) -> Promise<Location>{
     @param dictionary of search params
     @return Promise<SearchResults<Location>>.
 */
-public func findLocations(params:[String:AnyObject]) -> Promise<SearchResults<Location>>{
+public func findLocations(_ params:[String:AnyObject]) -> Promise<SearchResults<Location>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findLocations(params))
             .responseCollection { (response: Response<SearchResults<Location>, NSError>) in
@@ -371,7 +371,7 @@ Get Content Node By UUID
 @return Promise<ContentNode>.
 */
 
-@available(*, deprecated: 1.0.0, message: "use getContent(uuid)") public func getContentNode(uuid:String) -> Promise<ContentNode>{
+@available(*, deprecated: 1.0.0, message: "use getContent(uuid)") public func getContentNode(_ uuid:String) -> Promise<ContentNode>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.getContentNode(uuid) )
             .responseObject { (response: Response<ContentNode, NSError>) in
@@ -391,7 +391,7 @@ Get Content Node By UUID
  @param uuid.
  @return Promise<ContentNode>.
  */
-public func getContent(uuid:String) -> Promise<Content>{
+public func getContent(_ uuid:String) -> Promise<Content>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.getContent(uuid) )
             .responseObject { (response: Response<Content, NSError>) in
@@ -410,7 +410,7 @@ public func getContent(uuid:String) -> Promise<Content>{
  @param dictionary of search params
  @return Promise<SearchResults<Content>>.
  */
-public func findContent(params:[String:AnyObject]) -> Promise<SearchResults<Content>>{
+public func findContent(_ params:[String:AnyObject]) -> Promise<SearchResults<Content>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findContent(params))
             .responseCollection { (response: Response<SearchResults<Content>, NSError>) in
@@ -430,7 +430,7 @@ public func findContent(params:[String:AnyObject]) -> Promise<SearchResults<Cont
  @param dictionary of search params
  @return Promise<SearchResults<ContentNode>>.
  */
-@available(*, deprecated: 1.0.0, message: "use findContent(options)")public func findContentNodes(params:[String:AnyObject]) -> Promise<SearchResults<ContentNode>>{
+@available(*, deprecated: 1.0.0, message: "use findContent(options)")public func findContentNodes(_ params:[String:AnyObject]) -> Promise<SearchResults<ContentNode>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findContentNodes(params))
             .responseCollection { (response: Response<SearchResults<ContentNode>, NSError>) in
@@ -449,7 +449,7 @@ Find Data with params
 @param [String:AnyObject].
 @return Promise<SearchResults<Data>>.
 */
-public func findData(params:[String:AnyObject]) -> Promise<SearchResults<Data>>{
+public func findData(_ params:[String:AnyObject]) -> Promise<SearchResults<Data>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findData(params))
             .responseCollection { (response: Response<SearchResults<Data>, NSError>) in
@@ -469,7 +469,7 @@ Get Data by Group and Key
 @param uuid.
 @return Promise<Data>.
 */
-public func getData(group: String,  key: String) -> Promise<Data>{
+public func getData(_ group: String,  key: String) -> Promise<Data>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.getData(group, key))
             .responseObject { (response: Response<Data, NSError>) in
@@ -488,7 +488,7 @@ public func getData(group: String,  key: String) -> Promise<Data>{
  @param uuid.
  @return Promise<Feed>.
  */
-public func getFeed(uuid:String) -> Promise<Feed>{
+public func getFeed(_ uuid:String) -> Promise<Feed>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.getFeed(uuid) )
             .responseObject { (response: Response<Feed, NSError>) in
@@ -507,7 +507,7 @@ public func getFeed(uuid:String) -> Promise<Feed>{
  @param dictionary of search params
  @return Promise<SearchResults<Feed>>.
  */
-public func findFeeds(params:[String:AnyObject]) -> Promise<SearchResults<Feed>>{
+public func findFeeds(_ params:[String:AnyObject]) -> Promise<SearchResults<Feed>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findFeeds(params))
             .responseCollection { (response: Response<SearchResults<Feed>, NSError>) in
@@ -529,9 +529,9 @@ public func findFeeds(params:[String:AnyObject]) -> Promise<SearchResults<Feed>>
  @param options.
  @return Promise<Auth>.
  */
-func login(options:[String:String]) ->Promise<Auth>{
+func login(_ options:[String:String]) ->Promise<Auth>{
     return Promise { fulfill, reject in
-        Alamofire.request(Router.login(options))
+        Alamofire.request(Router.login(options as [String : AnyObject]))
             .responseObject { (response: Response<Auth, NSError>) in
                 switch response.result{
                 case .Success(let data):
@@ -559,7 +559,7 @@ Get Thing by UUID
 @param uuid.
 @return Promise<Thing>.
 */
-public func getThing(uuid:String) -> Promise<Thing>{
+public func getThing(_ uuid:String) -> Promise<Thing>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.getThing(uuid))
             .responseObject { (response: Response<Thing, NSError>) in
@@ -578,7 +578,7 @@ Get list of things
 @param dictionary of search params
 @return Promise<Array<Thing>>.
 */
-public func findThings(params:[String:AnyObject]) -> Promise<SearchResults<Thing>>{
+public func findThings(_ params:[String:AnyObject]) -> Promise<SearchResults<Thing>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findThings(params))
             .responseCollection { (response: Response<SearchResults<Thing>, NSError>) in
@@ -628,7 +628,7 @@ public func refreshToken() -> Promise<Auth>{
  @param timeout,params.
  @return Promise<Message>.
  */
-public func broadCast(timeout:String,params:[String:AnyObject]) -> Promise<Message>{
+public func broadCast(_ timeout:String,params:[String:AnyObject]) -> Promise<Message>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.broadcast(params,timeout))
             .responseObject { (response: Response<Message, NSError>) in
@@ -648,7 +648,7 @@ public func broadCast(timeout:String,params:[String:AnyObject]) -> Promise<Messa
  @param params.
  @return Promise<Message>.
  */
-public func respond(params:[String:AnyObject]) -> Promise<Message>{
+public func respond(_ params:[String:AnyObject]) -> Promise<Message>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.respond(params))
             .responseObject { (response: Response<Message, NSError>) in
@@ -668,7 +668,7 @@ Connection Socket
 @param name for connection(offline,line),callback
 @return void
 */
-public func connection(name:String,callback:String->Void){
+public func connection(_ name:String,callback:@escaping (String)->Void){
     runtime.connection(name,  callback: { (resultListen) -> Void in
         callback(resultListen)
     })
@@ -680,7 +680,7 @@ public func connection(name:String,callback:String->Void){
  @param String nameChannel.
  @return CommonChannel
  */
-public func getChannel(nameChannel:String,system:Bool,consumerApp:Bool) -> Channel{
+public func getChannel(_ nameChannel:String,system:Bool,consumerApp:Bool) -> Channel{
     return socketManager.getChannel(nameChannel,system: system,consumerApp: consumerApp)
 }
 
@@ -695,7 +695,7 @@ public func stop(){
 /**
  Refresh Auth Token Recursive with Timeout
 */
-private func refreshAuthToken(result:Auth){
+private func refreshAuthToken(_ result:Auth){
     after(getTimeout(result)).then{ result -> Void in
         refreshToken().then{ result -> Void in
             setTokenSDK(result)
@@ -710,17 +710,17 @@ private func refreshAuthToken(result:Auth){
 /**
  Get Time Out
  */
-private func getTimeout(data:Auth) -> NSTimeInterval{
+private func getTimeout(_ data:Auth) -> TimeInterval{
     let expiration = data.get("expiration") as! Double
-    let startDate = NSDate(timeIntervalSince1970: expiration/1000)
-    let timeout = startDate.timeIntervalSinceDate(NSDate())
-    return NSTimeInterval(Int64(timeout))
+    let startDate = Date(timeIntervalSince1970: expiration/1000)
+    let timeout = startDate.timeIntervalSince(Date())
+    return TimeInterval(Int64(timeout))
 }
 
 /**
  Set Token SDK
  */
-private func setTokenSDK(data:Auth){
+private func setTokenSDK(_ data:Auth){
     tokenSDK = data.get("token") as! String
 }
 
@@ -738,7 +738,7 @@ public func isConnected()->Bool{
  @param name for connection(update,line),callback
  @return void
  */
-public func on(name:String,callback:String->Void){
+public func on(_ name:String,callback:@escaping (String)->Void){
     authConnection.updateValue(callback, forKey: name)
 }
 

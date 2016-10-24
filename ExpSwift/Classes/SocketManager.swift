@@ -7,16 +7,16 @@
 //
 
 import Foundation
-import Socket_IO_Client_Swift
+import SocketIO
 import PromiseKit
 
 
-public  class SocketManager {
+open  class SocketManager {
     
-    public var socket:SocketIOClient?
+    open var socket:SocketIOClient?
     var channelFactory:ChannelFactory = ChannelFactory()
-    public typealias CallBackTypeConnection = String -> Void
-    public typealias CallBackType = [String: AnyObject] -> Void
+    public typealias CallBackTypeConnection = (String) -> Void
+    public typealias CallBackType = ([String: AnyObject]) -> Void
     var responders = [String: CallBackType]()
     var connection = [String: CallBackTypeConnection]()
     var subscription = [String]()
@@ -30,12 +30,8 @@ public  class SocketManager {
         Start the Socket Connection and init the different channel
         @return Promise<Bool>.
     */
-    public func start_socket() -> Promise<Bool> {
-        self.socket = SocketIOClient(socketURL: hostSocket, options: ["log": true,
-        "reconnects": true,
-        "reconnectAttempts": 5,
-        "reconnectWait": 5,
-        "connectParams": ["token":tokenSDK]])
+    open func start_socket() -> Promise<Bool> {
+        self.socket = SocketIOClient(socketURL: URL(string: hostSocket)!, config: [.log(true), .forcePolling(true), .connectParams(["token":tokenSDK]), .reconnects(true), .reconnectAttempts(5), .reconnectWait(5)])
         expLogging("Starting EXP Socket Connection Host= \(hostSocket) Token= \(tokenSDK)")
      
         
@@ -45,7 +41,7 @@ public  class SocketManager {
                 fulfill(true)
                 //do subscribe to the channels
                 self.subscribeChannels()
-                if((self.connection.indexForKey(Config.ONLINE)) != nil){
+                if((self.connection.index(forKey: Config.ONLINE)) != nil){
                     let callBack = self.connection[Config.ONLINE]!
                     callBack(Config.ONLINE)
                 }
@@ -53,7 +49,7 @@ public  class SocketManager {
             }
             self.socket!.on("disconnect") {data, ack in
                 expLogging("EXP socket disconnected")
-                if((self.connection.indexForKey(Config.OFFLINE)) != nil){
+                if((self.connection.index(forKey: Config.OFFLINE)) != nil){
                     let callBack = self.connection[Config.OFFLINE]!
                     callBack(Config.OFFLINE)
                 }
@@ -61,8 +57,8 @@ public  class SocketManager {
             self.socket!.on("broadcast"){data, ack in
                 expLogging("EXP BROADCAST data \(data)")
                 let dic = data[0] as! NSDictionary
-                let channelID = dic.valueForKey("channel") as! String
-                if((self.channels.indexForKey(channelID)) != nil){
+                let channelID = dic.value(forKey: "channel") as! String
+                if((self.channels.index(forKey: channelID)) != nil){
                     let channel=self.channels[channelID]! as Channel
                     channel.onBroadcast(dic as! [String : AnyObject])
                 }
@@ -73,13 +69,13 @@ public  class SocketManager {
             self.socket!.on("subscribed"){data, ack in
                 expLogging("EXP subscribed data \(data)")
                 let response = data[0] as! NSArray
-                for (_, element) in response.enumerate() {
+                for (_, element) in response.enumerated() {
                     let id:String = element as! String
-                    if((self.subscriptionPromise.indexForKey(id)) != nil){
+                    if((self.subscriptionPromise.index(forKey: id)) != nil){
                         var dictionary:Dictionary<String,Any> = self.subscriptionPromise[id] as! Dictionary
-                        let fun = dictionary["fulfill"] as! Any -> Void
+                        let fun = dictionary["fulfill"] as! (Any) -> Void
                         fun(id) //resolve  promise
-                        self.subscriptionPromise.removeValueForKey(id)
+                        self.subscriptionPromise.removeValue(forKey: id)
                     }
                 }
             }
@@ -91,15 +87,15 @@ public  class SocketManager {
     /**
      Subscribe channels to socket connection
      */
-    public func subscribe(idChannel:String)->Promise<Any>{
-        if(subscription.indexOf(idChannel) == nil){
+    open func subscribe(_ idChannel:String)->Promise<Any>{
+        if(subscription.index(of: idChannel) == nil){
             subscription.append(idChannel)
             self.socket!.emit("subscribe", subscription)
         }
         let subscribePromise = Promise<Any> { fulfill, reject in
             var promiseDic = Dictionary<String,Any>()
             promiseDic  = [ "fulfill": fulfill,"reject":reject]
-            if(subscriptionPromise.indexForKey(idChannel) == nil){
+            if(subscriptionPromise.index(forKey: idChannel) == nil){
                subscriptionPromise.updateValue(promiseDic, forKey: idChannel)
             }
         }
@@ -111,7 +107,7 @@ public  class SocketManager {
     @param  Dictionarty.
     @return Promise<Any>
     */
-    public func connection(name:String, callback:CallBackTypeConnection){
+    open func connection(_ name:String, callback:@escaping CallBackTypeConnection){
         connection.updateValue(callback, forKey: name)
     }
     
@@ -121,9 +117,9 @@ public  class SocketManager {
         @param channel String
         @return CommonChannel
      */
-    public func getChannel(nameChannel:String,system:Bool,consumerApp:Bool) -> Channel{
+    open func getChannel(_ nameChannel:String,system:Bool,consumerApp:Bool) -> Channel{
         let channel:Channel
-        if(channelCache.indexForKey(nameChannel) != nil){
+        if(channelCache.index(forKey: nameChannel) != nil){
             channel = channelCache[nameChannel]!
         }else{
             channel = channelFactory.produceChannel(nameChannel, socket: socketManager,system: system,consumerApp: consumerApp)
@@ -137,8 +133,8 @@ public  class SocketManager {
     /**
     Disconnect from exp and remove token
     */
-    public func disconnect(){
-        self.socket!.close()
+    open func disconnect(){
+        self.socket!.disconnect()
         self.subscriptionPromise = [:]
         self.subscription = []
         self.channels = [:]
@@ -148,9 +144,9 @@ public  class SocketManager {
     /**
         Refresh Socket Connection
     */
-    public func refreshConnection(){
-        self.socket!.close()
-        self.socket!.connect()
+    open func refreshConnection(){
+        self.socket!.disconnect()
+        self.socket!.reconnect()
         subscribeChannels()
         expLogging("EXP refresh socket connection")
     }
@@ -158,7 +154,7 @@ public  class SocketManager {
     /**
      Subscribe the channels when there is a disconnect
      */
-    public func subscribeChannels(){
+    open func subscribeChannels(){
         self.subscription = []
         self.subscriptionPromise = [:]
         for (channelId, _) in channels {
@@ -166,11 +162,5 @@ public  class SocketManager {
         }
     }
     
-    public func isConnected()->Bool{
-        if(self.socket?.status.description == "Connected"){
-            return true;
-        }else{
-            return false;
-        }
-    }
+    
 }

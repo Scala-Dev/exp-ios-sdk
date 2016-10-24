@@ -14,11 +14,11 @@ import Alamofire
 
 
 public protocol ResponseCollectionLocation {
-    static func collection(response response: NSHTTPURLResponse, representation: AnyObject,location: Location) -> [Self]
+    static func collection(response: HTTPURLResponse, representation: AnyObject,location: Location) -> [Self]
 }
 
 extension Alamofire.Request {
-    public func responseCollection<T: ResponseCollectionLocation>(completionHandler: Response<SearchResults<T>, NSError> -> Void) -> Self {
+    public func responseCollection<T: ResponseCollectionLocation>(_ completionHandler: (Response<SearchResults<T>, NSError>) -> Void) -> Self {
         
         let responseSerializer = ResponseSerializer<SearchResults<T>, NSError> { request, response, data, error in
             guard error == nil else { return .Failure(error!) }

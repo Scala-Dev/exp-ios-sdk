@@ -20,28 +20,28 @@ public final class Ref: ResponseObject,ResponseCollection {
     public let subtype: String
     public let name: String
     
-    required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
-        self.major = representation.valueForKeyPath("major") as! String
-        self.minor = representation.valueForKeyPath("minor") as! String
-        self.manufacturer = representation.valueForKeyPath("manufacturer") as! String
-        self.proximityUuid = representation.valueForKeyPath("proximityUuid") as! String
-        self.primaryType = representation.valueForKeyPath("primaryType") as! String
-        self.uuid = representation.valueForKeyPath("uuid") as? String
-        self.org = representation.valueForKeyPath("org") as? String
-        self.subtype = representation.valueForKeyPath("subtype") as! String
-        self.name = representation.valueForKeyPath("name") as! String
+    required public init?(response: HTTPURLResponse, representation: AnyObject) {
+        self.major = representation.value(forKeyPath: "major") as! String
+        self.minor = representation.value(forKeyPath: "minor") as! String
+        self.manufacturer = representation.value(forKeyPath: "manufacturer") as! String
+        self.proximityUuid = representation.value(forKeyPath: "proximityUuid") as! String
+        self.primaryType = representation.value(forKeyPath: "primaryType") as! String
+        self.uuid = representation.value(forKeyPath: "uuid") as? String
+        self.org = representation.value(forKeyPath: "org") as? String
+        self.subtype = representation.value(forKeyPath: "subtype") as! String
+        self.name = representation.value(forKeyPath: "name") as! String
     }
     
     
     
     
     
-    public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Ref] {
+    public static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Ref] {
         var refs: [Ref] = []
         
         if let representation = representation as? [[String: AnyObject]] {
             for refRepresentation in representation {
-                if let ref = Ref(response: response, representation: refRepresentation) {
+                if let ref = Ref(response: response, representation: refRepresentation as AnyObject) {
                     refs.append(ref)
                 }
             }

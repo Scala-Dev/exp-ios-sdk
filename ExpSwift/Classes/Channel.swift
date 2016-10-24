@@ -7,13 +7,13 @@
 //
 
 import Foundation
-import Socket_IO_Client_Swift
+import SocketIO
 import PromiseKit
 
 
-public class Channel: ChannelProtocol {
+open class Channel: ChannelProtocol {
     
-    public typealias CallBackType = [String: AnyObject] -> Void
+    public typealias CallBackType = ([String: AnyObject]) -> Void
     var listeners = [String: [CallBackType]]()
     var responders = [String: CallBackType]()
     var socketManager:SocketManager
@@ -35,8 +35,8 @@ public class Channel: ChannelProtocol {
      @param  Dictionarty.
      @return Promise<Any>
      */
-    public func broadcast(name:String, payload:[String:AnyObject],timeout:String) -> Void{
-        let msg:Dictionary<String,AnyObject> = ["name":name,"channel":generateId(),"payload":payload]
+    open func broadcast(_ name:String, payload:[String:AnyObject],timeout:String) -> Void{
+        let msg:Dictionary<String,AnyObject> = ["name":name as AnyObject,"channel":generateId() as AnyObject,"payload":payload as AnyObject]
         expLogging(" BROADCAST \(msg) ")
         broadCast(timeout,params: msg)
     }
@@ -46,7 +46,7 @@ public class Channel: ChannelProtocol {
      @param  Dictionarty.
      @return Promise<Any>
      */
-    public func listen(name:String, callback:CallBackType)->Promise<Any>{
+    open func listen(_ name:String, callback:@escaping CallBackType)->Promise<Any>{
         listeners.updateValue(createSubList(name, callback: callback), forKey: name)
         return subscribe(generateId())
     }
@@ -56,8 +56,8 @@ public class Channel: ChannelProtocol {
      @param  uuid String.
      @return
      */
-    public func fling(payload:[String:AnyObject]) -> Void{
-        let msg:Dictionary<String,AnyObject> = ["name":"fling","channel":self.channelId!,"payload":payload]
+    open func fling(_ payload:[String:AnyObject]) -> Void{
+        let msg:Dictionary<String,AnyObject> = ["name":"fling" as AnyObject,"channel":self.channelId! as AnyObject,"payload":payload as AnyObject]
         expLogging("FLING \(msg) ")
         broadCast("2000",params: msg)
     }
@@ -65,7 +65,7 @@ public class Channel: ChannelProtocol {
     /**
      Handle On Broadcast callback
     */
-    public func onBroadcast(dic: [String : AnyObject]) {
+    open func onBroadcast(_ dic: [String : AnyObject]) {
         let name = dic["name"] as! String
         if let subscriberList = self.listeners[name] {
             for callBack in subscriberList {
@@ -77,7 +77,7 @@ public class Channel: ChannelProtocol {
     /**
      Subscribe to the channel
      */
-    public func subscribe(idChannel:String)->Promise<Any>{
+    open func subscribe(_ idChannel:String)->Promise<Any>{
         return self.socketManager.subscribe(idChannel)
     }
     
@@ -85,17 +85,17 @@ public class Channel: ChannelProtocol {
     /**
      Generate Channel ID from org,name
      */
-    public func generateId()->String{
+    open func generateId()->String{
         if((channelId ?? "").isEmpty){
             let org = auth?.get("identity")!["organization"] as! String
             let systemInt:Int = self.system ? 1:0
             let consumerAppInt:Int = self.consumerApp ? 1:0
             let paramsArray = [org,self.channelName,systemInt,consumerAppInt]
             do {
-                let jsonData = try NSJSONSerialization.dataWithJSONObject(paramsArray, options: [])
-                let string = NSString(data: jsonData, encoding: NSUTF8StringEncoding)
-                let utf8str = string!.dataUsingEncoding(NSUTF8StringEncoding)
-                channelId = (utf8str?.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue: 0)))!
+                let jsonData = try JSONSerialization.data(withJSONObject: paramsArray, options: [])
+                let string = NSString(data: jsonData, encoding: String.Encoding.utf8)
+                let utf8str = string!.data(using: String.Encoding.utf8)
+                channelId = (utf8str?.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0)))!
             }catch let error as NSError{
                 expLogging(error.description)
             }
@@ -108,8 +108,8 @@ public class Channel: ChannelProtocol {
      Identify
      @return
      */
-    public func identify() -> Void{
-        let msg:Dictionary<String,AnyObject> = ["name":"identify","channel":self.channelId!]
+    open func identify() -> Void{
+        let msg:Dictionary<String,AnyObject> = ["name":"identify" as AnyObject,"channel":self.channelId! as AnyObject]
         expLogging("IDENTIFY \(msg) ")
         broadCast("2000",params: msg)
     }
@@ -120,7 +120,7 @@ public class Channel: ChannelProtocol {
      * @param callback
      * @return
      */
-    private func createSubList(name:String, callback:CallBackType)->[CallBackType]{
+    fileprivate func createSubList(_ name:String, callback:@escaping CallBackType)->[CallBackType]{
         var subscriberArray: [CallBackType] = []
         if let listCallback = self.listeners[name] {
             subscriberArray = listCallback

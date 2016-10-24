@@ -8,11 +8,11 @@
 
 import Foundation
 
-public class Model {
+open class Model {
     
     var document: [String:AnyObject] = [String:AnyObject]()
     
-     required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
+     required public init?(response: HTTPURLResponse, representation: AnyObject) {
         if let representation = representation as? [String: AnyObject] {
             for documentRep in representation{
                 self.document.updateValue(documentRep.1, forKey: documentRep.0)
@@ -20,11 +20,11 @@ public class Model {
         }
     }
 
-    public func getDocument() -> [String:AnyObject] {
+    open func getDocument() -> [String:AnyObject] {
         return self.document
     }
     
-    public func get(name:String) -> AnyObject? {
+    open func get(_ name:String) -> AnyObject? {
         var dict = self.document
         let paths = name.characters.split {$0 == "."}.map(String.init)
         for path in paths {
@@ -39,7 +39,7 @@ public class Model {
     }
     
     
-    public func fling(channel:Channel,payload:[String:AnyObject]){
+    open func fling(_ channel:Channel,payload:[String:AnyObject]){
         channel.fling(payload)
     }
 }

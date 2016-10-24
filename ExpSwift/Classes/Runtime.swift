@@ -7,15 +7,15 @@
 //
 
 import Foundation
-import Socket_IO_Client_Swift
+import SocketIO
 import Alamofire
 import PromiseKit
 import JWT
 
-public class Runtime{
+open class Runtime{
     
     var optionsRuntime = [String: String]()
-    var timeout:NSTimeInterval = 5 // seconds
+    var timeout:TimeInterval = 5 // seconds
     var enableSocket:Bool = true // enable socket connection
     
     /**
@@ -23,7 +23,7 @@ public class Runtime{
     @param host,uuid,secret.
     @return Promise<Bool>.
     */
-    public func start(host: String, uuid: String, secret: String)  -> Promise<Bool> {
+    open func start(_ host: String, uuid: String, secret: String)  -> Promise<Bool> {
         return start(["host": host, "deviceUuid": uuid, "secret": secret])
     }
     
@@ -32,7 +32,7 @@ public class Runtime{
     @param host,user,password,organization.
     @return Promise<Bool>.
     */
-    public func start(host:String , user: String , password:String, organization:String) -> Promise<Bool> {
+    open func start(_ host:String , user: String , password:String, organization:String) -> Promise<Bool> {
         return start(["host": host, "username": user, "password": password, "organization": organization])
     }
 
@@ -43,7 +43,7 @@ public class Runtime{
      @param options
      @return Promise<Bool>.
      */
-    public func start(options:[String:String]) -> Promise<Bool> {
+    open func start(_ options:[String:String]) -> Promise<Bool> {
         expLogging("EXP start with options \(options)")
         optionsRuntime = options
         return Promise { fulfill, reject in
@@ -70,7 +70,7 @@ public class Runtime{
             }
             
             if let uuid = options["uuid"], let secret = options["secret"] {
-                let tokenSign = JWT.encode(["uuid": uuid, "type": "device"], algorithm: .HS256(secret))
+                let tokenSign = JWT.encode(["uuid": uuid, "type": "device"], algorithm: .hs256(secret.data(using: .utf8)!))
                 login(["token":tokenSign]).then {(auth: Auth) -> Void  in
                     self.initNetwork(auth)
                     if self.enableSocket {
@@ -84,7 +84,7 @@ public class Runtime{
             }
             
             if let uuid = options["deviceUuid"], let secret = options["secret"] {
-                let tokenSign = JWT.encode(["uuid": uuid, "type": "device"], algorithm: .HS256(secret))
+                let tokenSign = JWT.encode(["uuid": uuid, "type": "device"], algorithm: .hs256(secret.data(using: .utf8)!))
                 login(["token":tokenSign]).then {(auth: Auth) -> Void  in
                     self.initNetwork(auth)
                     if self.enableSocket {
@@ -99,7 +99,7 @@ public class Runtime{
             }
             
             if let uuid = options["uuid"], let apiKey = options["apiKey"] {
-                let tokenSign = JWT.encode(["uuid": uuid, "type": "consumerApp"], algorithm: .HS256(apiKey))
+                let tokenSign = JWT.encode(["uuid": uuid, "type": "consumerApp"], algorithm: .hs256(apiKey.data(using: .utf8)!))
                 login(["token":tokenSign]).then {(auth: Auth) -> Void  in
                     self.initNetwork(auth)
                     if self.enableSocket {
@@ -113,7 +113,7 @@ public class Runtime{
             }
             
             if let uuid = options["consumerAppUuid"], let apiKey = options["apiKey"] {
-                let tokenSign = JWT.encode(["uuid": uuid, "type": "consumerApp"], algorithm: .HS256(apiKey))
+                let tokenSign = JWT.encode(["uuid": uuid, "type": "consumerApp"], algorithm: .hs256(apiKey.data(using: .utf8)!))
                 login(["token":tokenSign]).then {(auth: Auth) -> Void  in
                     self.initNetwork(auth)
                     if self.enableSocket {
@@ -127,7 +127,7 @@ public class Runtime{
             }
             
             if let uuid = options["networkUuid"], let apiKey = options["apiKey"] {
-                let tokenSign = JWT.encode(["uuid": uuid, "type": "consumerApp"], algorithm: .HS256(apiKey))
+                let tokenSign = JWT.encode(["uuid": uuid, "type": "consumerApp"], algorithm: .hs256(apiKey.data(using: .utf8)!))
                 login(["token":tokenSign]).then {(auth: Auth) -> Void  in
                     self.initNetwork(auth)
                     if self.enableSocket {
@@ -147,7 +147,7 @@ public class Runtime{
      Init network parameters for socket connection and Api calls
      @param auth
      */
-    private func initNetwork(auth: Auth)->Void{
+    fileprivate func initNetwork(_ auth: Auth)->Void{
         tokenSDK = auth.get("token") as! String
         let networks = auth.get("network") as! NSDictionary
         hostSocket = networks["host"] as! String
@@ -158,7 +158,7 @@ public class Runtime{
     @param host,user,password,organization.
     @return Promise<Bool>.
     */
-    public func stop(){
+    open func stop(){
         socketManager.disconnect()
         tokenSDK = ""
     }
@@ -168,7 +168,7 @@ public class Runtime{
     @param name for connection(offline,line),callback
     @return void
     */
-    public func connection(name:String,callback:String->Void){
+    open func connection(_ name:String,callback:@escaping (String)->Void){
         socketManager.connection(name,  callback: { (resultListen) -> Void in
             callback(resultListen)
         })
@@ -177,7 +177,7 @@ public class Runtime{
     /**
      Socket Manager is Connected
      */
-    public func isConnected()->Bool{
+    open func isConnected()->Bool{
         return socketManager.isConnected()
     }
     

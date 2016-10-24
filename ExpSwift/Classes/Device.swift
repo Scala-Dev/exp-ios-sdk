@@ -14,25 +14,25 @@ import Alamofire
 public final class Device: Model,ResponseObject,ResponseCollection {
     
     public let uuid: String
-    private var location:Location?
-    private var experience:Experience?
+    fileprivate var location:Location?
+    fileprivate var experience:Experience?
     
 
-    required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
-        self.uuid = representation.valueForKeyPath("uuid") as! String
-        if let dic = representation.valueForKeyPath("location")  as? NSDictionary {
-            if let uuid = dic.valueForKeyPath("uuid") as? String {
-                self.location = Location(response:response, representation: representation.valueForKeyPath("location")!)!
+    required public init?(response: HTTPURLResponse, representation: AnyObject) {
+        self.uuid = representation.value(forKeyPath: "uuid") as! String
+        if let dic = representation.value(forKeyPath: "location")  as? NSDictionary {
+            if let uuid = dic.value(forKeyPath: "uuid") as? String {
+                self.location = Location(response:response, representation: representation.value(forKeyPath: "location")!)!
             }
         }
         super.init(response: response, representation: representation)
     }
     
-    public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Device] {
+    public static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Device] {
         var devices: [Device] = []
         if let representation = representation as? [[String: AnyObject]] {
             for deviceRepresentation in representation {
-                if let device = Device(response: response, representation: deviceRepresentation) {
+                if let device = Device(response: response, representation: deviceRepresentation as AnyObject) {
                     devices.append(device)
                 }
             }

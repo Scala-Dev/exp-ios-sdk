@@ -11,11 +11,11 @@ import Alamofire
 
 
 public protocol ResponseCollection {
-    static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Self]
+    static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Self]
 }
 
 extension Alamofire.Request {
-    public func responseCollection<T: ResponseCollection>(completionHandler: Response<SearchResults<T>, NSError> -> Void) -> Self {
+    public func responseCollection<T: ResponseCollection>(_ completionHandler: (Response<SearchResults<T>, NSError>) -> Void) -> Self {
         
         let responseSerializer = ResponseSerializer<SearchResults<T>, NSError> { request, response, data, error in
             guard error == nil else { return .Failure(error!) }

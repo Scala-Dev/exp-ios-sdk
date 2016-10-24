@@ -11,28 +11,28 @@ import Foundation
 public final class Thing: Model,ResponseObject,ResponseCollection {
     
     public let uuid: String
-    private var location:Location?
-    private var experience:Experience?
+    fileprivate var location:Location?
+    fileprivate var experience:Experience?
     
-    required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
-        self.uuid = representation.valueForKeyPath("uuid") as! String
-        if let dic = representation.valueForKeyPath("location")  as? NSDictionary {
-            if let uuid = dic.valueForKeyPath("uuid") as? String {
-                self.location = Location(response:response, representation: representation.valueForKeyPath("location")!)!
+    required public init?(response: HTTPURLResponse, representation: AnyObject) {
+        self.uuid = representation.value(forKeyPath: "uuid") as! String
+        if let dic = representation.value(forKeyPath: "location")  as? NSDictionary {
+            if let uuid = dic.value(forKeyPath: "uuid") as? String {
+                self.location = Location(response:response, representation: representation.value(forKeyPath: "location")!)!
             }
         }
-        if let dic = representation.valueForKeyPath("experience")  as? NSDictionary {
-            self.experience = Experience(response:response, representation: representation.valueForKeyPath("experience")!)!
+        if let dic = representation.value(forKeyPath: "experience")  as? NSDictionary {
+            self.experience = Experience(response:response, representation: representation.value(forKeyPath: "experience")!)!
         }
         super.init(response: response, representation: representation)
     }
     
-    public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Thing] {
+    public static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Thing] {
         var things: [Thing] = []
         
         if let representation = representation as? [[String: AnyObject]] {
             for thingRepresentation in representation {
-                if let thing = Thing(response: response, representation: thingRepresentation) {
+                if let thing = Thing(response: response, representation: thingRepresentation as AnyObject) {
                     things.append(thing)
                 }
             }

@@ -11,11 +11,11 @@ import Alamofire
 
 
 public protocol ResponseObject {
-    init?(response: NSHTTPURLResponse, representation: AnyObject)
+    init?(response: HTTPURLResponse, representation: AnyObject)
 }
 
 extension Request {
- public func responseObject<T: ResponseObject>(completionHandler: Response<T, NSError> -> Void) -> Self {
+ public func responseObject<T: ResponseObject>(_ completionHandler: (Response<T, NSError>) -> Void) -> Self {
         
         let responseSerializer = ResponseSerializer<T, NSError> { request, response, data, error in
             guard error == nil else { return .Failure(error!) }

@@ -17,7 +17,7 @@ public final class Location: Model,ResponseObject,ResponseCollection {
     public var zones: [Zone] = []
     
     
-    required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
+    required public init?(response: HTTPURLResponse, representation: AnyObject) {
         if let representation = representation as? [String: AnyObject] {
             self.uuid = representation["uuid"] as! String
         } else {
@@ -25,7 +25,7 @@ public final class Location: Model,ResponseObject,ResponseCollection {
         }
         super.init(response: response, representation: representation)
         
-        if let zonesLocation = representation.valueForKeyPath("zones") as? [[String: AnyObject]] {
+        if let zonesLocation = representation.value(forKeyPath: "zones") as? [[String: AnyObject]] {
             if(!zonesLocation.isEmpty){
                 self.zones = Zone.collection(response:response, representation: zonesLocation,location: self)
             }
@@ -33,12 +33,12 @@ public final class Location: Model,ResponseObject,ResponseCollection {
 
     }
     
-     public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Location] {
+     public static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Location] {
         var locations: [Location] = []
         
         if let representation = representation as? [[String: AnyObject]] {
             for locationRepresentation in representation {
-                if let location = Location(response: response, representation: locationRepresentation) {
+                if let location = Location(response: response, representation: locationRepresentation as AnyObject) {
                     locations.append(location)
                 }
             }
@@ -57,7 +57,7 @@ public final class Location: Model,ResponseObject,ResponseCollection {
 
     public func getDevices() -> Promise<SearchResults<Device>>{
         return Promise { fulfill, reject in
-            Alamofire.request(Router.findDevices(["location.uuid":self.uuid]))
+            Alamofire.request(Router.findDevices(["location.uuid":self.uuid as AnyObject]))
                 .responseCollection { (response: Response<SearchResults<Device>, NSError>) in
                     switch response.result{
                     case .Success(let data):
@@ -71,7 +71,7 @@ public final class Location: Model,ResponseObject,ResponseCollection {
     
     public func getThings() -> Promise<SearchResults<Thing>>{
         return Promise { fulfill, reject in
-            Alamofire.request(Router.findThings(["location.uuid":self.uuid]))
+            Alamofire.request(Router.findThings(["location.uuid":self.uuid as AnyObject]))
                 .responseCollection { (response: Response<SearchResults<Thing>, NSError>) in
                     switch response.result{
                     case .Success(let data):

@@ -13,7 +13,7 @@ public final class Data: Model,ResponseObject,ResponseCollection {
     public let group: String
     public let key: String
     
-    required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
+    required public init?(response: HTTPURLResponse, representation: AnyObject) {
         if let representation = representation as? [String: AnyObject] {
             self.group = representation["group"] as! String
             self.key = representation["key"] as! String
@@ -25,12 +25,12 @@ public final class Data: Model,ResponseObject,ResponseCollection {
         super.init(response: response, representation: representation)
     }
     
-     public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Data] {
+     public static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Data] {
         var dataItems: [Data] = []
         
         if let representation = representation as? [[String: AnyObject]] {
             for dataRepresentation in representation {
-                if let data = Data(response: response, representation: dataRepresentation) {
+                if let data = Data(response: response, representation: dataRepresentation as AnyObject) {
                     dataItems.append(data)
                 }
             }

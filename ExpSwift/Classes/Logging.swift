@@ -9,7 +9,7 @@
 import Foundation
 
 
-func expLogging<T>(@autoclosure object: () -> T, _ file: String = #file, _ function: String = #function, _ line: Int = #line) {
+func expLogging<T>(_ object: @autoclosure () -> T, _ file: String = #file, _ function: String = #function, _ line: Int = #line) {
         #if DEBUG
             let value = object()
             let stringRepresentation: String

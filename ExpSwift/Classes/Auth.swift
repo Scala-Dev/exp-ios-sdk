@@ -11,7 +11,7 @@ public final class Auth: Model,ResponseObject {
     
 
     
-    required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
+    required public init?(response: HTTPURLResponse, representation: AnyObject) {
         let representation = representation as? [String: AnyObject] 
         super.init(response: response, representation: representation!)
     }

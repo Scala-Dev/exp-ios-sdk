@@ -8,15 +8,15 @@
 
 import Foundation
 import PromiseKit
-import Socket_IO_Client_Swift
+import SocketIO
 
 public protocol ChannelProtocol {
 
      associatedtype CallBackType
-     func onBroadcast(dic:[String:AnyObject])
-     func broadcast(name:String,var payload:[String:AnyObject],timeout:String)
-     func listen(name:String, callback:CallBackType)->Promise<Any>
-     func fling(dic:[String:AnyObject])
+     func onBroadcast(_ dic:[String:AnyObject])
+     func broadcast(_ name:String,payload:[String:AnyObject],timeout:String)
+     func listen(_ name:String, callback:CallBackType)->Promise<Any>
+     func fling(_ dic:[String:AnyObject])
      func identify()
 
 }

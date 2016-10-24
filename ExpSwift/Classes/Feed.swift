@@ -14,7 +14,7 @@ public final class Feed: Model,ResponseObject,ResponseCollection {
     
     public let uuid: String
     
-    required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
+    required public init?(response: HTTPURLResponse, representation: AnyObject) {
         if let representation = representation as? [String: AnyObject] {
             self.uuid = representation["uuid"] as! String
         } else {
@@ -24,12 +24,12 @@ public final class Feed: Model,ResponseObject,ResponseCollection {
         super.init(response: response, representation: representation)
     }
     
-    public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Feed] {
+    public static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Feed] {
         var feeds: [Feed] = []
         
         if let representation = representation as? [[String: AnyObject]] {
             for deviceRepresentation in representation {
-                if let feed = Feed(response: response, representation: deviceRepresentation) {
+                if let feed = Feed(response: response, representation: deviceRepresentation as AnyObject) {
                     feeds.append(feed)
                 }
             }
@@ -58,7 +58,7 @@ public final class Feed: Model,ResponseObject,ResponseCollection {
     }
     
 
-      public func getData(query:[String:AnyObject]) ->Promise<AnyObject>{
+      public func getData(_ query:[String:AnyObject]) ->Promise<AnyObject>{
 
         return Promise { fulfill, reject in
             Alamofire.request(Router.getDynamicFeedData(uuid,query))

@@ -24,7 +24,7 @@ public final class Content: Model,ResponseObject,ResponseCollection {
         case UNKNOWN = ""
     }
     
-    required public init?(response: NSHTTPURLResponse, representation: AnyObject) {
+    required public init?(response: HTTPURLResponse, representation: AnyObject) {
         if let representation = representation as? [String: AnyObject] {
             self.uuid = representation["uuid"] as! String
             self.subtype = CONTENT_TYPES(rawValue: representation["subtype"] as! String)!
@@ -33,8 +33,8 @@ public final class Content: Model,ResponseObject,ResponseCollection {
             self.subtype = CONTENT_TYPES.UNKNOWN
         }
         
-        if let childrenPath = representation.valueForKeyPath("children") as? [[String: AnyObject]] {
-            self.children = Content.collection(response:response, representation: childrenPath)
+        if let childrenPath = representation.value(forKeyPath: "children") as? [[String: AnyObject]] {
+            self.children = Content.collection(response:response, representation: childrenPath as AnyObject)
         }
         
         super.init(response: response, representation: representation)
@@ -43,11 +43,11 @@ public final class Content: Model,ResponseObject,ResponseCollection {
         document["children"] = nil
     }
     
-     public static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Content] {
+     public static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Content] {
         var contents: [Content] = []
             if let representation = representation as? [[String: AnyObject]] {
                 for contentRepresentation in representation {
-                    if let content = Content(response: response, representation: contentRepresentation) {
+                    if let content = Content(response: response, representation: contentRepresentation as AnyObject) {
                         contents.append(content)
                     }
                 }
@@ -85,8 +85,9 @@ public final class Content: Model,ResponseObject,ResponseCollection {
      Get Children from with params
      @return Promise<[Content]>.
      */
-    public func getChildren(var params:[String:AnyObject]) ->Promise<SearchResults<Content>>{
-        params.updateValue(uuid, forKey: "parent")
+    public func getChildren(_ params:[String:AnyObject]) ->Promise<SearchResults<Content>>{
+        var params = params
+        params.updateValue(uuid as AnyObject, forKey: "parent")
             return Promise { fulfill, reject in
                 Alamofire.request(Router.findContent(params))
                     .responseCollection { (response: Response<SearchResults<Content>, NSError>) in
@@ -112,10 +113,10 @@ public final class Content: Model,ResponseObject,ResponseCollection {
         
         switch(self.subtype) {
         case .FILE:
-            let escapeUrl = self.document["path"]!.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+            let escapeUrl = self.document["path"]!.addingPercentEscapes(using: String.Encoding.utf8)!
             return "\(hostUrl)/api/delivery\(escapeUrl)?_rt=\(rt)"
         case .APP:
-            let escapeUrl = self.document["path"]!.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+            let escapeUrl = self.document["path"]!.addingPercentEscapes(using: String.Encoding.utf8)!
             return "\(hostUrl)/api/delivery\(escapeUrl)/index.html?_rt=\(rt)"
         case .URL:
             return self.document["url"] as? String
@@ -128,12 +129,12 @@ public final class Content: Model,ResponseObject,ResponseCollection {
     Get Url to a file variant
     @return String.
     */
-    public func getVariantUrl (name: String) -> String? {
+    public func getVariantUrl (_ name: String) -> String? {
 
         if(CONTENT_TYPES.FILE == self.subtype && hasVariant(name)){
             if let url = getUrl() {
                 let rt = auth?.get("restrictedToken") as! String
-                let variant = name.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+                let variant = name.addingPercentEscapes(using: String.Encoding.utf8)!
                 return "\(url)&variant=\(variant)"
             }
         }
@@ -141,7 +142,7 @@ public final class Content: Model,ResponseObject,ResponseCollection {
         return nil
     }
     
-    public func hasVariant(name: String) -> Bool {
+    public func hasVariant(_ name: String) -> Bool {
         if let variants = self.document["variants"] as? [[String:AnyObject]] {
             for variant in variants {
                 if(variant["name"] as! String == name){
