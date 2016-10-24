@@ -7,40 +7,40 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = "ExpSwift"
-  s.version          = "1.0.4"
-  s.summary          = "Exp IOS SDK library. Native IOS library for EXP platform."
+  s.name             = 'ExpSwift'
+  s.version          = '1.0.5'
+  s.summary          = '"Exp IOS SDK library. Native IOS library for EXP platform.'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
 #   * Try to keep it short, snappy and to the point.
 #   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!  
-  s.description      = "Exp IOS SDK library. Native IOS library for EXP platform will allow you to communicate directly to EXP platform."
+#   * Finally, don't worry about the indent, CocoaPods strips it!
 
-  s.homepage         = "https://github.com/ScalaInc/exp-ios-sdk"
-  # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
-  s.license          = 'MIT'
-  s.author           = { "Cesar Oyarzun" => "cesar.oyarzun@scala.com" }
+  s.description      = <<-DESC
+TODO: Add long description of the pod here.
+                       DESC
+
+  s.homepage         = 'https://github.com/<GITHUB_USERNAME>/ExpSwift'
+  # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
+  s.license          = { :type => 'MIT', :file => 'LICENSE' }
+  s.author           = { 'Cesar Oyarzun' => 'cesar.oyarzun@scala.com' }
   s.source           = { :git => "https://github.com/ScalaInc/exp-ios-sdk.git", :tag => 'v1.0.4' }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.platform     = :ios, '8.0'
-  s.requires_arc = true
+  s.ios.deployment_target = '10.0'
 
-  s.source_files = 'Pod/Classes/**/*'
-  #s.resource_bundles = {
-  #  'ExpSwift' => ['Pod/Assets/*.png']
-  #}
+  s.source_files = 'ExpSwift/Classes/**/*'
+  
+  # s.resource_bundles = {
+  #   'ExpSwift' => ['ExpSwift/Assets/*.png']
+  # }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
-   s.dependency 'PromiseKit','3.2.1'
-   s.dependency 'Alamofire','3.1.5'
-   s.dependency 'Socket.IO-Client-Swift','4.1.2'
-   s.dependency 'JSONWebToken','1.4.1'
+  # s.dependency 'AFNetworking', '~> 2.3'
+    s.dependency 'PromiseKit','4.0'
+    s.dependency 'Alamofire','4.0.1'
+    s.dependency 'Socket.IO-Client-Swift','8.0.2'
+    s.dependency 'JSONWebToken','2.0.1'
 end
-
-
-
-

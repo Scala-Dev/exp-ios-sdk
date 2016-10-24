@@ -1,0 +1,16 @@
+PODS:
+  - ExpSwift (0.1.0)
+
+DEPENDENCIES:
+  - ExpSwift (from `../`)
+
+EXTERNAL SOURCES:
+  ExpSwift:
+    :path: ../
+
+SPEC CHECKSUMS:
+  ExpSwift: 993022fd982b978f027fcef1cf43a11dcd3b3ec5
+
+PODFILE CHECKSUM: bce88fd488a14162645c8c96433b6ba0b5df2003
+
+COCOAPODS: 1.1.1
