@@ -33,6 +33,7 @@ public enum SOCKET_CHANNELS: String {
 
 
 enum Router: URLRequestConvertible {
+    static let baseURLString = hostUrl
     case findDevices([String: AnyObject])
     case getDevice(String)
     case getExperience(String)
@@ -49,61 +50,60 @@ enum Router: URLRequestConvertible {
     case findThings([String: AnyObject])
     case getFeed(String)
     case getFeedData(String)
-    case getDynamicFeedData(String,[String:AnyObject])
+    case getDynamicFeedData([String:AnyObject])
     case findFeeds([String: AnyObject])
     case login([String: AnyObject])
     case refreshToken()
-    case broadcast([String: AnyObject],String)
+    case broadcast([String: AnyObject])
     case respond([String: AnyObject])
-    var method: Alamofire.Method {
+    
+    var method: HTTPMethod {
         switch self {
         case .findDevices:
-            return .GET
+            return .get
         case .getDevice:
-            return .GET
+            return .get
         case .getExperience:
-            return .GET
+            return .get
         case .findExperiences:
-            return .GET
+            return .get
         case .getLocation:
-            return .GET
+            return .get
         case .findLocations:
-            return .GET
+            return .get
         case .getContent:
-            return .GET
+            return .get
         case .getContentNode:
-            return .GET
+            return .get
         case .findContent:
-            return .GET
+            return .get
         case .findContentNodes:
-            return .GET
+            return .get
         case .findData:
-            return .GET
+            return .get
         case .getData:
-            return .GET
+            return .get
         case .getThing:
-            return .GET
+            return .get
         case .findThings:
-            return .GET
+            return .get
         case .getFeed:
-            return .GET
+            return .get
         case .getFeedData:
-            return .GET
+            return .get
         case .getDynamicFeedData:
-            return .GET
+            return .get
         case .findFeeds:
-            return .GET
+            return .get
         case .login:
-            return .POST
+            return .post
         case .refreshToken:
-            return .POST
+            return .post
         case .broadcast:
-            return .POST
+            return .post
         case .respond:
-            return .POST
-        
+            return .post
         }
-        
     }
     
     var path: String {
@@ -152,73 +152,59 @@ enum Router: URLRequestConvertible {
                 return "/api/networks/current/broadcasts"
             case .respond:
                 return "/api/networks/current/responses"
-
         }
-        
     }
     
-    var URLRequest: NSMutableURLRequest {
-        let URL = Foundation.URL(string: hostUrl)!
-        var mutableURLRequest = NSMutableURLRequest(URL: URL.URLByAppendingPathComponent(path))
-        expLogging(mutableURLRequest.URLString)
-        mutableURLRequest.HTTPMethod = method.rawValue
-        mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        mutableURLRequest.setValue("Bearer \(tokenSDK)", forHTTPHeaderField: "Authorization")
+    // MARK: URLRequestConvertible
+    
+    func asURLRequest() throws -> URLRequest {
+        let url = try Router.baseURLString.asURL()
+        
+        var urlRequest = URLRequest(url: url.appendingPathComponent(path))
+        urlRequest.httpMethod = method.rawValue
+        
         switch self {
-            case .findDevices(let parameters):
-                let reqFindDevices = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
-                expLogging("EXP Http Request findDevices: \(reqFindDevices)")
-                return reqFindDevices
-            case .findExperiences(let parameters):
-                let reqFindExperiences = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
-                expLogging("EXP Http Request findExperiences: \(reqFindExperiences)")
-                return reqFindExperiences
-            case .findLocations(let parameters):
-                let reqFindLocations = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
-                expLogging("EXP Http Request findLocations: \(reqFindLocations)")
-                return reqFindLocations
-            case .findData(let parameters):
-                let reqFindData = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
-                expLogging("EXP Http Request findData: \(reqFindData)")
-                return reqFindData
-            case .findThings(let parameters):
-                let reqFindThings = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
-                expLogging("EXP Htpp Request findThings: \(reqFindThings)")
-                return reqFindThings
-            case .findContent(let parameters):
-                let reqFindContentNodes = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
-                expLogging("EXP Http Request findContent: \(reqFindContentNodes)")
-                return reqFindContentNodes
-            case .findContentNodes(let parameters):
-                let reqFindContentNodes = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
-                expLogging("EXP Http Request findContentNodes: \(reqFindContentNodes)")
-                return reqFindContentNodes
-            case .findFeeds(let parameters):
-                let reqFindFeeds = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
-                expLogging("EXP Http Request findFeeds: \(reqFindFeeds)")
-                return reqFindFeeds
-            case .login(let parameters):
-                let reqLogin = Alamofire.ParameterEncoding.JSON.encode(mutableURLRequest, parameters: parameters).0
-                expLogging("EXP Http Request login: \(reqLogin)")
-                return reqLogin
-            case .broadcast(let parameters,let timeout):
-                expLogging("EXP Http Request broadcast parameters: \(parameters)")
-                let reqBroadcast = Alamofire.ParameterEncoding.JSON.encode(mutableURLRequest, parameters: parameters).0
-                reqBroadcast.URL = Foundation.URL(string: reqBroadcast.URLString+"?timeout=\(timeout)")
-                return reqBroadcast
-            case .respond(let parameters):
-                let reqRespond = Alamofire.ParameterEncoding.JSON.encode(mutableURLRequest, parameters: parameters).0
-                expLogging("EXP Http Request Respond: \(reqRespond)")
-                return reqRespond
-            case .getDynamicFeedData(let uuid,let parameters):
-                mutableURLRequest.URL = Foundation.URL(string: mutableURLRequest.URLString + "\(uuid)/data")
-                let reqDynamicFeed = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
-                expLogging("EXP Http Request Dynamic Feed: \(reqDynamicFeed)")
-                return reqDynamicFeed
-            default:
-                expLogging("EXP Http Request : \(mutableURLRequest)")
-                return mutableURLRequest
+        case .findDevices(let parameters):
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request findDevices: \(urlRequest)")
+        case .findExperiences(let parameters):
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request findExperiences: \(urlRequest)")
+        case .findLocations(let parameters):
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request findLocations: \(urlRequest)")
+        case .findData(let parameters):
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request findData: \(urlRequest)")
+        case .findThings(let parameters):
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request findThings: \(urlRequest)")
+        case .findContent(let parameters):
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request findContent: \(urlRequest)")
+        case .findContentNodes(let parameters):
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request findContentNodes: \(urlRequest)")
+        case .findFeeds(let parameters):
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request findFeeds: \(urlRequest)")
+        case .login(let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request login: \(urlRequest)")
+        case .broadcast(let parameters):
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request broadcast: \(urlRequest)")
+        case .respond(let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request respond: \(urlRequest)")
+        case .getDynamicFeedData(let parameters):
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request getDynamicFeedData: \(urlRequest)")
+        default:
+            break
         }
+        
+        return urlRequest
     }
 }
 
