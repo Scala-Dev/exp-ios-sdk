@@ -27,7 +27,7 @@ public final class Zone: Model,ResponseObject,ResponseCollectionLocation {
         super.init(response: response, representation: representation)
     }
 
-    public static func collection(response: HTTPURLResponse, representation: AnyObject,location: Location) -> [Zone] {
+    public static func collection(response: HTTPURLResponse, representation: Any,location: Location) -> [Zone] {
         var zones: [Zone] = []
         
         if let representation = representation as? [[String: AnyObject]] {

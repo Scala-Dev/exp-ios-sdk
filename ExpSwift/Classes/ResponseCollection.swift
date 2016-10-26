@@ -53,7 +53,7 @@ extension DataRequest {
             let dic = jsonObject as! NSDictionary
             let results: AnyObject? = dic.object(forKey: "results") as AnyObject?
             let total: Int64 = (dic.object(forKey: "total") as! NSNumber).int64Value
-            let collection: [T] = T.collection(from: response, withRepresentation: jsonObject)
+            let collection: [T] = T.collection(from: response, withRepresentation: results!)
             let searchResults = SearchResults<T>(results: collection, total: total)
             
             return .success(searchResults!)
