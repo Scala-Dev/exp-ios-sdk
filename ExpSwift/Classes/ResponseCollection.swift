@@ -15,7 +15,7 @@ public protocol ResponseCollection {
 }
 
 extension ResponseCollection where Self: ResponseObject {
-    static func collection(from response: HTTPURLResponse, withRepresentation representation: Any) -> [Self] {
+    public static func collection(from response: HTTPURLResponse, withRepresentation representation: Any) -> [Self] {
         var collection: [Self] = []
         
         if let representation = representation as? [[String: Any]] {
@@ -34,9 +34,9 @@ extension DataRequest {
     @discardableResult
     func responseCollection<T: ResponseCollection>(
         queue: DispatchQueue? = nil,
-        completionHandler: @escaping (DataResponse<[T]>) -> Void) -> Self
+        completionHandler: @escaping (DataResponse<SearchResults<T>>) -> Void) -> Self
     {
-        let responseSerializer = DataResponseSerializer<[T]> { request, response, data, error in
+        let responseSerializer = DataResponseSerializer<SearchResults<T>> { request, response, data, error in
             guard error == nil else { return .failure(BackendError.network(error: error!)) }
             
             let jsonSerializer = DataRequest.jsonResponseSerializer(options: .allowFragments)
@@ -50,8 +50,13 @@ extension DataRequest {
                 let reason = "Response collection could not be serialized due to nil response."
                 return .failure(BackendError.objectSerialization(reason: reason))
             }
+            let dic = jsonObject as! NSDictionary
+            let results: AnyObject? = dic.object(forKey: "results") as AnyObject?
+            let total: Int64 = (dic.object(forKey: "total") as! NSNumber).int64Value
+            let collection: [T] = T.collection(from: response, withRepresentation: jsonObject)
+            let searchResults = SearchResults<T>(results: collection, total: total)
             
-            return .success(T.collection(from: response, withRepresentation: jsonObject))
+            return .success(searchResults!)
         }
         
         return response(responseSerializer: responseSerializer, completionHandler: completionHandler)

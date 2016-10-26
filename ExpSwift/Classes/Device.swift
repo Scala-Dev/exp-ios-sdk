@@ -18,17 +18,18 @@ public final class Device: Model,ResponseObject,ResponseCollection {
     fileprivate var experience:Experience?
     
 
-    required public init?(response: HTTPURLResponse, representation: AnyObject) {
-        self.uuid = representation.value(forKeyPath: "uuid") as! String
-        if let dic = representation.value(forKeyPath: "location")  as? NSDictionary {
+    required public init?(response: HTTPURLResponse, representation: Any) {
+        let representation = representation as? [String: AnyObject]
+        self.uuid = representation?["uuid"] as! String
+        if let dic = representation?["location"]  as? NSDictionary {
             if let uuid = dic.value(forKeyPath: "uuid") as? String {
-                self.location = Location(response:response, representation: representation.value(forKeyPath: "location")!)!
+                self.location = Location(response:response, representation: representation?["location"])
             }
         }
         super.init(response: response, representation: representation)
     }
     
-    public static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Device] {
+    public static func collection(response: HTTPURLResponse, representation: Any) -> [Device] {
         var devices: [Device] = []
         if let representation = representation as? [[String: AnyObject]] {
             for deviceRepresentation in representation {
@@ -44,11 +45,11 @@ public final class Device: Model,ResponseObject,ResponseCollection {
         if let uuidLocation = self.document["location.uuid"]{
             return Promise { fulfill, reject in
                 Alamofire.request( Router.getLocation(uuidLocation as! String) )
-                    .responseObject { (response: Response<Location, NSError>) in
+                    .responseObject { (response: DataResponse<Location>) in
                         switch response.result{
-                        case .Success(let data):
+                        case .success(let data):
                             fulfill(data)
-                        case .Failure(let error):
+                        case .failure(let error):
                             return reject(error)
                         }
                 }
@@ -73,11 +74,11 @@ public final class Device: Model,ResponseObject,ResponseCollection {
         if let uuidExperience = self.document["experience.uuid"]{
             return Promise { fulfill, reject in
             Alamofire.request( Router.getExperience(uuidExperience as! String) )
-                .responseObject { (response: Response<Experience, NSError>) in
+                .responseObject { (response: DataResponse<Experience>) in
                     switch response.result{
-                    case .Success(let data):
+                    case .success(let data):
                         fulfill(data)
-                    case .Failure(let error):
+                    case .failure(let error):
                         return reject(error)
                     }
                 }
@@ -97,11 +98,11 @@ public final class Device: Model,ResponseObject,ResponseCollection {
             if let uuididentity = identity["uuid"]{
              return Promise { fulfill, reject in
                 Alamofire.request( Router.getDevice(uuididentity as! String) )
-                    .responseObject { (response: Response<Device, NSError>) in
+                    .responseObject { (response: DataResponse<Device>) in
                         switch response.result{
-                        case .Success(let data):
+                        case .success(let data):
                             fulfill(data)
-                        case .Failure(let error):
+                        case .failure(let error):
                             return reject(error)
                         }
                 }

@@ -24,7 +24,7 @@ public final class Content: Model,ResponseObject,ResponseCollection {
         case UNKNOWN = ""
     }
     
-    required public init?(response: HTTPURLResponse, representation: AnyObject) {
+    required public init?(response: HTTPURLResponse, representation: Any) {
         if let representation = representation as? [String: AnyObject] {
             self.uuid = representation["uuid"] as! String
             self.subtype = CONTENT_TYPES(rawValue: representation["subtype"] as! String)!
@@ -33,27 +33,13 @@ public final class Content: Model,ResponseObject,ResponseCollection {
             self.subtype = CONTENT_TYPES.UNKNOWN
         }
         
-        if let childrenPath = representation.value(forKeyPath: "children") as? [[String: AnyObject]] {
-            self.children = Content.collection(response:response, representation: childrenPath as AnyObject)
-        }
-        
+                
         super.init(response: response, representation: representation)
         
         // remove children from document
         document["children"] = nil
     }
     
-     public static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Content] {
-        var contents: [Content] = []
-            if let representation = representation as? [[String: AnyObject]] {
-                for contentRepresentation in representation {
-                    if let content = Content(response: response, representation: contentRepresentation as AnyObject) {
-                        contents.append(content)
-                    }
-                }
-            }
-        return contents
-    }
     
     /**
     Get Children from Node
@@ -67,13 +53,13 @@ public final class Content: Model,ResponseObject,ResponseCollection {
         } else {
             return Promise { fulfill, reject in
                 Alamofire.request(Router.getContent(uuid) )
-                    .responseObject { (response: Response<Content, NSError>) in
+                    .responseObject { (response: DataResponse<Content>) in
                         switch response.result{
-                        case .Success(let data):
+                        case .success(let data):
                             self.children = data.children
                             
                             fulfill(self.children)
-                        case .Failure(let error):
+                        case .failure(let error):
                             return reject(error)
                         }
                 }
@@ -90,11 +76,11 @@ public final class Content: Model,ResponseObject,ResponseCollection {
         params.updateValue(uuid as AnyObject, forKey: "parent")
             return Promise { fulfill, reject in
                 Alamofire.request(Router.findContent(params))
-                    .responseCollection { (response: Response<SearchResults<Content>, NSError>) in
+                    .responseCollection { (response: DataResponse<SearchResults<Content>>) in
                         switch response.result{
-                        case .Success(let data):
+                        case .success(let data):
                             fulfill(data)
-                        case .Failure(let error):
+                        case .failure(let error):
                             return reject(error)
                         }
                 }
@@ -113,10 +99,10 @@ public final class Content: Model,ResponseObject,ResponseCollection {
         
         switch(self.subtype) {
         case .FILE:
-            let escapeUrl = self.document["path"]!.addingPercentEscapes(using: String.Encoding.utf8)!
+            let escapeUrl = (self.document["path"]! as! String).addingPercentEscapes(using: String.Encoding.utf8)!
             return "\(hostUrl)/api/delivery\(escapeUrl)?_rt=\(rt)"
         case .APP:
-            let escapeUrl = self.document["path"]!.addingPercentEscapes(using: String.Encoding.utf8)!
+            let escapeUrl = (self.document["path"]! as! String).addingPercentEscapes(using: String.Encoding.utf8)!
             return "\(hostUrl)/api/delivery\(escapeUrl)/index.html?_rt=\(rt)"
         case .URL:
             return self.document["url"] as? String

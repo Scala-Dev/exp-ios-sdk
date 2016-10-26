@@ -10,33 +10,46 @@ import Foundation
 
 
 public final class Ref: ResponseObject,ResponseCollection {
-    public let major: String
-    public let minor: String
-    public let manufacturer: String
-    public let proximityUuid: String
-    public let primaryType: String
-    public let uuid: String?
-    public let org: String?
-    public let subtype: String
-    public let name: String
+     let major: String
+     let minor: String
+     let manufacturer: String
+     let proximityUuid: String
+     let primaryType: String
+     let uuid: String?
+     let org: String?
+     let subtype: String
+     let name: String
     
-    required public init?(response: HTTPURLResponse, representation: AnyObject) {
-        self.major = representation.value(forKeyPath: "major") as! String
-        self.minor = representation.value(forKeyPath: "minor") as! String
-        self.manufacturer = representation.value(forKeyPath: "manufacturer") as! String
-        self.proximityUuid = representation.value(forKeyPath: "proximityUuid") as! String
-        self.primaryType = representation.value(forKeyPath: "primaryType") as! String
-        self.uuid = representation.value(forKeyPath: "uuid") as? String
-        self.org = representation.value(forKeyPath: "org") as? String
-        self.subtype = representation.value(forKeyPath: "subtype") as! String
-        self.name = representation.value(forKeyPath: "name") as! String
+    required public init?(response: HTTPURLResponse, representation: Any) {
+        guard
+            let representation = representation as? [String: AnyObject],
+            let major = representation["major"] as? String,
+            let minor = representation["minor"] as? String,
+            let manufacturer = representation["manufacturer"] as? String,
+            let proximityUuid = representation["proximityUuid"] as? String,
+            let primaryType = representation["primaryType"] as? String,
+            let uuid = representation["uuid"] as? String,
+            let org = representation["org"] as? String,
+            let subtype = representation["subtype"] as? String,
+            let name = representation["name"] as? String
+        else { return nil }
+        
+        self.major = major
+        self.minor = minor
+        self.manufacturer = manufacturer
+        self.proximityUuid = proximityUuid
+        self.primaryType = primaryType
+        self.uuid = uuid
+        self.org = org
+        self.subtype = subtype
+        self.name = name
     }
     
     
     
     
     
-    public static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Ref] {
+    public static func collection(response: HTTPURLResponse, representation: Any) -> [Ref] {
         var refs: [Ref] = []
         
         if let representation = representation as? [[String: AnyObject]] {

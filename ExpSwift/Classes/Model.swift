@@ -10,9 +10,9 @@ import Foundation
 
 open class Model {
     
-    var document: [String:AnyObject] = [String:AnyObject]()
+    var document: [String:Any] = [String:Any]()
     
-     required public init?(response: HTTPURLResponse, representation: AnyObject) {
+     required public init?(response: HTTPURLResponse, representation: Any) {
         if let representation = representation as? [String: AnyObject] {
             for documentRep in representation{
                 self.document.updateValue(documentRep.1, forKey: documentRep.0)
@@ -20,11 +20,11 @@ open class Model {
         }
     }
 
-    open func getDocument() -> [String:AnyObject] {
+    open func getDocument() -> [String:Any] {
         return self.document
     }
     
-    open func get(_ name:String) -> AnyObject? {
+    open func get(_ name:String) -> Any? {
         var dict = self.document
         let paths = name.characters.split {$0 == "."}.map(String.init)
         for path in paths {

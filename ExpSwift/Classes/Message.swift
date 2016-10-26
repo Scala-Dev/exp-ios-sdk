@@ -11,17 +11,16 @@ public final class Message: Model,ResponseObject,ResponseCollection {
     
     public let uuid: String
     
-    required public init?(response: HTTPURLResponse, representation: AnyObject) {
+    required public init?(response: HTTPURLResponse, representation: Any) {
         if let representation = representation as? [String: AnyObject] {
             self.uuid = representation["uuid"] as! String
         } else {
             self.uuid = ""
         }
-        
         super.init(response: response, representation: representation)
     }
     
-    public static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Message] {
+    public static func collection(response: HTTPURLResponse, representation: Any) -> [Message] {
         var devices: [Message] = []
         
         if let representation = representation as? [[String: AnyObject]] {

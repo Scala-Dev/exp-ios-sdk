@@ -87,17 +87,15 @@ open class Channel: ChannelProtocol {
      */
     open func generateId()->String{
         if((channelId ?? "").isEmpty){
-            let org = auth?.get("identity")!["organization"] as! String
+            let identity = auth?.get("identity") as! [String:AnyObject]
+            let org = identity["organization"] as! String
             let systemInt:Int = self.system ? 1:0
             let consumerAppInt:Int = self.consumerApp ? 1:0
             let paramsArray = [org,self.channelName,systemInt,consumerAppInt] as [Any]
             do {
                 let jsonData = try JSONSerialization.data(withJSONObject: paramsArray, options: [])
-                guard let plainData = (jsonData as NSData).data(using: String.Encoding.utf8.rawValue) else {
-                    fatalError()
-                }
-                channelId = (plainData as NSData).base64EncodedString(NSData.Base64EncodingOptions(rawValue: 0))
-                print(channelId) 
+                channelId = (jsonData as NSData).base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
+                print(channelId)
                 //let string = String(data: jsonData, encoding: NSUTF8StringEncoding)
                 //let utf8str = String(data: jsonData,encoding: String.Encoding.utf8)
                 //channelId = (utf8str?.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0)))!

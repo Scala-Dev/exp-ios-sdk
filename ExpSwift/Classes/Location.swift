@@ -17,20 +17,17 @@ public final class Location: Model,ResponseObject,ResponseCollection {
     public var zones: [Zone] = []
     
     
-    required public init?(response: HTTPURLResponse, representation: AnyObject) {
+    required public init?(response: HTTPURLResponse, representation: Any) {
         if let representation = representation as? [String: AnyObject] {
             self.uuid = representation["uuid"] as! String
         } else {
             self.uuid = ""
         }
         super.init(response: response, representation: representation)
-        
-        if let zonesLocation = representation.value(forKeyPath: "zones") as? [[String: AnyObject]] {
-            if(!zonesLocation.isEmpty){
-                self.zones = Zone.collection(response:response, representation: zonesLocation,location: self)
-            }
-        }
 
+       // if let zonesLocation = representation["zones"] as? [String: Any] {
+       //     self.zones = Zone.collection(response:response, representation: zonesLocation,location: self)
+       //}
     }
     
      public static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Location] {
@@ -57,12 +54,12 @@ public final class Location: Model,ResponseObject,ResponseCollection {
 
     public func getDevices() -> Promise<SearchResults<Device>>{
         return Promise { fulfill, reject in
-            Alamofire.request(Router.findDevices(["location.uuid":self.uuid as AnyObject]))
-                .responseCollection { (response: Response<SearchResults<Device>, NSError>) in
+            Alamofire.request(Router.findDevices(["location.uuid":self.uuid]))
+                .responseCollection { (response: DataResponse<SearchResults<Device>>) in
                     switch response.result{
-                    case .Success(let data):
+                    case .success(let data):
                         fulfill(data)
-                    case .Failure(let error):
+                    case .failure(let error):
                         return reject(error)
                     }
             }
@@ -71,12 +68,12 @@ public final class Location: Model,ResponseObject,ResponseCollection {
     
     public func getThings() -> Promise<SearchResults<Thing>>{
         return Promise { fulfill, reject in
-            Alamofire.request(Router.findThings(["location.uuid":self.uuid as AnyObject]))
-                .responseCollection { (response: Response<SearchResults<Thing>, NSError>) in
+            Alamofire.request(Router.findThings(["location.uuid":self.uuid]))
+                .responseCollection { (response: DataResponse<SearchResults<Thing>>) in
                     switch response.result{
-                    case .Success(let data):
+                    case .success(let data):
                         fulfill(data)
-                    case .Failure(let error):
+                    case .failure(let error):
                         return reject(error)
                     }
             }

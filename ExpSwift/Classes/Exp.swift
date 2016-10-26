@@ -34,7 +34,7 @@ public enum SOCKET_CHANNELS: String {
 
 enum Router: URLRequestConvertible {
     static let baseURLString = hostUrl
-    case findDevices([String: AnyObject])
+    case findDevices([String: Any])
     case getDevice(String)
     case getExperience(String)
     case findExperiences([String: AnyObject])
@@ -47,14 +47,16 @@ enum Router: URLRequestConvertible {
     case findData([String: AnyObject])
     case getData(String,String)
     case getThing(String)
-    case findThings([String: AnyObject])
+    case findThings([String: Any])
     case getFeed(String)
     case getFeedData(String)
-    case getDynamicFeedData([String:AnyObject])
+    //todo fix param
+    case getDynamicFeedData(String,[String:AnyObject])
     case findFeeds([String: AnyObject])
     case login([String: AnyObject])
     case refreshToken()
-    case broadcast([String: AnyObject])
+    //todo fix param
+    case broadcast([String: AnyObject],String)
     case respond([String: AnyObject])
     
     var method: HTTPMethod {
@@ -162,6 +164,8 @@ enum Router: URLRequestConvertible {
         
         var urlRequest = URLRequest(url: url.appendingPathComponent(path))
         urlRequest.httpMethod = method.rawValue
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest.setValue("Bearer \(tokenSDK)", forHTTPHeaderField: "Authorization")
         
         switch self {
         case .findDevices(let parameters):
@@ -191,13 +195,13 @@ enum Router: URLRequestConvertible {
         case .login(let parameters):
             urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
             expLogging("EXP Http Request login: \(urlRequest)")
-        case .broadcast(let parameters):
+        case .broadcast(let parameters,let timeout):
             urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
             expLogging("EXP Http Request broadcast: \(urlRequest)")
         case .respond(let parameters):
             urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
             expLogging("EXP Http Request respond: \(urlRequest)")
-        case .getDynamicFeedData(let parameters):
+        case .getDynamicFeedData(let uuid,let parameters):
             urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
             expLogging("EXP Http Request getDynamicFeedData: \(urlRequest)")
         default:
@@ -244,11 +248,11 @@ public func start(_ options:[String:String]) -> Promise<Bool> {
 public func findDevices(_ params:[String:AnyObject]) -> Promise<SearchResults<Device>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findDevices(params))
-            .responseCollection { (response: Response<SearchResults<Device>, NSError>) in
+            .responseCollection { (response: DataResponse<SearchResults<Device>>) in
                 switch response.result{
-                case .Success(let data):
+                case .success(let data):
                     fulfill(data)
-                case .Failure(let error):
+                case .failure(let error):
                     return reject(error)
                 }
         }
@@ -263,11 +267,11 @@ public func findDevices(_ params:[String:AnyObject]) -> Promise<SearchResults<De
 public func getDevice(_ uuid:String) -> Promise<Device>{
     return Promise { fulfill, reject in
         Alamofire.request( Router.getDevice(uuid) )
-            .responseObject { (response: Response<Device, NSError>) in
+            .responseObject { (response: DataResponse<Device>) in
                 switch response.result{
-                case .Success(let data):
+                case .success(let data):
                     fulfill(data)
-                case .Failure(let error):
+                case .failure(let error):
                     return reject(error)
                 }
         }
@@ -282,11 +286,11 @@ public func getDevice(_ uuid:String) -> Promise<Device>{
 public func getExperience(_ uuid:String) -> Promise<Experience>{
     return Promise { fulfill, reject in
        Alamofire.request(Router.getExperience(uuid) )
-        .responseObject { (response: Response<Experience, NSError>) in
+        .responseObject { (response: DataResponse<Experience>) in
             switch response.result{
-            case .Success(let data):
+            case .success(let data):
                 fulfill(data)
-            case .Failure(let error):
+            case .failure(let error):
                 return reject(error)
             }
         }
@@ -301,11 +305,11 @@ public func getExperience(_ uuid:String) -> Promise<Experience>{
 public func findExperiences(_ params:[String:AnyObject]) -> Promise<SearchResults<Experience>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findExperiences(params))
-            .responseCollection { (response: Response<SearchResults<Experience>, NSError>) in
+            .responseCollection { (response: DataResponse<SearchResults<Experience>>) in
                 switch response.result{
-                case .Success(let data):
+                case .success(let data):
                     fulfill(data)
-                case .Failure(let error):
+                case .failure(let error):
                     return reject(error)
                 }
         }
@@ -320,11 +324,11 @@ public func findExperiences(_ params:[String:AnyObject]) -> Promise<SearchResult
 public func getLocation(_ uuid:String) -> Promise<Location>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.getLocation(uuid) )
-            .responseObject { (response: Response<Location, NSError>) in
+            .responseObject { (response: DataResponse<Location>) in
                 switch response.result{
-                case .Success(let data):
+                case .success(let data):
                     fulfill(data)
-                case .Failure(let error):
+                case .failure(let error):
                     return reject(error)
                 }
         }
@@ -339,11 +343,11 @@ public func getLocation(_ uuid:String) -> Promise<Location>{
 public func findLocations(_ params:[String:AnyObject]) -> Promise<SearchResults<Location>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findLocations(params))
-            .responseCollection { (response: Response<SearchResults<Location>, NSError>) in
+            .responseCollection { (response: DataResponse<SearchResults<Location>>) in
                 switch response.result{
-                case .Success(let data):
+                case .success(let data):
                     fulfill(data)
-                case .Failure(let error):
+                case .failure(let error):
                     return reject(error)
                 }
         }
@@ -360,11 +364,11 @@ Get Content Node By UUID
 @available(*, deprecated: 1.0.0, message: "use getContent(uuid)") public func getContentNode(_ uuid:String) -> Promise<ContentNode>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.getContentNode(uuid) )
-            .responseObject { (response: Response<ContentNode, NSError>) in
+            .responseObject { (response: DataResponse<ContentNode>) in
                 switch response.result{
-                case .Success(let data):
+                case .success(let data):
                     fulfill(data)
-                case .Failure(let error):
+                case .failure(let error):
                     return reject(error)
                 }
         }
@@ -380,11 +384,11 @@ Get Content Node By UUID
 public func getContent(_ uuid:String) -> Promise<Content>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.getContent(uuid) )
-            .responseObject { (response: Response<Content, NSError>) in
+            .responseObject { (response: DataResponse<Content>) in
                 switch response.result{
-                case .Success(let data):
+                case .success(let data):
                     fulfill(data)
-                case .Failure(let error):
+                case .failure(let error):
                     return reject(error)
                 }
         }
@@ -399,11 +403,11 @@ public func getContent(_ uuid:String) -> Promise<Content>{
 public func findContent(_ params:[String:AnyObject]) -> Promise<SearchResults<Content>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findContent(params))
-            .responseCollection { (response: Response<SearchResults<Content>, NSError>) in
+            .responseCollection { (response: DataResponse<SearchResults<Content>>) in
                 switch response.result{
-                case .Success(let data):
+                case .success(let data):
                     fulfill(data)
-                case .Failure(let error):
+                case .failure(let error):
                     return reject(error)
                 }
         }
@@ -419,11 +423,11 @@ public func findContent(_ params:[String:AnyObject]) -> Promise<SearchResults<Co
 @available(*, deprecated: 1.0.0, message: "use findContent(options)")public func findContentNodes(_ params:[String:AnyObject]) -> Promise<SearchResults<ContentNode>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findContentNodes(params))
-            .responseCollection { (response: Response<SearchResults<ContentNode>, NSError>) in
+            .responseCollection { (response: DataResponse<SearchResults<ContentNode>>) in
                 switch response.result{
-                case .Success(let data):
+                case .success(let data):
                     fulfill(data)
-                case .Failure(let error):
+                case .failure(let error):
                     return reject(error)
                 }
         }
@@ -438,11 +442,11 @@ Find Data with params
 public func findData(_ params:[String:AnyObject]) -> Promise<SearchResults<Data>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findData(params))
-            .responseCollection { (response: Response<SearchResults<Data>, NSError>) in
+            .responseCollection { (response: DataResponse<SearchResults<Data>>) in
                 switch response.result{
-                case .Success(let data):
+                case .success(let data):
                     fulfill(data)
-                case .Failure(let error):
+                case .failure(let error):
                     return reject(error)
                 }
         }
@@ -458,11 +462,11 @@ Get Data by Group and Key
 public func getData(_ group: String,  key: String) -> Promise<Data>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.getData(group, key))
-            .responseObject { (response: Response<Data, NSError>) in
+            .responseObject { (response: DataResponse<Data>) in
                 switch response.result{
-                case .Success(let data):
+                case .success(let data):
                     fulfill(data)
-                case .Failure(let error):
+                case .failure(let error):
                     return reject(error)
                 }
         }
@@ -477,11 +481,11 @@ public func getData(_ group: String,  key: String) -> Promise<Data>{
 public func getFeed(_ uuid:String) -> Promise<Feed>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.getFeed(uuid) )
-            .responseObject { (response: Response<Feed, NSError>) in
+            .responseObject { (response: DataResponse<Feed>) in
                 switch response.result{
-                case .Success(let data):
+                case .success(let data):
                     fulfill(data)
-                case .Failure(let error):
+                case .failure(let error):
                     return reject(error)
                 }
         }
@@ -496,11 +500,11 @@ public func getFeed(_ uuid:String) -> Promise<Feed>{
 public func findFeeds(_ params:[String:AnyObject]) -> Promise<SearchResults<Feed>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findFeeds(params))
-            .responseCollection { (response: Response<SearchResults<Feed>, NSError>) in
+            .responseCollection { (response: DataResponse<SearchResults<Feed>>) in
                 switch response.result{
-                case .Success(let data):
+                case .success(let data):
                     fulfill(data)
-                case .Failure(let error):
+                case .failure(let error):
                     return reject(error)
                 }
         }
@@ -518,9 +522,9 @@ public func findFeeds(_ params:[String:AnyObject]) -> Promise<SearchResults<Feed
 func login(_ options:[String:String]) ->Promise<Auth>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.login(options as [String : AnyObject]))
-            .responseObject { (response: Response<Auth, NSError>) in
+            .responseObject { (response: DataResponse<Auth>) in
                 switch response.result{
-                case .Success(let data):
+                case .success(let data):
                     fulfill(data)
                     expLogging("EXP login response : \(data.document)")
                     auth = data
@@ -529,7 +533,7 @@ func login(_ options:[String:String]) ->Promise<Auth>{
                     if let callBack = authConnection[Config.UPDATE]{
                         callBack(Config.UPDATE)
                     }
-                case .Failure(let error):
+                case .failure(let error):
                     if let callBack = authConnection[Config.ERROR]{
                         callBack(Config.ERROR)
                     }
@@ -548,11 +552,11 @@ Get Thing by UUID
 public func getThing(_ uuid:String) -> Promise<Thing>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.getThing(uuid))
-            .responseObject { (response: Response<Thing, NSError>) in
+            .responseObject { (response: DataResponse<Thing>) in
                 switch response.result{
-                case .Success(let data):
+                case .success(let data):
                     fulfill(data)
-                case .Failure(let error):
+                case .failure(let error):
                     return reject(error)
                 }
         }
@@ -567,11 +571,11 @@ Get list of things
 public func findThings(_ params:[String:AnyObject]) -> Promise<SearchResults<Thing>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findThings(params))
-            .responseCollection { (response: Response<SearchResults<Thing>, NSError>) in
+            .responseCollection { (response: DataResponse<SearchResults<Thing>>) in
                 switch response.result{
-                case .Success(let data):
+                case .success(let data):
                     fulfill(data)
-                case .Failure(let error):
+                case .failure(let error):
                     return reject(error)
                 }
         }
@@ -587,16 +591,16 @@ public func findThings(_ params:[String:AnyObject]) -> Promise<SearchResults<Thi
 public func refreshToken() -> Promise<Auth>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.refreshToken())
-            .responseObject { (response: Response<Auth, NSError>) in
+            .responseObject { (response: DataResponse<Auth>) in
                 switch response.result{
-                case .Success(let data):
+                case .success(let data):
                     fulfill(data)
                     if let callBack = authConnection[Config.UPDATE]{
                         callBack(Config.UPDATE)
                     }
-                case .Failure(let error):
+                case .failure(let error):
                     // try again in 5 seconds
-                    after(NSTimeInterval(runtime.timeout)).then{ result -> Void in
+                    after(interval: TimeInterval(runtime.timeout)).then{ result -> Void in
                         runtime.start(runtime.optionsRuntime)
                     }
                     if let callBack = authConnection[Config.ERROR]{
@@ -617,11 +621,11 @@ public func refreshToken() -> Promise<Auth>{
 public func broadCast(_ timeout:String,params:[String:AnyObject]) -> Promise<Message>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.broadcast(params,timeout))
-            .responseObject { (response: Response<Message, NSError>) in
+            .responseObject { (response: DataResponse<Message>) in
                 switch response.result{
-                case .Success(let data):
+                case .success(let data):
                     fulfill(data)
-                case .Failure(let error):
+                case .failure(let error):
                     return reject(error)
                 }
         }
@@ -637,11 +641,11 @@ public func broadCast(_ timeout:String,params:[String:AnyObject]) -> Promise<Mes
 public func respond(_ params:[String:AnyObject]) -> Promise<Message>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.respond(params))
-            .responseObject { (response: Response<Message, NSError>) in
+            .responseObject { (response: DataResponse<Message>) in
                 switch response.result{
-                case .Success(let data):
+                case .success(let data):
                     fulfill(data)
-                case .Failure(let error):
+                case .failure(let error):
                     return reject(error)
                 }
         }
@@ -682,7 +686,7 @@ public func stop(){
  Refresh Auth Token Recursive with Timeout
 */
 private func refreshAuthToken(_ result:Auth){
-    after(getTimeout(result)).then{ result -> Void in
+    after(interval: getTimeout(result)).then{ result -> Void in
         refreshToken().then{ result -> Void in
             setTokenSDK(result)
             expLogging("EXP refreshAuthToken: \(result.document)")

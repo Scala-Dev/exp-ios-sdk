@@ -14,20 +14,21 @@ public final class Thing: Model,ResponseObject,ResponseCollection {
     fileprivate var location:Location?
     fileprivate var experience:Experience?
     
-    required public init?(response: HTTPURLResponse, representation: AnyObject) {
-        self.uuid = representation.value(forKeyPath: "uuid") as! String
-        if let dic = representation.value(forKeyPath: "location")  as? NSDictionary {
+    required public init?(response: HTTPURLResponse, representation: Any) {
+        let representation = representation as? [String: AnyObject]
+        self.uuid = representation?["uuid"] as! String
+        if let dic = representation?["location"]  as? NSDictionary {
             if let uuid = dic.value(forKeyPath: "uuid") as? String {
-                self.location = Location(response:response, representation: representation.value(forKeyPath: "location")!)!
+                self.location = Location(response:response, representation: representation?["location"])
             }
         }
-        if let dic = representation.value(forKeyPath: "experience")  as? NSDictionary {
-            self.experience = Experience(response:response, representation: representation.value(forKeyPath: "experience")!)!
+        if let dic = representation?["experience"]  as? NSDictionary {
+            self.experience = Experience(response:response, representation: representation?["experience"])
         }
         super.init(response: response, representation: representation)
     }
     
-    public static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Thing] {
+    public static func collection(response: HTTPURLResponse, representation: Any) -> [Thing] {
         var things: [Thing] = []
         
         if let representation = representation as? [[String: AnyObject]] {
