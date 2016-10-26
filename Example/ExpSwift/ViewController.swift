@@ -21,7 +21,7 @@ class ViewController: UIViewController {
         
         ExpSwift.start(host,user: "cesar.oyarzun@scala.com",password: "5715031Com@",organization: "").then{ result -> Void in
             debugPrint("test")
-            ExpSwift.findLocations(["limit":10 as AnyObject, "skip":0 as AnyObject, "sort":"name" as AnyObject]).then { (locations: SearchResults<Location>) -> Void in
+            ExpSwift.findLocations(["limit":10, "skip":0, "sort":"name"]).then { (locations: SearchResults<Location>) -> Void in
                 for location:Location in locations
                 {
                     debugPrint(location.get("name"))
@@ -145,10 +145,6 @@ class ViewController: UIViewController {
         //        ExpSwift.connection("offline", callback: { obj -> Void in
         //            debugPrint(obj)
         //        })
-        
-        
-        
-        
         
     }
 
