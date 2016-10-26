@@ -37,27 +37,27 @@ enum Router: URLRequestConvertible {
     case findDevices([String: Any])
     case getDevice(String)
     case getExperience(String)
-    case findExperiences([String: AnyObject])
+    case findExperiences([String: Any])
     case getLocation(String)
-    case findLocations([String: AnyObject])
+    case findLocations([String: Any])
     case getContent(String)
-    case findContent([String: AnyObject])
+    case findContent([String: Any])
     case getContentNode(String)
-    case findContentNodes([String: AnyObject])
-    case findData([String: AnyObject])
+    case findContentNodes([String: Any])
+    case findData([String: Any])
     case getData(String,String)
     case getThing(String)
     case findThings([String: Any])
     case getFeed(String)
     case getFeedData(String)
     //todo fix param
-    case getDynamicFeedData(String,[String:AnyObject])
-    case findFeeds([String: AnyObject])
-    case login([String: AnyObject])
+    case getDynamicFeedData(String,[String:Any])
+    case findFeeds([String: Any])
+    case login([String: Any])
     case refreshToken()
     //todo fix param
-    case broadcast([String: AnyObject],String)
-    case respond([String: AnyObject])
+    case broadcast([String: Any],String)
+    case respond([String: Any])
     
     var method: HTTPMethod {
         switch self {
@@ -245,7 +245,7 @@ public func start(_ options:[String:String]) -> Promise<Bool> {
     @param dictionary of search params
     @return Promise<SearchResults<Device>>.
 */
-public func findDevices(_ params:[String:AnyObject]) -> Promise<SearchResults<Device>>{
+public func findDevices(_ params:[String:Any]) -> Promise<SearchResults<Device>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findDevices(params))
             .responseCollection { (response: DataResponse<SearchResults<Device>>) in
@@ -302,7 +302,7 @@ public func getExperience(_ uuid:String) -> Promise<Experience>{
     @param dictionary of search params
     @return Promise<SearchResults<Experience>>.
 */
-public func findExperiences(_ params:[String:AnyObject]) -> Promise<SearchResults<Experience>>{
+public func findExperiences(_ params:[String:Any]) -> Promise<SearchResults<Experience>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findExperiences(params))
             .responseCollection { (response: DataResponse<SearchResults<Experience>>) in
@@ -340,7 +340,7 @@ public func getLocation(_ uuid:String) -> Promise<Location>{
     @param dictionary of search params
     @return Promise<SearchResults<Location>>.
 */
-public func findLocations(_ params:[String:AnyObject]) -> Promise<SearchResults<Location>>{
+public func findLocations(_ params:[String:Any]) -> Promise<SearchResults<Location>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findLocations(params))
             .responseCollection { (response: DataResponse<SearchResults<Location>>) in
@@ -400,7 +400,7 @@ public func getContent(_ uuid:String) -> Promise<Content>{
  @param dictionary of search params
  @return Promise<SearchResults<Content>>.
  */
-public func findContent(_ params:[String:AnyObject]) -> Promise<SearchResults<Content>>{
+public func findContent(_ params:[String:Any]) -> Promise<SearchResults<Content>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findContent(params))
             .responseCollection { (response: DataResponse<SearchResults<Content>>) in
@@ -439,7 +439,7 @@ Find Data with params
 @param [String:AnyObject].
 @return Promise<SearchResults<Data>>.
 */
-public func findData(_ params:[String:AnyObject]) -> Promise<SearchResults<Data>>{
+public func findData(_ params:[String:Any]) -> Promise<SearchResults<Data>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findData(params))
             .responseCollection { (response: DataResponse<SearchResults<Data>>) in
@@ -497,7 +497,7 @@ public func getFeed(_ uuid:String) -> Promise<Feed>{
  @param dictionary of search params
  @return Promise<SearchResults<Feed>>.
  */
-public func findFeeds(_ params:[String:AnyObject]) -> Promise<SearchResults<Feed>>{
+public func findFeeds(_ params:[String:Any]) -> Promise<SearchResults<Feed>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findFeeds(params))
             .responseCollection { (response: DataResponse<SearchResults<Feed>>) in
@@ -568,7 +568,7 @@ Get list of things
 @param dictionary of search params
 @return Promise<Array<Thing>>.
 */
-public func findThings(_ params:[String:AnyObject]) -> Promise<SearchResults<Thing>>{
+public func findThings(_ params:[String:Any]) -> Promise<SearchResults<Thing>>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.findThings(params))
             .responseCollection { (response: DataResponse<SearchResults<Thing>>) in
@@ -618,7 +618,7 @@ public func refreshToken() -> Promise<Auth>{
  @param timeout,params.
  @return Promise<Message>.
  */
-public func broadCast(_ timeout:String,params:[String:AnyObject]) -> Promise<Message>{
+public func broadCast(_ timeout:String,params:[String:Any]) -> Promise<Message>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.broadcast(params,timeout))
             .responseObject { (response: DataResponse<Message>) in
@@ -638,7 +638,7 @@ public func broadCast(_ timeout:String,params:[String:AnyObject]) -> Promise<Mes
  @param params.
  @return Promise<Message>.
  */
-public func respond(_ params:[String:AnyObject]) -> Promise<Message>{
+public func respond(_ params:[String:Any]) -> Promise<Message>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.respond(params))
             .responseObject { (response: DataResponse<Message>) in
