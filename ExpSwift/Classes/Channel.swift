@@ -95,11 +95,6 @@ open class Channel: ChannelProtocol {
             do {
                 let jsonData = try JSONSerialization.data(withJSONObject: paramsArray, options: [])
                 channelId = (jsonData as NSData).base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
-                print(channelId)
-                //let string = String(data: jsonData, encoding: NSUTF8StringEncoding)
-                //let utf8str = String(data: jsonData,encoding: String.Encoding.utf8)
-                //channelId = (utf8str?.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0)))!
-                
                 }catch let error as NSError{
                 expLogging(error.description)
             }

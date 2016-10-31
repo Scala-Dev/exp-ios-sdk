@@ -27,14 +27,14 @@ public final class Feed: Model,ResponseObject,ResponseCollection {
      Get output from Feed
      @return Promise<AnyObject>.
      */
-    public func getData() ->Promise<AnyObject>{
+    public func getData() ->Promise<Any>{
 
         return Promise { fulfill, reject in
             Alamofire.request(Router.getFeedData(uuid))
                 .responseJSON {response in
                     switch response.result {
                     case .success(let data):
-                        fulfill(data as AnyObject)
+                        fulfill(data)
                     case .failure(let error):
                         return reject(error)
                     }
@@ -44,7 +44,7 @@ public final class Feed: Model,ResponseObject,ResponseCollection {
     }
     
 
-      public func getData(_ query:[String:AnyObject]) ->Promise<AnyObject>{
+      public func getData(_ query:[String:Any]) ->Promise<Any>{
 
         return Promise { fulfill, reject in
             Alamofire.request(Router.getDynamicFeedData(uuid,query))
