@@ -28,7 +28,6 @@ public final class Feed: Model,ResponseObject,ResponseCollection {
      @return Promise<AnyObject>.
      */
     public func getData() ->Promise<Any>{
-
         return Promise { fulfill, reject in
             Alamofire.request(Router.getFeedData(uuid))
                 .responseJSON {response in
@@ -39,13 +38,11 @@ public final class Feed: Model,ResponseObject,ResponseCollection {
                         return reject(error)
                     }
                 }
-
         }  
     }
     
 
       public func getData(_ query:[String:Any]) ->Promise<Any>{
-
         return Promise { fulfill, reject in
             Alamofire.request(Router.getDynamicFeedData(uuid,query))
                 .responseJSON {response in
@@ -56,7 +53,6 @@ public final class Feed: Model,ResponseObject,ResponseCollection {
                         return reject(error)
                     }
                 }
-
         }  
     }
 }
