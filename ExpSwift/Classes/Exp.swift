@@ -196,12 +196,14 @@ enum Router: URLRequestConvertible {
             urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
             expLogging("EXP Http Request login: \(urlRequest)")
         case .broadcast(let parameters,let timeout):
-            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
+            urlRequest.url?.appendingPathComponent("?timeout=\(timeout)")
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
             expLogging("EXP Http Request broadcast: \(urlRequest)")
         case .respond(let parameters):
             urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
             expLogging("EXP Http Request respond: \(urlRequest)")
         case .getDynamicFeedData(let uuid,let parameters):
+            urlRequest.url?.appendingPathComponent("\(uuid)/data")
             urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
             expLogging("EXP Http Request getDynamicFeedData: \(urlRequest)")
         default:

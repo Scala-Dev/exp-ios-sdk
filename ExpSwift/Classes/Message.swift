@@ -12,25 +12,12 @@ public final class Message: Model,ResponseObject,ResponseCollection {
     public let uuid: String
     
     required public init?(response: HTTPURLResponse, representation: Any) {
-        if let representation = representation as? [String: AnyObject] {
-            self.uuid = representation["uuid"] as! String
-        } else {
+         let representation = representation as? [String: AnyObject]
+         if let uuid = representation?["uuid"] as? String {
+            self.uuid = (representation?["uuid"] as? String)!
+         } else {
             self.uuid = ""
-        }
+         }
         super.init(response: response, representation: representation)
     }
-    
-    public static func collection(response: HTTPURLResponse, representation: Any) -> [Message] {
-        var devices: [Message] = []
-        
-        if let representation = representation as? [[String: AnyObject]] {
-            for deviceRepresentation in representation {
-                if let device = Message(response: response, representation: deviceRepresentation as AnyObject) {
-                    devices.append(device)
-                }
-            }
-        }
-        return devices
-    }
-    
 }
