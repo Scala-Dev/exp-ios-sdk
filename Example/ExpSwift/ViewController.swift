@@ -21,21 +21,18 @@ class ViewController: UIViewController {
         
         ExpSwift.start(host,user: "cesar.oyarzun@scala.com",password: "5715031Com@",organization: "").then{ result -> Void in
             debugPrint("test")
-            ExpSwift.findLocations(["limit":10, "skip":0, "sort":"name"]).then { (locations: SearchResults<Location>) -> Void in
-                for location:Location in locations
-                {
-                    debugPrint(location.get("name"))
-                    let devicesList = location.getDevices()
-                    //                    location.fling(channel1,payload: payload1)
-                    //                    let zones = location.getZones()
-                    //                    debugPrint(zones)
-                    
-                }
-                //                debugPrint(devices)
-                }
-                    //                    debugPrint(error)
             
-            
+            let document = ExpSwift.auth?.getDocument()
+            let channel = ExpSwift.getChannel("device uui",system: false,consumerApp: false)
+            //socket connection
+            let channel1 = ExpSwift.getChannel("channel1",system: false,consumerApp: true)
+            let payload:Dictionary<String,Any> = ["test":"message"]
+            channel1.listen("hi", callback: { (resultListen) -> Void in
+                debugPrint(".... MESSAGE  RECIEVE ...." + resultListen.description);
+            }).then { result -> Void in
+                debugPrint(".... SENDING  BROADCAST ....");
+                channel1.broadcast("hi", payload: payload, timeout: "2000");
+            }
             }.then {result -> Void in
                 //
                 //            ExpSwift.findContentNodes(["limit":10, "skip":0, "sort":"name", "name": "10-26-2015"]).then { (devices: SearchResults<ContentNode>) -> Void in
@@ -46,7 +43,13 @@ class ViewController: UIViewController {
                 //                }.error { error in
                 //                    debugPrint(error)
                 //            }
-                
+                ExpSwift.getLocation("eaf41ef9-8d34-4656-86c7-c9076049bb74").then { (location: Location) -> Void in
+
+                    debugPrint(location)
+                    debugPrint(location.getZones())
+                    }.catch { error in
+                        
+                }
                 
             }
         
