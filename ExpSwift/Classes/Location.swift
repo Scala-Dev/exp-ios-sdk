@@ -24,27 +24,13 @@ public final class Location: Model,ResponseObject,ResponseCollection {
             self.uuid = ""
         }
         super.init(response: response, representation: representation)
-
         if let representation = representation as? [String: AnyObject] {
-            if let zonesLocation = representation["zones"] as? [String: Any] {
+            if let zonesLocation = representation["zones"] as? [Any] {
                 self.zones = Zone.collection(response:response, representation: zonesLocation,location: self)
             }
         }
     }
-    
-     public static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Location] {
-        var locations: [Location] = []
         
-        if let representation = representation as? [[String: AnyObject]] {
-            for locationRepresentation in representation {
-                if let location = Location(response: response, representation: locationRepresentation as AnyObject) {
-                    locations.append(location)
-                }
-            }
-        }
-        return locations
-    }
-    
     public func getZones() -> [Zone]{
         return self.zones
     }

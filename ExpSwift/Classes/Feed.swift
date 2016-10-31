@@ -23,19 +23,6 @@ public final class Feed: Model,ResponseObject,ResponseCollection {
         super.init(response: response, representation: representation)
     }
     
-    public static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Feed] {
-        var feeds: [Feed] = []
-        
-        if let representation = representation as? [[String: AnyObject]] {
-            for deviceRepresentation in representation {
-                if let feed = Feed(response: response, representation: deviceRepresentation as AnyObject) {
-                    feeds.append(feed)
-                }
-            }
-        }
-        return feeds
-    }
-    
     /**
      Get output from Feed
      @return Promise<AnyObject>.

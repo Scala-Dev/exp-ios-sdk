@@ -26,19 +26,6 @@ public final class Experience: Model,ResponseObject,ResponseCollection {
     }
     
     
-     public static func collection(response: HTTPURLResponse, representation: Any) -> [Experience] {
-        var experiences: [Experience] = []
-        
-        if let representation = representation as? [[String: AnyObject]] {
-            for experienceRepresentation in representation {
-                if let experience = Experience(response: response, representation: experienceRepresentation) {
-                    experiences.append(experience)
-                }
-            }
-        }
-        return experiences
-    }
-    
     public func getDevices() -> Promise<SearchResults<Device>>{
         return Promise { fulfill, reject in
             Alamofire.request(Router.findDevices(["location.uuid":self.uuid]))

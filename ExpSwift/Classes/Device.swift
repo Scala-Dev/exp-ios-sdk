@@ -29,18 +29,6 @@ public final class Device: Model,ResponseObject,ResponseCollection {
         super.init(response: response, representation: representation)
     }
     
-    public static func collection(response: HTTPURLResponse, representation: Any) -> [Device] {
-        var devices: [Device] = []
-        if let representation = representation as? [[String: AnyObject]] {
-            for deviceRepresentation in representation {
-                if let device = Device(response: response, representation: deviceRepresentation as AnyObject) {
-                    devices.append(device)
-                }
-            }
-        }
-        return devices
-    }
-    
     public func getLocation() -> Promise<Location?>{
         if let uuidLocation = self.document["location.uuid"]{
             return Promise { fulfill, reject in

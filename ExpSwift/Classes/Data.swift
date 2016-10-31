@@ -23,19 +23,4 @@ public final class Data: Model,ResponseObject,ResponseCollection {
         }
         super.init(response: response, representation: representation)
     }
-    
-     public static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Data] {
-        var dataItems: [Data] = []
-        
-        if let representation = representation as? [[String: AnyObject]] {
-            for dataRepresentation in representation {
-                if let data = Data(response: response, representation: dataRepresentation as AnyObject) {
-                    dataItems.append(data)
-                }
-            }
-        }
-        return dataItems
-    }
-    
-
 }
