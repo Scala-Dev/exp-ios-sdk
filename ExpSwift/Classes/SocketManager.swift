@@ -31,7 +31,7 @@ open  class SocketManager {
         @return Promise<Bool>.
     */
     open func start_socket() -> Promise<Bool> {
-        self.socket = SocketIOClient(socketURL: URL(string: hostSocket)!, config: [.log(true), .forcePolling(true), .connectParams(["token":tokenSDK]), .reconnects(true), .reconnectAttempts(5), .reconnectWait(5)])
+        self.socket = SocketIOClient(socketURL: URL(string: hostSocket)!, config: [.log(true), .forceWebsockets(true), .connectParams(["token":tokenSDK])])
         expLogging("Starting EXP Socket Connection Host= \(hostSocket) Token= \(tokenSDK)")
      
         

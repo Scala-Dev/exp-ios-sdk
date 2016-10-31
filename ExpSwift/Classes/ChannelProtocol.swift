@@ -13,10 +13,10 @@ import SocketIO
 public protocol ChannelProtocol {
 
      associatedtype CallBackType
-     func onBroadcast(_ dic:[String:AnyObject])
-     func broadcast(_ name:String,payload:[String:AnyObject],timeout:String)
+     func onBroadcast(_ dic:[String:Any])
+     func broadcast(_ name:String,payload:[String:Any],timeout:String)
      func listen(_ name:String, callback:CallBackType)->Promise<Any>
-     func fling(_ dic:[String:AnyObject])
+     func fling(_ dic:[String:Any])
      func identify()
 
 }

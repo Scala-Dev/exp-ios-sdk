@@ -13,7 +13,7 @@ import PromiseKit
 
 open class Channel: ChannelProtocol {
     
-    public typealias CallBackType = ([String: AnyObject]) -> Void
+    public typealias CallBackType = ([String: Any]) -> Void
     var listeners = [String: [CallBackType]]()
     var responders = [String: CallBackType]()
     var socketManager:SocketManager
@@ -35,8 +35,8 @@ open class Channel: ChannelProtocol {
      @param  Dictionarty.
      @return Promise<Any>
      */
-    open func broadcast(_ name:String, payload:[String:AnyObject],timeout:String) -> Void{
-        let msg:Dictionary<String,AnyObject> = ["name":name as AnyObject,"channel":generateId() as AnyObject,"payload":payload as AnyObject]
+    open func broadcast(_ name:String, payload:[String:Any],timeout:String) -> Void{
+        let msg:Dictionary<String,Any> = ["name":name,"channel":generateId(),"payload":payload]
         expLogging(" BROADCAST \(msg) ")
         broadCast(timeout,params: msg)
     }
@@ -56,8 +56,8 @@ open class Channel: ChannelProtocol {
      @param  uuid String.
      @return
      */
-    open func fling(_ payload:[String:AnyObject]) -> Void{
-        let msg:Dictionary<String,AnyObject> = ["name":"fling" as AnyObject,"channel":self.channelId! as AnyObject,"payload":payload as AnyObject]
+    open func fling(_ payload:[String:Any]) -> Void{
+        let msg:Dictionary<String,Any> = ["name":"fling" as AnyObject,"channel":self.channelId! ,"payload":payload]
         expLogging("FLING \(msg) ")
         broadCast("2000",params: msg)
     }
@@ -65,7 +65,7 @@ open class Channel: ChannelProtocol {
     /**
      Handle On Broadcast callback
     */
-    open func onBroadcast(_ dic: [String : AnyObject]) {
+    open func onBroadcast(_ dic: [String : Any]) {
         let name = dic["name"] as! String
         if let subscriberList = self.listeners[name] {
             for callBack in subscriberList {
@@ -113,7 +113,7 @@ open class Channel: ChannelProtocol {
      @return
      */
     open func identify() -> Void{
-        let msg:Dictionary<String,AnyObject> = ["name":"identify" as AnyObject,"channel":self.channelId! as AnyObject]
+        let msg:Dictionary<String,Any> = ["name":"identify","channel":self.channelId!]
         expLogging("IDENTIFY \(msg) ")
         broadCast("2000",params: msg)
     }
