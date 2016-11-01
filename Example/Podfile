@@ -1,12 +1,12 @@
-source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
+platform :ios, '9.0'
 
 target 'ExpSwift_Example' do
-  pod "ExpSwift", :path => "../"
-end
+  pod 'ExpSwift', :path => '../'
 
-target 'ExpSwift_Tests' do
-  pod "ExpSwift", :path => "../"
+  target 'ExpSwift_Tests' do
+    inherit! :search_paths
 
-  
+    
+  end
 end
