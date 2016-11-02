@@ -1,6 +1,6 @@
 PODS:
   - Alamofire (4.0.1)
-  - CryptoSwift (0.6.3)
+  - CryptoSwift (0.6.5)
   - ExpSwift (1.0.5):
     - Alamofire (= 4.0.1)
     - JSONWebToken (= 2.0.1)
@@ -30,12 +30,12 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Alamofire: 7682d43245de14874acd142ec137b144aa1dd335
-  CryptoSwift: 623f81faf4bc34caf78b792f8625fda9fc309abd
-  ExpSwift: 61be3ddeb3e3382b48668b6bd806ce5e701e9d0c
+  CryptoSwift: d86b1d97d39b4a361ba44c77180b221e9c5b864f
+  ExpSwift: 3614c61804dfeb559ea77ef1c8096a026c286c62
   JSONWebToken: 37f3666c459ed1a1554663a2741ac7655d488b1f
   PromiseKit: 97edc7fb2fb7d2c68c8e09d1f79b3ab7bcb6b06a
   Socket.IO-Client-Swift: 136598e4a81a42b0e6855e7f94a0e5a6efdc5ff8
 
-PODFILE CHECKSUM: 5d9deca29ab0b954bf0f0a33705f76bd14ccef59
+PODFILE CHECKSUM: 2432ab682d18ba33b5f1d3aff22f6e1a3d473f71
 
-COCOAPODS: 1.1.1
+COCOAPODS: 1.2.0.beta.1
