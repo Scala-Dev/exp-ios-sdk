@@ -10,7 +10,7 @@ import Foundation
 import PromiseKit
 import Alamofire
 
-public final class Zone: Model,ResponseObject,ResponseCollectionLocation {
+public final class Zone: Model,ResponseObject,ResponseCollection {
 
     public var name: String?
     public let key: String

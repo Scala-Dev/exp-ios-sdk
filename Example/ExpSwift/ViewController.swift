@@ -48,7 +48,15 @@ class ViewController: UIViewController {
                     debugPrint(location)
                     debugPrint(location.getZones())
                     }.catch { error in
-                        
+                }
+                
+                ExpSwift.getThing("afd97e7f-9eb5-4fb5-8da5-ccf421d488ed1").then{(thing: Thing) -> Void in
+                    debugPrint(".... GET THING ....")
+                    debugPrint(thing.getDocument().description)
+                    }.catch { error in
+                        //                switch backerror
+                        debugPrint(error)
+                        debugPrint(".... GET THING ...."+self.getErrorMessage(error))
                 }
                 
             }
@@ -156,5 +164,18 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    
+    func getErrorMessage(_ error:Any) -> String{
+        let nserror = error as! BackendError
+        switch nserror{
+            case .dataSerialization(let error):
+                debugPrint(error)
+            case .network(let error, let message):
+                debugPrint(message)
+            default: break
+        }
+        let message = nserror.localizedDescription
+        return message
+    }
 }
 
