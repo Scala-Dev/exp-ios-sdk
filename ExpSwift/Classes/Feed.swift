@@ -48,7 +48,7 @@ public final class Feed: Model,ResponseObject,ResponseCollection {
                 .responseJSON {response in
                     switch response.result {
                     case .success(let data):
-                        fulfill(data as AnyObject)
+                        fulfill(data)
                     case .failure(let error):
                         return reject(error)
                     }

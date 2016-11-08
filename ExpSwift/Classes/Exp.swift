@@ -30,6 +30,13 @@ public enum SOCKET_CHANNELS: String {
     case EXPERIENCE = "experience"
 }
 
+public enum BackendError: Error {
+    case network(error: Error,message: Any)
+    case dataSerialization(error: Error)
+    case jsonSerialization(error: Error)
+    case xmlSerialization(error: Error)
+    case objectSerialization(reason: String)
+}
 
 
 enum Router: URLRequestConvertible {

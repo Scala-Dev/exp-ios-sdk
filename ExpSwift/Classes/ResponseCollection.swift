@@ -37,7 +37,14 @@ extension DataRequest {
         completionHandler: @escaping (DataResponse<SearchResults<T>>) -> Void) -> Self
     {
         let responseSerializer = DataResponseSerializer<SearchResults<T>> { request, response, data, error in
-            guard error == nil else { return .failure(BackendError.network(error: error!)) }
+            guard error == nil else {
+                let jsonResponseSerializer = DataRequest.jsonResponseSerializer(options: .allowFragments)
+                let result = jsonResponseSerializer.serializeResponse(request, response, data, nil)
+                guard case let .success(jsonObject) = result else {
+                    return .failure(BackendError.jsonSerialization(error: result.error!))
+                }
+                return .failure(BackendError.network(error: error!,message: jsonObject))
+            }
             
             let jsonSerializer = DataRequest.jsonResponseSerializer(options: .allowFragments)
             let result = jsonSerializer.serializeResponse(request, response, data, nil)
