@@ -23,4 +23,8 @@ public final class Data: Model,ResponseObject,ResponseCollection {
         }
         super.init(response: response, representation: representation)
     }
+    
+    public override func getChannelName() -> String {
+        return "data:" + self.key + self.group
+    }
 }
