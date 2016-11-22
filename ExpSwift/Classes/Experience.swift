@@ -49,6 +49,9 @@ public final class Experience: Model,ResponseObject,ResponseCollection {
             return (device?.getExperience())!
         }
     }
-
-    
+}
+extension ExpModel where Self: Experience {
+    func refresh() -> Promise<Experience> {
+        return getExperience(getUuid())
+    }
 }

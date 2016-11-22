@@ -77,5 +77,10 @@ public final class Location: Model,ResponseObject,ResponseCollection {
          return (device?.getLocation())!
         }
     }
+}
 
+extension ExpModel where Self: Location {
+    func refresh() -> Promise<Location> {
+        return getLocation(getUuid())
+    }
 }

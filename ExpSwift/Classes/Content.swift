@@ -138,5 +138,10 @@ public final class Content: Model,ResponseObject,ResponseCollection {
         }
         return false;
     }
+}
 
+extension ExpModel where Self: Content {
+    func refresh() -> Promise<Content> {
+        return getContent(getUuid())
+    }
 }

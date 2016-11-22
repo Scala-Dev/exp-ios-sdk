@@ -126,9 +126,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "346"
-            endingLineNumber = "346"
-            landmarkName = "findLocations(_:)"
-            landmarkType = "9">
+            endingLineNumber = "346">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -142,9 +140,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "350"
-            endingLineNumber = "350"
-            landmarkName = "findLocations(_:)"
-            landmarkType = "9">
+            endingLineNumber = "350">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -406,7 +402,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../ExpSwift/Classes/SocketManager.swift"
@@ -417,38 +413,6 @@
             endingLineNumber = "58"
             landmarkName = "start_socket()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ExpSwift.SocketManager.(start_socket () -&gt; PromiseKit.Promise&lt;Swift.Bool&gt;).(closure #1).(closure #3)"
-                  moduleName = "ExpSwift"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/cesar/exp-ios-sdk-swift3/ExpSwift/Classes/SocketManager.swift"
-                  timestampString = "499621104.55555"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "58"
-                  endingLineNumber = "58"
-                  offsetFromSymbolStart = "148">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ExpSwift.SocketManager.(start_socket () -&gt; PromiseKit.Promise&lt;Swift.Bool&gt;).(closure #1).(closure #3).(implicit closure #1)"
-                  moduleName = "ExpSwift"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/cesar/exp-ios-sdk-swift3/ExpSwift/Classes/SocketManager.swift"
-                  timestampString = "499621104.556774"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "58"
-                  endingLineNumber = "58"
-                  offsetFromSymbolStart = "12">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -465,38 +429,6 @@
             endingLineNumber = "51"
             landmarkName = "start_socket()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ExpSwift.SocketManager.(start_socket () -&gt; PromiseKit.Promise&lt;Swift.Bool&gt;).(closure #1).(closure #2)"
-                  moduleName = "ExpSwift"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/cesar/exp-ios-sdk-swift3/ExpSwift/Classes/SocketManager.swift"
-                  timestampString = "499621104.559371"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "51"
-                  endingLineNumber = "51"
-                  offsetFromSymbolStart = "32">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ExpSwift.SocketManager.(start_socket () -&gt; PromiseKit.Promise&lt;Swift.Bool&gt;).(closure #1).(closure #2).(implicit closure #1)"
-                  moduleName = "ExpSwift"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/cesar/exp-ios-sdk-swift3/ExpSwift/Classes/SocketManager.swift"
-                  timestampString = "499621104.560633"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "51"
-                  endingLineNumber = "51"
-                  offsetFromSymbolStart = "4">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -538,7 +470,7 @@
                   moduleName = "ExpSwift"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/cesar/exp-ios-sdk-swift3/ExpSwift/Classes/SocketManager.swift"
-                  timestampString = "499621104.563288"
+                  timestampString = "501447821.881672"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "67"
@@ -553,7 +485,7 @@
                   moduleName = "ExpSwift"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/cesar/exp-ios-sdk-swift3/ExpSwift/Classes/SocketManager.swift"
-                  timestampString = "499621104.564792"
+                  timestampString = "501447821.883027"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "67"
@@ -654,9 +586,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "628"
-            endingLineNumber = "628"
-            landmarkName = "broadCast(_:params:)"
-            landmarkType = "9">
+            endingLineNumber = "628">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -686,9 +616,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "624"
-            endingLineNumber = "624"
-            landmarkName = "broadCast(_:params:)"
-            landmarkType = "9">
+            endingLineNumber = "624">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -710,7 +638,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../ExpSwift/Classes/Message.swift"
@@ -778,22 +706,22 @@
                   moduleName = "ExpSwift"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/cesar/exp-ios-sdk-swift3/ExpSwift/Classes/Exp.swift"
-                  timestampString = "499621105.36072"
+                  timestampString = "501447821.891229"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "201"
                   endingLineNumber = "201"
-                  offsetFromSymbolStart = "9387">
+                  offsetFromSymbolStart = "7666">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ExpSwift.Router.(asURLRequest () throws -&gt; Foundation.URLRequest).(implicit closure #10)"
+                  symbolName = "ExpSwift.Router.(asURLRequest () throws -&gt; Foundation.URLRequest).(implicit closure #8)"
                   moduleName = "ExpSwift"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/cesar/exp-ios-sdk-swift3/ExpSwift/Classes/Exp.swift"
-                  timestampString = "499621105.362051"
+                  timestampString = "501447821.893431"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "201"
@@ -814,9 +742,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "623"
-            endingLineNumber = "623"
-            landmarkName = "broadCast(_:params:)"
-            landmarkType = "9">
+            endingLineNumber = "623">
             <Locations>
                <Location
                   shouldBeEnabled = "No"
@@ -854,7 +780,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../ExpSwift/Classes/Logging.swift"
@@ -865,6 +791,22 @@
             endingLineNumber = "15"
             landmarkName = "expLogging(_:_:_:_:)"
             landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../ExpSwift/Classes/Model.swift"
+            timestampString = "500591508.426484"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "51"
+            endingLineNumber = "51"
+            landmarkName = "Model"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

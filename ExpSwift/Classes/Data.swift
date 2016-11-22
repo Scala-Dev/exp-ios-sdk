@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PromiseKit
 
 public final class Data: Model,ResponseObject,ResponseCollection {
 
@@ -26,5 +27,11 @@ public final class Data: Model,ResponseObject,ResponseCollection {
     
     public override func getChannelName() -> String {
         return "data:" + self.key + self.group
+    }
+}
+
+extension ExpModel where Self: Data {
+    func refresh() -> Promise<Data> {
+        return getData(self.group,key: self.key)
     }
 }

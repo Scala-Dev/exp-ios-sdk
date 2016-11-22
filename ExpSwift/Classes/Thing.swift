@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PromiseKit
 
 public final class Thing: Model,ResponseObject,ResponseCollection {
     
@@ -56,6 +57,12 @@ public final class Thing: Model,ResponseObject,ResponseCollection {
     public func getExperience() -> Experience?{
         return self.experience
     }
-
-    
 }
+
+extension ExpModel where Self: Thing {
+    func refresh() -> Promise<Thing> {
+        return getThing(getUuid())
+    }
+}
+
+

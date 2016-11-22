@@ -87,5 +87,10 @@ public final class Zone: Model,ResponseObject,ResponseCollection {
             }
         }
     }
+}
 
+extension ExpModel where Self: Zone {
+    func refresh() -> Promise<Location> {
+        return getLocation(getUuid())
+    }
 }

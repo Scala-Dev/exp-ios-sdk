@@ -56,4 +56,11 @@ public final class Feed: Model,ResponseObject,ResponseCollection {
         }  
     }
 }
+extension ExpModel where Self: Feed {
+    func refresh() -> Promise<Feed> {
+        return getFeed(getUuid())
+    }
+}
+
+
 

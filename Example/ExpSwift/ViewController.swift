@@ -43,6 +43,19 @@ class ViewController: UIViewController {
                 //                }.error { error in
                 //                    debugPrint(error)
                 //            }
+                ExpSwift.createDevice( ["name":"Device Swift","subtype":"scala:device:player"] ).then { (device: Device) -> Void in
+                     debugPrint(device)
+                    }.catch { error in
+                        debugPrint(error)
+                }
+                
+            ExpSwift.createData("test",key: "datatest", document: ["name":"Device Swift","subtype":"scala:device:player"] ).then { (data:ExpSwift.Data) -> Void in
+                    debugPrint(data)
+                    }.catch { error in
+                        debugPrint(error)
+                }
+
+                
                 ExpSwift.getLocation("eaf41ef9-8d34-4656-86c7-c9076049bb74").then { (location: Location) -> Void in
 
                     debugPrint(location)
@@ -56,7 +69,7 @@ class ViewController: UIViewController {
                     }.catch { error in
                         //                switch backerror
                         debugPrint(error)
-                        debugPrint(".... GET THING ...."+self.getErrorMessage(error))
+//                        debugPrint(".... GET THING ...."+self.getErrorMessage(error))
                 }
                 
             }

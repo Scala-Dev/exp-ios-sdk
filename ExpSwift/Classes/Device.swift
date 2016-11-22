@@ -101,6 +101,10 @@ public final class Device: Model,ResponseObject,ResponseCollection {
             fulfill(nil)
         }
     }
+}
 
-    
+extension ExpModel where Self: Device {
+    func refresh() -> Promise<Device> {
+        return getDevice(getUuid())
+    }
 }
