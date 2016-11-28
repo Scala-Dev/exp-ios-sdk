@@ -43,23 +43,37 @@ class ViewController: UIViewController {
                 //                }.error { error in
                 //                    debugPrint(error)
                 //            }
-                ExpSwift.createDevice( ["name":"Device Swift","subtype":"scala:device:player"] ).then { (device: Device) -> Void in
-                     debugPrint(device)
-                    }.catch { error in
-                        debugPrint(error)
-                }
+//                ExpSwift.createDevice( ["name":"Device Swift","subtype":"scala:device:player"] ).then { (device: Device) -> Void in
+//                     debugPrint(device)
+//                    }.catch { error in
+//                        debugPrint(error)
+//                }
                 
-            ExpSwift.createData("test",key: "datatest", document: ["name":"Device Swift","subtype":"scala:device:player"] ).then { (data:ExpSwift.Data) -> Void in
-                    debugPrint(data)
-                    }.catch { error in
-                        debugPrint(error)
-                }
-
+//            ExpSwift.createData("test",key: "datatest", document: ["name":"Device Swift","subtype":"scala:device:player"] ).then { (data:ExpSwift.Data) -> Void in
+//                    debugPrint(data)
+//                    }.catch { error in
+//                        debugPrint(error)
+//                }
+//
+                
+                
+                ////        //GET DEVICE
+                ExpSwift.getDevice("8930ff64-1063-4a03-b1bc-33e1ba463d7a").then { (device: Device) -> Void in
+                            debugPrint(device.get("name"))
+                            device.setProperty(name: "name", value: "Device Updated SDK")
+                            
+                        }.catch { error in
+                            debugPrint(error)
+                        }
+                
                 
                 ExpSwift.getLocation("eaf41ef9-8d34-4656-86c7-c9076049bb74").then { (location: Location) -> Void in
 
                     debugPrint(location)
                     debugPrint(location.getZones())
+                    location.setProperty(name: "name", value: "Location Updated SDK")
+                    
+                    
                     }.catch { error in
                 }
                 

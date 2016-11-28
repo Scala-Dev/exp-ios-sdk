@@ -10,7 +10,7 @@ import Foundation
 import PromiseKit
 import Alamofire
 
-public final class Zone: Model,ResponseObject,ResponseCollection {
+public final class Zone: Model,ResponseObject,ResponseCollection,ModelProtocol {
 
     public var name: String?
     public let key: String
@@ -87,10 +87,21 @@ public final class Zone: Model,ResponseObject,ResponseCollection {
             }
         }
     }
-}
-
-extension ExpModel where Self: Zone {
-    func refresh() -> Promise<Location> {
-        return getLocation(getUuid())
+    
+    /**
+     Refresh Zone by calling the location
+     @return Promise<Location>
+     */
+    public func refresh() -> Promise<Location> {
+        return (self.location?.refresh())!
+    }
+    
+    /**
+     Save Zone by calling the location
+     @return Promise<Location>
+     */
+    public func save() -> Promise<Location> {
+        return (self.location?.save())!
     }
 }
+

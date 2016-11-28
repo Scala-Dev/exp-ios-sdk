@@ -9,7 +9,7 @@
 import Foundation
 import PromiseKit
 
-open class Model{
+public  class Model  {
     
     var document: [String:Any] = [String:Any]()
     
@@ -57,6 +57,9 @@ open class Model{
         return ExpSwift.getChannel(getChannelName(), system: system, consumerApp: consumer)
     }
     
+    open func setProperty(name:String,value:Any) -> Void{
+       self.document.updateValue(value, forKey: name)
+    }
 }
 
 

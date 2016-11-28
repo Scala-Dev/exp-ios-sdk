@@ -8,8 +8,9 @@
 
 import Foundation
 import PromiseKit
+import Alamofire
 
-public final class Thing: Model,ResponseObject,ResponseCollection {
+public final class Thing: Model,ResponseObject,ResponseCollection,ModelProtocol {
     
     public let uuid: String
     fileprivate var location:Location?
@@ -57,12 +58,26 @@ public final class Thing: Model,ResponseObject,ResponseCollection {
     public func getExperience() -> Experience?{
         return self.experience
     }
-}
-
-extension ExpModel where Self: Thing {
-    func refresh() -> Promise<Thing> {
+    
+    public func refresh() -> Promise<Thing> {
         return getThing(getUuid())
     }
+    
+    public func save() -> Promise<Thing> {
+        return Promise { fulfill, reject in
+            Alamofire.request(Router.saveThing(getUuid(),getDocument())).validate()
+                .responseObject { (response: DataResponse<Thing>) in
+                    switch response.result{
+                    case .success(let data):
+                        fulfill(data)
+                    case .failure(let error):
+                        return reject(error)
+                    }
+            }
+        }
+    }
 }
+
+
 
 

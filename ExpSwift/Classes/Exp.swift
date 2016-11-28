@@ -70,6 +70,13 @@ enum Router: URLRequestConvertible {
     case createFeed([String:Any])
     case createLocation([String:Any])
     case createThing([String:Any])
+    //save
+    case saveDevice(String,[String:Any])
+    case saveExperience(String,[String:Any])
+    case saveFeed(String,[String:Any])
+    case saveLocation(String,[String:Any])
+    case saveThing(String,[String:Any])
+    
     
     var method: HTTPMethod {
         switch self {
@@ -129,6 +136,16 @@ enum Router: URLRequestConvertible {
             return .post
         case .createThing:
             return .post
+        case .saveDevice:
+            return .patch
+        case .saveExperience:
+            return .patch
+        case .saveFeed:
+            return .patch
+        case .saveLocation:
+            return .patch
+        case .saveThing:
+            return .patch
         }
     }
     
@@ -190,6 +207,16 @@ enum Router: URLRequestConvertible {
                 return "/api/locations"
             case .createThing:
                 return "/api/things"
+            case .saveDevice(let uuid):
+                return "/api/devices/\(uuid)"
+            case .saveExperience(let uuid):
+                return "/api/experiences/\(uuid)"
+            case .saveFeed(let uuid):
+                return "/api/connectors/feeds/\(uuid)"
+            case .saveLocation(let uuid):
+                return "/api/locations/\(uuid)"
+            case .saveThing(let uuid):
+                return "/api/things/\(uuid)"
             
         }
     }
@@ -261,6 +288,21 @@ enum Router: URLRequestConvertible {
         case .createThing(let parameters):
             urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
             expLogging("EXP Http Request createThing: \(urlRequest)")
+        case .saveDevice(_,let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request saveDevice: \(urlRequest)")
+        case .saveExperience(_,let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request saveExperience: \(urlRequest)")
+        case .saveFeed(_,let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request saveFeed: \(urlRequest)")
+        case .saveLocation(_,let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request saveLocation: \(urlRequest)")
+        case .saveThing(_,let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request saveThing: \(urlRequest)")
         default:
             break
         }
