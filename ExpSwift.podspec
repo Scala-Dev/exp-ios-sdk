@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ExpSwift'
-  s.version          = '1.0.5'
+  s.version          = '1.0.6'
   s.summary          = '"Exp IOS SDK library. Native IOS library for EXP platform.'
 
 # This description is used to generate tags and improve search results.
