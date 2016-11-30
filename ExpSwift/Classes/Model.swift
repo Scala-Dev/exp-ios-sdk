@@ -19,7 +19,11 @@ open class Model {
             }
         }
     }
-
+    
+    open func getUuid()->String{
+       return self.document["uuid"] as! String
+    }
+    
     open func getDocument() -> [String:Any] {
         return self.document
     }
@@ -39,7 +43,16 @@ open class Model {
     }
     
     
-    open func fling(_ channel:Channel,payload:[String:AnyObject]){
-        channel.fling(payload)
+    open func getChannelName()->String{
+        return self.getUuid()
+    }
+    
+    
+    open func getChannel() -> Channel{
+        return ExpSwift.getChannel(getChannelName(), system: false, consumerApp: false)
+    }
+    
+    open func getChannel(system:Bool,consumer:Bool) -> Channel{
+        return ExpSwift.getChannel(getChannelName(), system: system, consumerApp: consumer)
     }
 }
