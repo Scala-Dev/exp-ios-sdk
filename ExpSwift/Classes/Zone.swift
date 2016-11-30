@@ -92,7 +92,7 @@ public final class Zone: Model,ResponseObject,ResponseCollection,ModelProtocol {
      Get Channel Name
      */
     override public func getChannelName() -> String {
-        return self.location?.uuid+":zone:"+self.key
+        return (self.location?.uuid)!+":zone:"+self.key
     }
     
     /**
