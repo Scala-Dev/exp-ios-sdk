@@ -89,6 +89,13 @@ public final class Zone: Model,ResponseObject,ResponseCollection,ModelProtocol {
     }
     
     /**
+     Get Channel Name
+     */
+    override public func getChannelName() -> String {
+        return self.location?.uuid+":zone:"+self.key
+    }
+    
+    /**
      Refresh Zone by calling the location
      @return Promise<Location>
      */
