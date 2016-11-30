@@ -10,7 +10,7 @@ import Foundation
 import PromiseKit
 import Alamofire
 
-public final class Feed: Model,ResponseObject,ResponseCollection {
+public final class Feed: Model,ResponseObject,ResponseCollection,ModelProtocol {
     
     public let uuid: String
     
@@ -55,5 +55,33 @@ public final class Feed: Model,ResponseObject,ResponseCollection {
                 }
         }  
     }
+    
+    /**
+     Refresh Feed
+     @return Promise<Feed>
+     */
+    public func refresh() -> Promise<Feed> {
+        return getFeed(getUuid())
+    }
+    
+    /**
+     Save Feed
+     @return Promise<Feed>
+     */
+    public func save() -> Promise<Feed> {
+        return Promise { fulfill, reject in
+            Alamofire.request(Router.saveFeed(uuid,getDocument())).validate()
+                .responseObject { (response: DataResponse<Feed>) in
+                    switch response.result{
+                    case .success(let data):
+                        fulfill(data)
+                    case .failure(let error):
+                        return reject(error)
+                    }
+            }
+        }
+    }
 }
+
+
 

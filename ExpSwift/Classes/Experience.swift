@@ -11,7 +11,7 @@ import PromiseKit
 import Alamofire
 
 
-public final class Experience: Model,ResponseObject,ResponseCollection {
+public final class Experience: Model,ResponseObject,ResponseCollection,ModelProtocol {
 
     public let uuid: String
     
@@ -49,6 +49,32 @@ public final class Experience: Model,ResponseObject,ResponseCollection {
             return (device?.getExperience())!
         }
     }
-
     
+    /**
+     Refresh Experience
+     @return Promise<Experience>
+     */
+    public func refresh() -> Promise<Experience> {
+        return getExperience(getUuid())
+    }
+    
+    /**
+     Save Experience
+     @return Promise<Experience>
+     */
+    public func save() -> Promise<Experience> {
+        return Promise { fulfill, reject in
+            Alamofire.request(Router.saveExperience(getUuid(),document)).validate()
+                .responseObject { (response: DataResponse<Experience>) in
+                    switch response.result{
+                    case .success(let data):
+                        fulfill(data)
+                    case .failure(let error):
+                        return reject(error)
+                    }
+            }
+        }
+    }
 }
+
+

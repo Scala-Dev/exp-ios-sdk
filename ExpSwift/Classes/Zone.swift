@@ -10,7 +10,7 @@ import Foundation
 import PromiseKit
 import Alamofire
 
-public final class Zone: Model,ResponseObject,ResponseCollection {
+public final class Zone: Model,ResponseObject,ResponseCollection,ModelProtocol {
 
     public var name: String?
     public let key: String
@@ -87,5 +87,28 @@ public final class Zone: Model,ResponseObject,ResponseCollection {
             }
         }
     }
-
+    
+    /**
+     Get Channel Name
+     */
+    override public func getChannelName() -> String {
+        return (self.location?.uuid)!+":zone:"+self.key
+    }
+    
+    /**
+     Refresh Zone by calling the location
+     @return Promise<Location>
+     */
+    public func refresh() -> Promise<Location> {
+        return (self.location?.refresh())!
+    }
+    
+    /**
+     Save Zone by calling the location
+     @return Promise<Location>
+     */
+    public func save() -> Promise<Location> {
+        return (self.location?.save())!
+    }
 }
+

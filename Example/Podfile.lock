@@ -1,23 +1,23 @@
 PODS:
   - Alamofire (4.0.1)
-  - CryptoSwift (0.6.5)
+  - CryptoSwift (0.6.6)
   - ExpSwift (1.0.5):
     - Alamofire (= 4.0.1)
     - JSONWebToken (= 2.0.1)
-    - PromiseKit (= 4.0)
+    - PromiseKit (= 4.0.4)
     - Socket.IO-Client-Swift (= 8.0.2)
   - JSONWebToken (2.0.1):
     - CryptoSwift (~> 0.6.0)
-  - PromiseKit (4.0.0):
-    - PromiseKit/Foundation (= 4.0.0)
-    - PromiseKit/QuartzCore (= 4.0.0)
-    - PromiseKit/UIKit (= 4.0.0)
-  - PromiseKit/CorePromise (4.0.0)
-  - PromiseKit/Foundation (4.0.0):
+  - PromiseKit (4.0.4):
+    - PromiseKit/Foundation (= 4.0.4)
+    - PromiseKit/QuartzCore (= 4.0.4)
+    - PromiseKit/UIKit (= 4.0.4)
+  - PromiseKit/CorePromise (4.0.4)
+  - PromiseKit/Foundation (4.0.4):
     - PromiseKit/CorePromise
-  - PromiseKit/QuartzCore (4.0.0):
+  - PromiseKit/QuartzCore (4.0.4):
     - PromiseKit/CorePromise
-  - PromiseKit/UIKit (4.0.0):
+  - PromiseKit/UIKit (4.0.4):
     - PromiseKit/CorePromise
   - Socket.IO-Client-Swift (8.0.2)
 
@@ -30,10 +30,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Alamofire: 7682d43245de14874acd142ec137b144aa1dd335
-  CryptoSwift: d86b1d97d39b4a361ba44c77180b221e9c5b864f
-  ExpSwift: 3614c61804dfeb559ea77ef1c8096a026c286c62
+  CryptoSwift: 88592381b73f36e192124539390a7c9bacda76af
+  ExpSwift: 1ead6815a11398d128f752cb5cfa6a1c2dadacad
   JSONWebToken: 37f3666c459ed1a1554663a2741ac7655d488b1f
-  PromiseKit: 97edc7fb2fb7d2c68c8e09d1f79b3ab7bcb6b06a
+  PromiseKit: 8e8ee39d33ff199d92a1a883b5396f6285be6c91
   Socket.IO-Client-Swift: 136598e4a81a42b0e6855e7f94a0e5a6efdc5ff8
 
 PODFILE CHECKSUM: 2432ab682d18ba33b5f1d3aff22f6e1a3d473f71

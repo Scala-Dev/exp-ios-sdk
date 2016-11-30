@@ -11,7 +11,7 @@ import PromiseKit
 import Alamofire
 
 
-public final class Location: Model,ResponseObject,ResponseCollection {
+public final class Location: Model,ResponseObject,ResponseCollection,ModelProtocol {
 
     public let uuid: String
     public var zones: [Zone] = []
@@ -77,5 +77,32 @@ public final class Location: Model,ResponseObject,ResponseCollection {
          return (device?.getLocation())!
         }
     }
-
+    
+    /**
+     Refresh Location
+     @return Pormise<Location>
+     */
+    public func refresh() -> Promise<Location> {
+        return getLocation(getUuid())
+    }
+    
+    /**
+     Save Location
+     @return Pormise<Location>
+     */
+    public func save() -> Promise<Location> {
+        return Promise { fulfill, reject in
+            Alamofire.request(Router.saveLocation(getUuid(),getDocument())).validate()
+                .responseObject { (response: DataResponse<Location>) in
+                    switch response.result{
+                    case .success(let data):
+                        fulfill(data)
+                    case .failure(let error):
+                        return reject(error)
+                    }
+            }
+        }
+    }
 }
+
+

@@ -138,5 +138,14 @@ public final class Content: Model,ResponseObject,ResponseCollection {
         }
         return false;
     }
-
+    
+    /**
+     Refresh Content
+     @return Promise<Content>
+     */
+    func refresh() -> Promise<Content> {
+        return getContent(getUuid())
+    }
 }
+
+

@@ -57,14 +57,26 @@ enum Router: URLRequestConvertible {
     case findThings([String: Any])
     case getFeed(String)
     case getFeedData(String)
-    //todo fix param
     case getDynamicFeedData(String,[String:Any])
     case findFeeds([String: Any])
     case login([String: Any])
     case refreshToken()
-    //todo fix param
     case broadcast([String: Any],String)
     case respond([String: Any])
+    //create 
+    case createDevice([String:Any])
+    case createData(String,String,[String:Any])
+    case createExperience([String:Any])
+    case createFeed([String:Any])
+    case createLocation([String:Any])
+    case createThing([String:Any])
+    //save
+    case saveDevice(String,[String:Any])
+    case saveExperience(String,[String:Any])
+    case saveFeed(String,[String:Any])
+    case saveLocation(String,[String:Any])
+    case saveThing(String,[String:Any])
+    
     
     var method: HTTPMethod {
         switch self {
@@ -112,6 +124,28 @@ enum Router: URLRequestConvertible {
             return .post
         case .respond:
             return .post
+        case .createDevice:
+            return .post
+        case .createData:
+            return .put
+        case .createExperience:
+            return .post
+        case .createFeed:
+            return .post
+        case .createLocation:
+            return .post
+        case .createThing:
+            return .post
+        case .saveDevice:
+            return .patch
+        case .saveExperience:
+            return .patch
+        case .saveFeed:
+            return .patch
+        case .saveLocation:
+            return .patch
+        case .saveThing:
+            return .patch
         }
     }
     
@@ -161,6 +195,29 @@ enum Router: URLRequestConvertible {
                 return "/api/networks/current/broadcasts"
             case .respond:
                 return "/api/networks/current/responses"
+            case .createDevice:
+                return "/api/devices"
+            case .createData(let group, let key,let document):
+                return "/api/data/\(group)/\(key)"
+            case .createExperience:
+                return "/api/experiences"
+            case .createFeed:
+                return "/api/connectors/feeds"
+            case .createLocation:
+                return "/api/locations"
+            case .createThing:
+                return "/api/things"
+            case .saveDevice(let uuid):
+                return "/api/devices/\(uuid)"
+            case .saveExperience(let uuid):
+                return "/api/experiences/\(uuid)"
+            case .saveFeed(let uuid):
+                return "/api/connectors/feeds/\(uuid)"
+            case .saveLocation(let uuid):
+                return "/api/locations/\(uuid)"
+            case .saveThing(let uuid):
+                return "/api/things/\(uuid)"
+            
         }
     }
     
@@ -213,6 +270,39 @@ enum Router: URLRequestConvertible {
             urlRequest.url?.appendingPathComponent("\(uuid)/data")
             urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
             expLogging("EXP Http Request getDynamicFeedData: \(urlRequest)")
+        case .createDevice(let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request createDevice: \(urlRequest)")
+        case .createData(let group,let key,let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request createData: \(urlRequest)")
+        case .createExperience(let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request createExperience: \(urlRequest)")
+        case .createFeed(let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request createFeed: \(urlRequest)")
+        case .createLocation(let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request createLocation: \(urlRequest)")
+        case .createThing(let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request createThing: \(urlRequest)")
+        case .saveDevice(_,let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request saveDevice: \(urlRequest)")
+        case .saveExperience(_,let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request saveExperience: \(urlRequest)")
+        case .saveFeed(_,let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request saveFeed: \(urlRequest)")
+        case .saveLocation(_,let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request saveLocation: \(urlRequest)")
+        case .saveThing(_,let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request saveThing: \(urlRequest)")
         default:
             break
         }
@@ -287,6 +377,27 @@ public func getDevice(_ uuid:String) -> Promise<Device>{
     }
 }
 
+
+/**
+ Create Device by document
+ @return Promise<Device>.
+ */
+public func createDevice(_ document:[String:Any]) -> Promise<Device>{
+    return Promise { fulfill, reject in
+        Alamofire.request( Router.createDevice(document)).validate()
+            .responseObject { (response: DataResponse<Device>) in
+                switch response.result{
+                case .success(let data):
+                    fulfill(data)
+                case .failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+
+
 /**
     Get Experience by UUID
     @param uuid.
@@ -315,6 +426,25 @@ public func findExperiences(_ params:[String:Any]) -> Promise<SearchResults<Expe
     return Promise { fulfill, reject in
         Alamofire.request(Router.findExperiences(params)).validate()
             .responseCollection { (response: DataResponse<SearchResults<Experience>>) in
+                switch response.result{
+                case .success(let data):
+                    fulfill(data)
+                case .failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+/**
+ Create Experience by document
+ @param document
+ @return Promise<Experience>
+ */
+public func createExperience(_ document:[String:Any]) -> Promise<Experience>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.createExperience(document)).validate()
+            .responseObject { (response: DataResponse<Experience>) in
                 switch response.result{
                 case .success(let data):
                     fulfill(data)
@@ -363,6 +493,24 @@ public func findLocations(_ params:[String:Any]) -> Promise<SearchResults<Locati
     }
 }
 
+/**
+ Create Location by document
+ @param document
+ @return Promise<Location>
+ */
+public func createLocation(_ document:[String:Any]) -> Promise<Location>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.createLocation(document)).validate()
+            .responseObject { (response: DataResponse<Location>) in
+                switch response.result{
+                case .success(let data):
+                    fulfill(data)
+                case .failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
 
 /**
 Get Content Node By UUID
@@ -483,6 +631,26 @@ public func getData(_ group: String,  key: String) -> Promise<Data>{
 }
 
 /**
+ Create Data by document
+ @param group,key,document
+ @return Promise<Data>.
+ */
+public func createData(_ group: String,  key: String,document: [String:Any]) -> Promise<Data>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.createData(group, key, document)).validate()
+            .responseObject { (response: DataResponse<Data>) in
+                switch response.result{
+                case .success(let data):
+                    fulfill(data)
+                case .failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+
+/**
  Get Feed By UUID
  @param uuid.
  @return Promise<Feed>.
@@ -520,7 +688,24 @@ public func findFeeds(_ params:[String:Any]) -> Promise<SearchResults<Feed>>{
     }
 }
 
-
+/**
+ Create Feed by document
+ @param document
+ @return Promise<Feed>
+ */
+public func createFeed(_ document:[String:Any]) -> Promise<Feed>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.createFeed(document)).validate()
+            .responseObject { (response: DataResponse<Feed>) in
+                switch response.result{
+                case .success(let data):
+                    fulfill(data)
+                case .failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
 
 
 /**
@@ -572,6 +757,7 @@ public func getThing(_ uuid:String) -> Promise<Thing>{
     }
 }
 
+
 /**
 Get list of things
 @param dictionary of search params
@@ -591,6 +777,24 @@ public func findThings(_ params:[String:Any]) -> Promise<SearchResults<Thing>>{
     }
 }
 
+/**
+ Create Thing by document
+ @param document
+ @return Promise<Thing>
+ */
+public func createThing(_ document:[String:Any]) -> Promise<Thing>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.createThing(document)).validate()
+            .responseObject { (response: DataResponse<Thing>) in
+                switch response.result{
+                case .success(let data):
+                    fulfill(data)
+                case .failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
 
 /**
  Refresh Token

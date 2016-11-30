@@ -7,8 +7,10 @@
 //
 
 import Foundation
+import PromiseKit
+import Alamofire
 
-public final class Data: Model,ResponseObject,ResponseCollection {
+public final class Data: Model,ResponseObject,ResponseCollection,ModelProtocol {
 
     public let group: String
     public let key: String
@@ -27,4 +29,32 @@ public final class Data: Model,ResponseObject,ResponseCollection {
     public override func getChannelName() -> String {
         return "data:" + self.key + self.group
     }
+    
+    /**
+     Refresh Data
+     @return Promise<Data>
+     */
+    public func refresh() -> Promise<Data> {
+        return getData(self.group,key: self.key)
+    }
+    
+    /**
+     Save Data
+     @return Promise<Data>
+     */
+    public func save() -> Promise<Data> {
+        return Promise { fulfill, reject in
+            Alamofire.request(Router.createData(self.group, self.key, getDocument())).validate()
+                .responseObject { (response: DataResponse<Data>) in
+                    switch response.result{
+                    case .success(let data):
+                        fulfill(data)
+                    case .failure(let error):
+                        return reject(error)
+                    }
+            }
+        }
+    }
 }
+
+

@@ -7,10 +7,12 @@
 //
 
 import Foundation
+import PromiseKit
 
-open class Model {
+public  class Model  {
     
     var document: [String:Any] = [String:Any]()
+    
     
      required public init?(response: HTTPURLResponse, representation: Any) {
         if let representation = representation as? [String: AnyObject] {
@@ -38,7 +40,6 @@ open class Model {
                 dict = dict[path] as! [String:AnyObject]
             }
         }
-        
         return nil
     }
     
@@ -55,4 +56,10 @@ open class Model {
     open func getChannel(system:Bool,consumer:Bool) -> Channel{
         return ExpSwift.getChannel(getChannelName(), system: system, consumerApp: consumer)
     }
+    
+    open func setProperty(name:String,value:Any) -> Void{
+       self.document.updateValue(value, forKey: name)
+    }
 }
+
+

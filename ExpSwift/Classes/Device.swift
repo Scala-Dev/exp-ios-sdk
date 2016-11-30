@@ -11,7 +11,7 @@ import PromiseKit
 import Alamofire
 
 
-public final class Device: Model,ResponseObject,ResponseCollection {
+public final class Device: Model,ResponseObject,ResponseCollection,ModelProtocol {
     
     public let uuid: String
     fileprivate var location:Location?
@@ -101,6 +101,30 @@ public final class Device: Model,ResponseObject,ResponseCollection {
             fulfill(nil)
         }
     }
-
     
+    /**
+     Refresh Device
+     @return Promise<Device>
+     */
+    public func refresh() -> Promise<Device> {
+        return getDevice(getUuid())
+    }
+
+    /**
+     Save Device
+     @return Promise<Device>
+    */
+    public func save() -> Promise<Device> {
+        return Promise { fulfill, reject in
+            Alamofire.request( Router.saveDevice(getUuid(),getDocument()) )
+                .responseObject { (response: DataResponse<Device>) in
+                    switch response.result{
+                    case .success(let data):
+                        fulfill(data)
+                    case .failure(let error):
+                        return reject(error)
+                    }
+            }
+        }
+    }
 }
