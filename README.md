@@ -257,6 +257,17 @@ ExpSwift.createDevice( ["name":"Device Swift","subtype":"scala:device:player"] )
     }
 ```
 
+**`ExpSwift.deleteDevice(uuid:String)`**
+
+
+```swift
+ExpSwift.deleteDevice(device.getUuid()).then{ () -> Void in
+        debugPrint("Device Deleted!")
+    }.catch { error in
+        debugPrint(error)
+}
+```
+
 **`device.getLocation()`**
 
 Resolves to the device's [location](#locations) or `null`.
@@ -316,6 +327,16 @@ ExpSwift.createThing( ["name","Rfid Name","subtype":"scala:thing:rfid","id","rfi
     }
 ```
 
+**`ExpSwift.deleteThing(uuid:String)`**
+
+
+```swift
+ExpSwift.deleteDevice(thing.getUuid()).then{ () -> Void in
+        debugPrint("Thing Deleted!")
+    }.catch { error in
+        debugPrint(error)
+}
+```
 
 **`thing.getLocation()`**
 
@@ -372,6 +393,17 @@ ExpSwift.createExperience( ["name","Experience Name"] ).then { (experience: Expe
     }
 ```
 
+**`ExpSwift.deleteExperience(uuid:String)`**
+
+
+```swift
+ExpSwift.deleteExperience(experience.getUuid()).then{ () -> Void in
+        debugPrint("Experience Deleted!")
+    }.catch { error in
+        debugPrint(error)
+}
+```
+
 **`experience.getDevices()`**
 
 Resolves to an array of [devices](#devices) that are part of this experience.
@@ -423,6 +455,17 @@ ExpSwift.createLocation( ["name","Location Name"] ).then { (location: Location) 
     }
 ```
 
+**`ExpSwift.deleteLocation(uuid:String)`**
+
+
+```swift
+ExpSwift.deleteLocation(location.getUuid()).then{ () -> Void in
+        debugPrint("Location Deleted!")
+    }.catch { error in
+        debugPrint(error)
+}
+```
+
 
 **`location.getZones()`**
 
@@ -448,6 +491,7 @@ location.getDevices().then { (devices: SearchResults<Device>) -> Void  in
     }.catch { error in
         debugPrint(error)
 }
+```
 
 **`location.getThings()`**
 
@@ -553,6 +597,17 @@ ExpSwift.createFeed( ["name","My Weather Feed","subtype","scala:feed:weather","s
     }
 ```
 
+**`ExpSwift.deleteFeed(uuid:String)`**
+
+
+```swift
+ExpSwift.deleteFeed(feed.getUuid()).then{ () -> Void in
+        debugPrint("Feed Deleted!")
+    }.catch { error in
+        debugPrint(error)
+}
+```
+
 
 ## Feed Object
 
@@ -622,6 +677,17 @@ Resolves to a data item created based on the supplied group, key, and value.
         }.catch { error in
             debugPrint(error)
     }
+```
+
+**`ExpSwift.deleteData(group:String,key:String)`**
+
+
+```swift
+ExpSwift.deleteData("groupname",key: "keyName").then{ () -> Void in
+        debugPrint("Data Deleted!")
+    }.catch { error in
+        debugPrint(error)
+}
 ```
 
 ## Content
