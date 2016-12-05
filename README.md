@@ -331,7 +331,7 @@ ExpSwift.createThing( ["name","Rfid Name","subtype":"scala:thing:rfid","id","rfi
 
 
 ```swift
-ExpSwift.deleteDevice(thing.getUuid()).then{ () -> Void in
+ExpSwift.deleteThing(thing.getUuid()).then{ () -> Void in
         debugPrint("Thing Deleted!")
     }.catch { error in
         debugPrint(error)
