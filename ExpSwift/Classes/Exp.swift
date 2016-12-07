@@ -226,15 +226,15 @@ enum Router: URLRequestConvertible {
                 return "/api/locations"
             case .createThing:
                 return "/api/things"
-            case .saveDevice(let uuid):
+            case .saveDevice(let uuid,_):
                 return "/api/devices/\(uuid)"
-            case .saveExperience(let uuid):
+            case .saveExperience(let uuid,_):
                 return "/api/experiences/\(uuid)"
-            case .saveFeed(let uuid):
+            case .saveFeed(let uuid,_):
                 return "/api/connectors/feeds/\(uuid)"
-            case .saveLocation(let uuid):
+            case .saveLocation(let uuid,_):
                 return "/api/locations/\(uuid)"
-            case .saveThing(let uuid):
+            case .saveThing(let uuid,_):
                 return "/api/things/\(uuid)"
             case .deleteDevice(let uuid):
                 return "/api/devices/\(uuid)"
