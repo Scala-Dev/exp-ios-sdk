@@ -30,6 +30,10 @@ public final class Data: Model,ResponseObject,ResponseCollection,ModelProtocol {
         return "data:" + self.key + self.group
     }
     
+    public func getValue() -> [String:Any]{
+        return get("value") as! [String : Any]
+    }
+    
     /**
      Refresh Data
      @return Promise<Data>

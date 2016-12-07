@@ -76,6 +76,13 @@ enum Router: URLRequestConvertible {
     case saveFeed(String,[String:Any])
     case saveLocation(String,[String:Any])
     case saveThing(String,[String:Any])
+    //delete
+    case deleteDevice(String)
+    case deleteData(String,String)
+    case deleteExperience(String)
+    case deleteFeed(String)
+    case deleteLocation(String)
+    case deleteThing(String)
     
     
     var method: HTTPMethod {
@@ -146,6 +153,18 @@ enum Router: URLRequestConvertible {
             return .patch
         case .saveThing:
             return .patch
+        case .deleteDevice:
+            return .delete
+        case .deleteData:
+            return .delete
+        case .deleteExperience:
+            return .delete
+        case .deleteFeed:
+            return .delete
+        case .deleteLocation:
+            return .delete
+        case .deleteThing:
+            return .delete
         }
     }
     
@@ -216,6 +235,18 @@ enum Router: URLRequestConvertible {
             case .saveLocation(let uuid):
                 return "/api/locations/\(uuid)"
             case .saveThing(let uuid):
+                return "/api/things/\(uuid)"
+            case .deleteDevice(let uuid):
+                return "/api/devices/\(uuid)"
+            case .deleteData(let group, let key):
+                return "/api/data/\(group)/\(key)"
+            case .deleteExperience(let uuid):
+                return "/api/experiences/\(uuid)"
+            case .deleteFeed(let uuid):
+                return "/api/connectors/feeds/\(uuid)"
+            case .deleteLocation(let uuid):
+                return "/api/locations/\(uuid)"
+            case .deleteThing(let uuid):
                 return "/api/things/\(uuid)"
             
         }
@@ -379,8 +410,8 @@ public func getDevice(_ uuid:String) -> Promise<Device>{
 
 
 /**
- Create Device by document
- @return Promise<Device>.
+    Create Device by document
+    @return Promise<Device>.
  */
 public func createDevice(_ document:[String:Any]) -> Promise<Device>{
     return Promise { fulfill, reject in
@@ -396,6 +427,25 @@ public func createDevice(_ document:[String:Any]) -> Promise<Device>{
     }
 }
 
+
+/**
+    Delete Device by uuid
+    @param uuid
+    @return Promise<Void>
+ */
+public func deleteDevice(_ uuid:String) -> Promise<Void>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.deleteDevice(uuid)).validate()
+            .responseJSON { response in
+                switch response.result{
+                    case .success(let data):
+                        fulfill()
+                    case .failure(let error):
+                        return reject(error)
+                }
+        }
+    }
+}
 
 
 /**
@@ -448,6 +498,26 @@ public func createExperience(_ document:[String:Any]) -> Promise<Experience>{
                 switch response.result{
                 case .success(let data):
                     fulfill(data)
+                case .failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+
+/**
+ Delete Experience by uuid
+ @param uuid
+ @return Promise<Void>
+ */
+public func deleteExperience(_ uuid:String) -> Promise<Void>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.deleteExperience(uuid)).validate()
+            .responseJSON { response in
+                switch response.result{
+                case .success(let data):
+                    fulfill()
                 case .failure(let error):
                     return reject(error)
                 }
@@ -511,6 +581,27 @@ public func createLocation(_ document:[String:Any]) -> Promise<Location>{
         }
     }
 }
+
+
+/**
+ Delete Location by uuid
+ @param uuid
+ @return Promise<Void>
+ */
+public func deleteLocation(_ uuid:String) -> Promise<Void>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.deleteLocation(uuid)).validate()
+            .responseJSON { response in
+                switch response.result{
+                case .success(let data):
+                    fulfill()
+                case .failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
 
 /**
 Get Content Node By UUID
@@ -616,7 +707,7 @@ Get Data by Group and Key
 @param uuid.
 @return Promise<Data>.
 */
-public func getData(_ group: String,  key: String) -> Promise<Data>{
+public func getData(_ group: String,key: String) -> Promise<Data>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.getData(group, key)).validate()
             .responseObject { (response: DataResponse<Data>) in
@@ -635,7 +726,7 @@ public func getData(_ group: String,  key: String) -> Promise<Data>{
  @param group,key,document
  @return Promise<Data>.
  */
-public func createData(_ group: String,  key: String,document: [String:Any]) -> Promise<Data>{
+public func createData(_ group: String,key: String,document: [String:Any]) -> Promise<Data>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.createData(group, key, document)).validate()
             .responseObject { (response: DataResponse<Data>) in
@@ -649,6 +740,25 @@ public func createData(_ group: String,  key: String,document: [String:Any]) -> 
     }
 }
 
+
+/**
+ Delete Data by uuid
+ @param uuid
+ @return Promise<Void>
+ */
+public func deleteData(_ group:String,key:String) -> Promise<Void>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.deleteData(group, key)).validate()
+            .responseJSON { response in
+                switch response.result{
+                case .success(let data):
+                    fulfill()
+                case .failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
 
 /**
  Get Feed By UUID
@@ -700,6 +810,26 @@ public func createFeed(_ document:[String:Any]) -> Promise<Feed>{
                 switch response.result{
                 case .success(let data):
                     fulfill(data)
+                case .failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+
+/**
+ Delete Feed by uuid
+ @param uuid
+ @return Promise<Void>
+ */
+public func deleteFeed(_ uuid:String) -> Promise<Void>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.deleteFeed(uuid)).validate()
+            .responseJSON { response in
+                switch response.result{
+                case .success(let data):
+                    fulfill()
                 case .failure(let error):
                     return reject(error)
                 }
@@ -789,6 +919,26 @@ public func createThing(_ document:[String:Any]) -> Promise<Thing>{
                 switch response.result{
                 case .success(let data):
                     fulfill(data)
+                case .failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+
+/**
+ Delete Thing by uuid
+ @param uuid
+ @return Promise<Void>
+ */
+public func deleteThing(_ uuid:String) -> Promise<Void>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.deleteThing(uuid)).validate()
+            .responseJSON { response in
+                switch response.result{
+                case .success(let data):
+                    fulfill()
                 case .failure(let error):
                     return reject(error)
                 }
