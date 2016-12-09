@@ -25,7 +25,9 @@ public final class Thing: Model,ResponseObject,ResponseCollection,ModelProtocol 
             }
         }
         if let dic = representation?["experience"]  as? NSDictionary {
-            self.experience = Experience(response:response, representation: representation?["experience"])
+             if let uuid = dic.value(forKeyPath: "uuid") as? String {
+               self.experience = Experience(response:response, representation: representation?["experience"])
+            }
         }
         super.init(response: response, representation: representation)
     }
