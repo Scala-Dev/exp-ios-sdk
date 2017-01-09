@@ -14,7 +14,7 @@ public final class Auth: Model,ResponseObject {
         super.init(response: response, representation: representation!)
     }
     
-    func getToken() -> String {
+    public func getToken() -> String {
         return get("token") as! String
     }
     
