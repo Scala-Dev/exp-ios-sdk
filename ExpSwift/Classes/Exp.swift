@@ -855,7 +855,7 @@ public func deleteFeed(_ uuid:String) -> Promise<Void>{
  @param options.
  @return Promise<Auth>.
  */
-func login(_ options:[String:AnyObject]) ->Promise<Auth>{
+func login(_ options:[String:Any?]) ->Promise<Auth>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.login(options)).validate()
             .responseObject { (response: DataResponse<Auth>) in

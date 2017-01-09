@@ -14,7 +14,7 @@ import JWT
 
 open class Runtime{
     
-    var optionsRuntime = [String: AnyObject]()
+    var optionsRuntime:[String : Any?] = [String : Any?]()
     var timeout:TimeInterval = 5 // seconds
     var enableSocket:Bool = true // enable socket connection
     
@@ -25,7 +25,7 @@ open class Runtime{
     @return Promise<Bool>.
     */
     open func start(_ host: String, uuid: String, secret: String)  -> Promise<Bool> {
-       return start(["host": host as AnyObject, "deviceUuid": uuid as AnyObject, "secret": secret as AnyObject])
+       return start(["host": host, "deviceUuid": uuid, "secret": secret])
     }
     
     /**
@@ -34,7 +34,7 @@ open class Runtime{
     @return Promise<Bool>.
     */
     open func start(_ host:String , user: String , password:String, organization:String) -> Promise<Bool> {
-        return start(["host": host as AnyObject, "username": user as AnyObject, "password": password as AnyObject, "organization": organization as AnyObject])
+        return start(["host": host, "username": user, "password": password, "organization": organization])
     }
     
     /**
@@ -43,7 +43,7 @@ open class Runtime{
      @return Promise<Bool>.
      */
     open func start(_ host:String , auth: Auth) -> Promise<Bool> {
-        return start(["host": host as AnyObject, "auth": auth])
+        return start(["host": host, "auth": auth])
     }
 
     
@@ -53,7 +53,7 @@ open class Runtime{
      @param options
      @return Promise<Bool>.
      */
-    open func start(_ options:[String:AnyObject]) -> Promise<Bool> {
+    open func start(_ options:[String:Any?]) -> Promise<Bool> {
         expLogging("EXP start with options \(options)")
         optionsRuntime = options
         return Promise { fulfill, reject in
@@ -81,7 +81,7 @@ open class Runtime{
             
             if let uuid = options["uuid"] as? String, let secret = options["secret"] as? String {
                 let tokenSign = JWT.encode(["uuid": uuid, "type": "device"], algorithm: .hs256(secret.data(using: .utf8)!))
-                login(["token":tokenSign as AnyObject]).then {(auth: Auth) -> Void  in
+                login(["token":tokenSign]).then {(auth: Auth) -> Void  in
                     self.initNetwork(auth)
                     if self.enableSocket {
                         socketManager.start_socket().then { (result: Bool) -> Void  in
@@ -93,9 +93,9 @@ open class Runtime{
                 }
             }
             
-            if let uuid = options["deviceUuid"] as? String, let secret = options["secret"] as? String {
+            if let uuid = options["deviceUuid"] as? String , let secret = options["secret"] as? String {
                 let tokenSign = JWT.encode(["uuid": uuid, "type": "device"], algorithm: .hs256(secret.data(using: .utf8)!))
-                login(["token":tokenSign as AnyObject]).then {(auth: Auth) -> Void  in
+                login(["token":tokenSign]).then {(auth: Auth) -> Void  in
                     self.initNetwork(auth)
                     if self.enableSocket {
                         socketManager.start_socket().then { (result: Bool) -> Void  in
@@ -110,7 +110,7 @@ open class Runtime{
             
             if let uuid = options["uuid"] as? String, let apiKey = options["apiKey"] as? String {
                 let tokenSign = JWT.encode(["uuid": uuid, "type": "consumerApp"], algorithm: .hs256(apiKey.data(using: .utf8)!))
-                login(["token":tokenSign as AnyObject]).then {(auth: Auth) -> Void  in
+                login(["token":tokenSign]).then {(auth: Auth) -> Void  in
                     self.initNetwork(auth)
                     if self.enableSocket {
                         socketManager.start_socket().then { (result: Bool) -> Void  in
@@ -122,9 +122,9 @@ open class Runtime{
                 }
             }
             
-            if let uuid = options["consumerAppUuid"] as? String, let apiKey = options["apiKey"] as? String {
+            if let uuid = options["consumerAppUuid"] as? String, let apiKey = options["apiKey"]  as? String{
                 let tokenSign = JWT.encode(["uuid": uuid, "type": "consumerApp"], algorithm: .hs256(apiKey.data(using: .utf8)!))
-                login(["token":tokenSign as AnyObject]).then {(auth: Auth) -> Void  in
+                login(["token":tokenSign]).then {(auth: Auth) -> Void  in
                     self.initNetwork(auth)
                     if self.enableSocket {
                         socketManager.start_socket().then { (result: Bool) -> Void  in
@@ -136,7 +136,7 @@ open class Runtime{
                 }
             }
             
-            if let uuid = options["networkUuid"] as? String, let apiKey = options["apiKey"] as? String{
+            if let uuid = options["networkUuid"] as? String , let apiKey = options["apiKey"] as? String{
                 let tokenSign = JWT.encode(["uuid": uuid, "type": "consumerApp"], algorithm: .hs256(apiKey.data(using: .utf8)!))
                 login(["token":tokenSign as AnyObject]).then {(auth: Auth) -> Void  in
                     self.initNetwork(auth)
@@ -152,7 +152,7 @@ open class Runtime{
             
             if let auth = options["auth"] as? Auth{
                 let tokenSign = auth.getToken()
-                login(["token":tokenSign as AnyObject]).then {(auth: Auth) -> Void  in
+                login(["token":tokenSign]).then {(auth: Auth) -> Void  in
                     self.initNetwork(auth)
                     if self.enableSocket {
                         socketManager.start_socket().then { (result: Bool) -> Void  in
