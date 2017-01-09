@@ -63,6 +63,8 @@ enum Router: URLRequestConvertible {
     case refreshToken()
     case broadcast([String: Any],String)
     case respond([String: Any])
+    case getCurrentUser()
+    case getToken([String: Any])
     //create 
     case createDevice([String:Any])
     case createData(String,String,[String:Any])
@@ -165,6 +167,10 @@ enum Router: URLRequestConvertible {
             return .delete
         case .deleteThing:
             return .delete
+        case .getCurrentUser:
+            return .get
+        case .getToken:
+            return .post
         }
     }
     
@@ -248,7 +254,10 @@ enum Router: URLRequestConvertible {
                 return "/api/locations/\(uuid)"
             case .deleteThing(let uuid):
                 return "/api/things/\(uuid)"
-            
+            case .getCurrentUser:
+                return "/api/users/current"
+            case .getToken:
+                return "/api/auth/token"
         }
     }
     
@@ -334,6 +343,9 @@ enum Router: URLRequestConvertible {
         case .saveThing(_,let parameters):
             urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
             expLogging("EXP Http Request saveThing: \(urlRequest)")
+        case .getToken(let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request getToken: \(urlRequest)")
         default:
             break
         }
@@ -366,7 +378,7 @@ Initialize the SDK and connect to EXP.
 @param options.
 @return Promise<Bool>.
 */
-public func start(_ options:[String:String]) -> Promise<Bool> {
+public func start(_ options:[String:AnyObject]) -> Promise<Bool> {
     return runtime.start(options)
 }
 
@@ -843,9 +855,9 @@ public func deleteFeed(_ uuid:String) -> Promise<Void>{
  @param options.
  @return Promise<Auth>.
  */
-func login(_ options:[String:String]) ->Promise<Auth>{
+func login(_ options:[String:AnyObject]) ->Promise<Auth>{
     return Promise { fulfill, reject in
-        Alamofire.request(Router.login(options as [String : AnyObject])).validate()
+        Alamofire.request(Router.login(options)).validate()
             .responseObject { (response: DataResponse<Auth>) in
                 switch response.result{
                 case .success(let data):
@@ -1005,6 +1017,70 @@ public func respond(_ params:[String:Any]) -> Promise<Message>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.respond(params)).validate()
             .responseObject { (response: DataResponse<Message>) in
+                switch response.result{
+                case .success(let data):
+                    fulfill(data)
+                case .failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+/**
+ Get Current User
+ @param params.
+ @return Promise<User>.
+ */
+public func getCurrentUser() -> Promise<User>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.getCurrentUser()).validate()
+            .responseObject { (response: DataResponse<User>) in
+                switch response.result{
+                case .success(let data):
+                    fulfill(data)
+                case .failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+/**
+ Get Current User
+ @param params.
+ @return Promise<User>.
+ */
+public func getToken(_ options:[String:AnyObject]) -> Promise<Auth>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.getToken(options)).validate()
+            .responseObject { (response: DataResponse<Auth>) in
+                switch response.result{
+                case .success(let data):
+                    fulfill(data)
+                case .failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+
+/**
+ Get Current User
+ @param params.
+ @return Promise<User>.
+ */
+public func getUser(_ host:String, auth:Auth) -> Promise<User>{
+    expLogging("EXP GET USER  : \(auth.document)")
+    setTokenSDK(auth)
+    refreshAuthToken(auth)
+    if let callBack = authConnection[Config.UPDATE]{
+        callBack(Config.UPDATE)
+    }
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.getCurrentUser()).validate()
+            .responseObject { (response: DataResponse<User>) in
                 switch response.result{
                 case .success(let data):
                     fulfill(data)
