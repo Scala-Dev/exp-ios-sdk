@@ -76,6 +76,8 @@ open class Runtime{
                             }
                         }
                     }
+                    }.catch {error in
+                        reject(error)
                 }
             }
             
@@ -90,6 +92,8 @@ open class Runtime{
                             }
                         }
                     }
+                    }.catch{error in
+                        reject(error)
                 }
             }
             
@@ -104,6 +108,8 @@ open class Runtime{
                             }
                         }
                     }
+                    }.catch{error in
+                        reject(error)
                 }
                 
             }
@@ -119,6 +125,8 @@ open class Runtime{
                             }
                         }
                     }
+                    }.catch{error in
+                        reject(error)
                 }
             }
             
@@ -133,6 +141,8 @@ open class Runtime{
                             }
                         }
                     }
+                    }.catch{error in
+                        reject(error)
                 }
             }
             
@@ -147,6 +157,8 @@ open class Runtime{
                             }
                         }
                     }
+                    }.catch{error in
+                        reject(error)
                 }
             }
             
@@ -161,6 +173,8 @@ open class Runtime{
                             }
                         }
                     }
+                    }.catch {error in
+                        reject(error)
                 }
             }
         }
