@@ -1071,10 +1071,10 @@ public func getToken(_ options:[String:AnyObject]) -> Promise<Auth>{
  @param params.
  @return Promise<User>.
  */
-public func getUser(_ host:String, auth:Auth) -> Promise<User>{
-    expLogging("EXP GET USER  : \(auth.document)")
-    setTokenSDK(auth)
-    refreshAuthToken(auth)
+public func getUser(_ host:String, token:String) -> Promise<User>{
+    expLogging("EXP GET USER  : \(token)")
+    tokenSDK = token
+    refreshAuthToken(token)
     if let callBack = authConnection[Config.UPDATE]{
         callBack(Config.UPDATE)
     }
@@ -1133,7 +1133,20 @@ private func refreshAuthToken(_ result:Auth){
             refreshAuthToken(result)
         }
     }
+}
 
+/**
+ Refresh Auth Token Recursive with Timeout
+ */
+private func refreshAuthToken(_ expirationToken:String){
+    after(interval: getTimeout(Double(expirationToken)!)).then{ result -> Void in
+        refreshToken().then{ result -> Void in
+            setTokenSDK(result)
+            expLogging("EXP refreshAuthToken: \(result.document)")
+            socketManager.refreshConnection()
+            refreshAuthToken(result)
+        }
+    }
 }
 
 /**
@@ -1141,6 +1154,15 @@ private func refreshAuthToken(_ result:Auth){
  */
 private func getTimeout(_ data:Auth) -> TimeInterval{
     let expiration = data.get("expiration") as! Double
+    let startDate = Date(timeIntervalSince1970: expiration/1000)
+    let timeout = startDate.timeIntervalSince(Date())
+    return TimeInterval(Int64(timeout))
+}
+
+/**
+ Get Time Out
+ */
+private func getTimeout(_ expiration:Double) -> TimeInterval{
     let startDate = Date(timeIntervalSince1970: expiration/1000)
     let timeout = startDate.timeIntervalSince(Date())
     return TimeInterval(Int64(timeout))
