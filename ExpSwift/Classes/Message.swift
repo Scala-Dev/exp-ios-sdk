@@ -11,7 +11,7 @@ public final class Message: Model,ResponseObject,ResponseCollection {
     
     public let uuid: String
     
-    required public init?(response: HTTPURLResponse, representation: Any) {
+    required public init?(response: HTTPURLResponse?, representation: Any?) {
          let representation = representation as? [String: AnyObject]
          if let uuid = representation?["uuid"] as? String {
             self.uuid = (representation?["uuid"] as? String)!

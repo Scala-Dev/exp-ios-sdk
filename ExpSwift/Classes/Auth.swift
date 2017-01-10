@@ -9,13 +9,16 @@
 import Foundation
 public final class Auth: Model,ResponseObject {
     
-    required public init?(response: HTTPURLResponse, representation: Any) {
-        let representation = representation as? [String: AnyObject] 
-        super.init(response: response, representation: representation!)
+    required public init?(response: HTTPURLResponse?, representation: Any?) {
+        super.init(response: response, representation: representation)
     }
+    
     
     public func getToken() -> String {
         return get("token") as! String
     }
+    
+    
+    
     
 }

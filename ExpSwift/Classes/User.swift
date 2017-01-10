@@ -10,7 +10,7 @@ import Foundation
 
 public final class User: Model,ResponseObject {
 
-    required public init?(response: HTTPURLResponse, representation: Any) {
+    required public init?(response: HTTPURLResponse?, representation: Any?) {
         let representation = representation as? [String: AnyObject]
         super.init(response: response, representation: representation!)
     }

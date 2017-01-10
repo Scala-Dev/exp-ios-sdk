@@ -16,7 +16,7 @@ public final class Thing: Model,ResponseObject,ResponseCollection,ModelProtocol 
     fileprivate var location:Location?
     fileprivate var experience:Experience?
     
-    required public init?(response: HTTPURLResponse, representation: Any) {
+    required public init?(response: HTTPURLResponse?, representation: Any?) {
         let representation = representation as? [String: AnyObject]
         self.uuid = representation?["uuid"] as! String
         if let dic = representation?["location"]  as? NSDictionary {

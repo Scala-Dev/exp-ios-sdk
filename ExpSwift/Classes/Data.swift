@@ -15,7 +15,7 @@ public final class Data: Model,ResponseObject,ResponseCollection,ModelProtocol {
     public let group: String
     public let key: String
     
-    required public init?(response: HTTPURLResponse, representation: Any) {
+    required public init?(response: HTTPURLResponse?, representation: Any?) {
         if let representation = representation as? [String: AnyObject] {
             self.group = representation["group"] as! String
             self.key = representation["key"] as! String
