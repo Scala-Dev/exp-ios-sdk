@@ -383,6 +383,15 @@ public func start(_ options:[String:AnyObject]) -> Promise<Bool> {
 }
 
 /**
+ Initialize the SDK and connect to EXP.
+ @param options.
+ @return Promise<Bool>.
+ */
+public func start(_ host:String, auth:Auth) -> Promise<Bool> {
+    return runtime.start(host,auth: auth)
+}
+
+/**
     Get list of devices
     @param dictionary of search params
     @return Promise<SearchResults<Device>>.
