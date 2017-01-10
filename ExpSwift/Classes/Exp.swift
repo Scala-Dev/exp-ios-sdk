@@ -1074,10 +1074,6 @@ public func getToken(_ options:[String:AnyObject]) -> Promise<Auth>{
 public func getUser(_ host:String, token:String) -> Promise<User>{
     expLogging("EXP GET USER  : \(token)")
     tokenSDK = token
-    refreshAuthToken(token)
-    if let callBack = authConnection[Config.UPDATE]{
-        callBack(Config.UPDATE)
-    }
     return Promise { fulfill, reject in
         Alamofire.request(Router.getCurrentUser()).validate()
             .responseObject { (response: DataResponse<User>) in
@@ -1090,6 +1086,16 @@ public func getUser(_ host:String, token:String) -> Promise<User>{
         }
     }
 }
+
+/**
+ Starth with Auth 
+ @param options.
+ @return Promise<Auth>.
+ */
+func start_auth(_ auth:Auth) ->Promise<User>{
+    return getCurrentUser()
+}
+
 
 
 /**
