@@ -378,7 +378,7 @@ Initialize the SDK and connect to EXP.
 @param options.
 @return Promise<Bool>.
 */
-public func start(_ options:[String:AnyObject]) -> Promise<Bool> {
+public func start(_ options:[String:Any]) -> Promise<Bool> {
     return runtime.start(options)
 }
 
