@@ -1060,7 +1060,7 @@ public func getCurrentUser() -> Promise<User>{
  @param params.
  @return Promise<User>.
  */
-public func getToken(_ options:[String:AnyObject]) -> Promise<Auth>{
+public func getToken(_ options:[String:Any]) -> Promise<Auth>{
     return Promise { fulfill, reject in
         Alamofire.request(Router.getToken(options)).validate()
             .responseObject { (response: DataResponse<Auth>) in
@@ -1083,6 +1083,7 @@ public func getToken(_ options:[String:AnyObject]) -> Promise<Auth>{
 public func getUser(_ host:String, token:String) -> Promise<User>{
     expLogging("EXP GET USER  : \(token)")
     tokenSDK = token
+    hostUrl = host
     return Promise { fulfill, reject in
         Alamofire.request(Router.getCurrentUser()).validate()
             .responseObject { (response: DataResponse<User>) in
