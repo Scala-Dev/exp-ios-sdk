@@ -148,7 +148,7 @@ open class Runtime{
             
             if let uuid = options["networkUuid"] as? String , let apiKey = options["apiKey"] as? String{
                 let tokenSign = JWT.encode(["uuid": uuid, "type": "consumerApp"], algorithm: .hs256(apiKey.data(using: .utf8)!))
-                login(["token":tokenSign as AnyObject]).then {(auth: Auth) -> Void  in
+                login(["token":tokenSign]).then {(auth: Auth) -> Void  in
                     self.initNetwork(auth)
                     if self.enableSocket {
                         socketManager.start_socket().then { (result: Bool) -> Void  in
