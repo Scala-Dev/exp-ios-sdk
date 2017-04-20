@@ -163,7 +163,7 @@ open class Runtime{
             }
             
             if let auth = options["auth"] as? Auth{
-                start_auth(auth).then {(user: User) -> Void  in
+                startAuth(auth).then {(user: User) -> Void  in
                     self.initNetwork(auth)
                     if self.enableSocket {
                         socketManager.start_socket().then { (result: Bool) -> Void  in

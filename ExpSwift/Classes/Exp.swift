@@ -1102,7 +1102,7 @@ public func getUser(_ host:String, token:String) -> Promise<User>{
  @param options.
  @return Promise<Auth>.
  */
-func start_auth(_ auth:Auth) ->Promise<User>{
+func startAuth(_ auth:Auth) ->Promise<User>{
     return getCurrentUser()
 }
 
