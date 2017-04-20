@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Cesar Oyarzun' => 'cesar.oyarzun@scala.com' }
-  s.source           = { :git => "https://github.com/ScalaInc/exp-ios-sdk.git", :tag => 'v1.0.6' }
+  s.source           = { :git => "https://github.com/ScalaInc/exp-ios-sdk.git", :tag => 'eagle-v1.0.0' }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '9.0'
