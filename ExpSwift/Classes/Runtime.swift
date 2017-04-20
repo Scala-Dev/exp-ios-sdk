@@ -149,8 +149,7 @@ open class Runtime{
      */
     fileprivate func initNetwork(_ auth: Auth)->Void{
         tokenSDK = auth.get("token") as! String
-        let networks = auth.get("network") as! NSDictionary
-        hostSocket = networks["host"] as! String
+        hostSocket = hostUrl
     }
     
     /**
