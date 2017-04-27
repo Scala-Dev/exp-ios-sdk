@@ -11,7 +11,7 @@ import Alamofire
 
 
 public protocol ResponseObject {
-    init?(response: HTTPURLResponse, representation: Any)
+    init?(response: HTTPURLResponse?, representation: Any?)
 }
 
 

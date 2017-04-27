@@ -20,7 +20,7 @@ public final class Ref: ResponseObject,ResponseCollection {
      let subtype: String
      let name: String
     
-    required public init?(response: HTTPURLResponse, representation: Any) {
+    required public init?(response: HTTPURLResponse?, representation: Any?) {
         guard
             let representation = representation as? [String: AnyObject],
             let major = representation["major"] as? String,
