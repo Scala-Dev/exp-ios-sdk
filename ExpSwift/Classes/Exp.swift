@@ -19,6 +19,7 @@ var hostSocket: String = ""
 public var auth:Auth?
 var socketManager = SocketManager()
 var runtime = Runtime()
+let timeoutLogin = 10
 public typealias CallBackTypeConnection = (String) -> Void
 var authConnection = [String: CallBackTypeConnection]()
 
@@ -1102,8 +1103,11 @@ public func getUser(_ host:String, token:String) -> Promise<User>{
  @param options.
  @return Promise<Auth>.
  */
-func startAuth(_ auth:Auth) ->Promise<User>{
-    return getCurrentUser()
+func startAuth(_ data:Auth) {
+    //set auth to context
+    auth = data
+    setTokenSDK(data)
+    refreshAuthToken(data)
 }
 
 
@@ -1138,7 +1142,7 @@ public func stop(){
 
 
 /**
- Refresh Auth Token Recursive with Timeout
+ Refresh Auth Token Recursive with Auth 
 */
 private func refreshAuthToken(_ result:Auth){
     after(interval: getTimeout(result)).then{ result -> Void in
@@ -1154,8 +1158,8 @@ private func refreshAuthToken(_ result:Auth){
 /**
  Refresh Auth Token Recursive with Timeout
  */
-private func refreshAuthToken(_ expirationToken:String){
-    after(interval: getTimeout(Double(expirationToken)!)).then{ result -> Void in
+private func refreshAuthToken(_ timeout:String){
+    after(interval: getTimeout(Double(timeout)!)).then{ result -> Void in
         refreshToken().then{ result -> Void in
             setTokenSDK(result)
             expLogging("EXP refreshAuthToken: \(result.document)")
@@ -1169,10 +1173,13 @@ private func refreshAuthToken(_ expirationToken:String){
  Get Time Out
  */
 private func getTimeout(_ data:Auth) -> TimeInterval{
-    let expiration = data.get("expiration") as! Double
-    let startDate = Date(timeIntervalSince1970: expiration/1000)
-    let timeout = startDate.timeIntervalSince(Date())
-    return TimeInterval(Int64(timeout))
+    var timeoutVal:TimeInterval = TimeInterval(timeoutLogin);
+    if let expiration = data.get("expiration") as? Double{
+        let startDate = Date(timeIntervalSince1970: expiration/1000)
+        var timeout = startDate.timeIntervalSince(Date())
+        timeoutVal = TimeInterval(Int64(timeout))
+    }
+    return timeoutVal
 }
 
 /**
