@@ -14,7 +14,7 @@ public  class Model  {
     var document: [String:Any] = [String:Any]()
     
     
-     required public init?(response: HTTPURLResponse, representation: Any) {
+     required public init?(response: HTTPURLResponse?, representation: Any?) {
         if let representation = representation as? [String: AnyObject] {
             for documentRep in representation{
                 self.document.updateValue(documentRep.1, forKey: documentRep.0)

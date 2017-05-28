@@ -19,6 +19,7 @@ var hostSocket: String = ""
 public var auth:Auth?
 var socketManager = SocketManager()
 var runtime = Runtime()
+let timeoutLogin = 10
 public typealias CallBackTypeConnection = (String) -> Void
 var authConnection = [String: CallBackTypeConnection]()
 
@@ -63,6 +64,8 @@ enum Router: URLRequestConvertible {
     case refreshToken()
     case broadcast([String: Any],String)
     case respond([String: Any])
+    case getCurrentUser()
+    case getToken([String: Any])
     //create 
     case createDevice([String:Any])
     case createData(String,String,[String:Any])
@@ -165,6 +168,10 @@ enum Router: URLRequestConvertible {
             return .delete
         case .deleteThing:
             return .delete
+        case .getCurrentUser:
+            return .get
+        case .getToken:
+            return .post
         }
     }
     
@@ -248,7 +255,10 @@ enum Router: URLRequestConvertible {
                 return "/api/locations/\(uuid)"
             case .deleteThing(let uuid):
                 return "/api/things/\(uuid)"
-            
+            case .getCurrentUser:
+                return "/api/users/current"
+            case .getToken:
+                return "/api/auth/token"
         }
     }
     
@@ -334,6 +344,9 @@ enum Router: URLRequestConvertible {
         case .saveThing(_,let parameters):
             urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
             expLogging("EXP Http Request saveThing: \(urlRequest)")
+        case .getToken(let parameters):
+            urlRequest = try JSONEncoding.default.encode(urlRequest, with: parameters)
+            expLogging("EXP Http Request getToken: \(urlRequest)")
         default:
             break
         }
@@ -366,8 +379,17 @@ Initialize the SDK and connect to EXP.
 @param options.
 @return Promise<Bool>.
 */
-public func start(_ options:[String:String]) -> Promise<Bool> {
+public func start(_ options:[String:Any]) -> Promise<Bool> {
     return runtime.start(options)
+}
+
+/**
+ Initialize the SDK and connect to EXP.
+ @param options.
+ @return Promise<Bool>.
+ */
+public func start(_ host:String, auth:Auth) -> Promise<Bool> {
+    return runtime.start(host,auth: auth)
 }
 
 /**
@@ -843,9 +865,9 @@ public func deleteFeed(_ uuid:String) -> Promise<Void>{
  @param options.
  @return Promise<Auth>.
  */
-func login(_ options:[String:String]) ->Promise<Auth>{
+func login(_ options:[String:Any?]) ->Promise<Auth>{
     return Promise { fulfill, reject in
-        Alamofire.request(Router.login(options as [String : AnyObject])).validate()
+        Alamofire.request(Router.login(options)).validate()
             .responseObject { (response: DataResponse<Auth>) in
                 switch response.result{
                 case .success(let data):
@@ -1015,6 +1037,80 @@ public func respond(_ params:[String:Any]) -> Promise<Message>{
     }
 }
 
+/**
+ Get Current User
+ @param params.
+ @return Promise<User>.
+ */
+public func getCurrentUser() -> Promise<User>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.getCurrentUser()).validate()
+            .responseObject { (response: DataResponse<User>) in
+                switch response.result{
+                case .success(let data):
+                    fulfill(data)
+                case .failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+/**
+ Get Current User
+ @param params.
+ @return Promise<User>.
+ */
+public func getToken(_ options:[String:Any]) -> Promise<Auth>{
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.getToken(options)).validate()
+            .responseObject { (response: DataResponse<Auth>) in
+                switch response.result{
+                case .success(let data):
+                    fulfill(data)
+                case .failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+
+/**
+ Get Current User
+ @param params.
+ @return Promise<User>.
+ */
+public func getUser(_ host:String, token:String) -> Promise<User>{
+    expLogging("EXP GET USER  : \(token)")
+    tokenSDK = token
+    hostUrl = host
+    return Promise { fulfill, reject in
+        Alamofire.request(Router.getCurrentUser()).validate()
+            .responseObject { (response: DataResponse<User>) in
+                switch response.result{
+                case .success(let data):
+                    fulfill(data)
+                case .failure(let error):
+                    return reject(error)
+                }
+        }
+    }
+}
+
+/**
+ Starth with Auth 
+ @param options.
+ @return Promise<Auth>.
+ */
+func startAuth(_ data:Auth) {
+    //set auth to context
+    auth = data
+    setTokenSDK(data)
+    refreshAuthToken(data)
+}
+
+
 
 /**
 Connection Socket
@@ -1046,7 +1142,7 @@ public func stop(){
 
 
 /**
- Refresh Auth Token Recursive with Timeout
+ Refresh Auth Token Recursive with Auth 
 */
 private func refreshAuthToken(_ result:Auth){
     after(interval: getTimeout(result)).then{ result -> Void in
@@ -1057,14 +1153,39 @@ private func refreshAuthToken(_ result:Auth){
             refreshAuthToken(result)
         }
     }
+}
 
+/**
+ Refresh Auth Token Recursive with Timeout
+ */
+private func refreshAuthToken(_ timeout:String){
+    after(interval: getTimeout(Double(timeout)!)).then{ result -> Void in
+        refreshToken().then{ result -> Void in
+            setTokenSDK(result)
+            expLogging("EXP refreshAuthToken: \(result.document)")
+            socketManager.refreshConnection()
+            refreshAuthToken(result)
+        }
+    }
 }
 
 /**
  Get Time Out
  */
 private func getTimeout(_ data:Auth) -> TimeInterval{
-    let expiration = data.get("expiration") as! Double
+    var timeoutVal:TimeInterval = TimeInterval(timeoutLogin);
+    if let expiration = data.get("expiration") as? Double{
+        let startDate = Date(timeIntervalSince1970: expiration/1000)
+        var timeout = startDate.timeIntervalSince(Date())
+        timeoutVal = TimeInterval(Int64(timeout))
+    }
+    return timeoutVal
+}
+
+/**
+ Get Time Out
+ */
+private func getTimeout(_ expiration:Double) -> TimeInterval{
     let startDate = Date(timeIntervalSince1970: expiration/1000)
     let timeout = startDate.timeIntervalSince(Date())
     return TimeInterval(Int64(timeout))

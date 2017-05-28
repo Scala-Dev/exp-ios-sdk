@@ -25,7 +25,7 @@ public final class ContentNode: Model,ResponseObject,ResponseCollection {
         case UNKNOWN = ""
     }
     
-    required public init?(response: HTTPURLResponse, representation: Any) {
+    required public init?(response: HTTPURLResponse?, representation: Any?) {
         if let representation = representation as? [String: AnyObject] {
             self.uuid = representation["uuid"] as! String
             self.subtype = CONTENT_TYPES(rawValue: representation["subtype"] as! String)!

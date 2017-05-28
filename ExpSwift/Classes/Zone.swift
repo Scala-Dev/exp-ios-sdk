@@ -16,7 +16,7 @@ public final class Zone: Model,ResponseObject,ResponseCollection,ModelProtocol {
     public let key: String
     fileprivate var location: Location?
     
-    required public init?(response: HTTPURLResponse, representation: Any) {
+    required public init?(response: HTTPURLResponse?, representation: Any?) {
         guard
             let representation = representation as? [String: Any],
             let key = representation["key"] as? String,
@@ -27,7 +27,7 @@ public final class Zone: Model,ResponseObject,ResponseCollection,ModelProtocol {
         super.init(response: response, representation: representation)
     }
 
-    public static func collection(response: HTTPURLResponse, representation: Any,location: Location) -> [Zone] {
+    public static func collection(response: HTTPURLResponse?, representation: Any?,location: Location?) -> [Zone] {
         var zones: [Zone] = []
         
         if let representation = representation as? [[String: AnyObject]] {

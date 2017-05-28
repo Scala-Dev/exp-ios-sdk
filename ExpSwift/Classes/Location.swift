@@ -17,7 +17,7 @@ public final class Location: Model,ResponseObject,ResponseCollection,ModelProtoc
     public var zones: [Zone] = []
     
     
-    required public init?(response: HTTPURLResponse, representation: Any) {
+    required public init?(response: HTTPURLResponse?, representation: Any?) {
         if let representation = representation as? [String: AnyObject] {
             self.uuid = representation["uuid"] as! String
         } else {
